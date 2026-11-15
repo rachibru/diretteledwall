@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="br.it/ledwall" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>br.it/ledwall - Quotidiani Online</title>
+  <style>
+    :root {
+      --brand-blue: #0b3d75;
+      --brand-blue-dark: #072a52;
+      --studio-bg: #e7ebf0;
+      --studio-bg-light: #f5f7fa;
+      --live-red: #e52521;
+      --header-h: 44px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at 50% 25%, var(--studio-bg-light) 0%, var(--studio-bg) 75%, #d6dde6 100%);
+      color: #1a2433;
+    }
+
+    /* TOP BAR UNICA RIGA */
+    header.topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: calc(var(--header-h) + env(safe-area-inset-top));
+      padding-top: env(safe-area-inset-top);
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
+      background: linear-gradient(180deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(7, 42, 82, 0.25);
+      gap: 10px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--live-red);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(229, 37, 33, 0.5);
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse 1.4s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.8); }
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      color: #fff;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .brand-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.25);
+      flex-shrink: 0;
+    }
+
+    .view-subtitle {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .topbar-right::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-pill {
+      height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .filter-pill.active {
+      background: #fff;
+      color: var(--brand-blue);
+      border-color: #fff;
+    }
+
+    .btn-icon-only {
+      height: 26px;
+      padding: 0 7px;
+      border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    body.on-air-clean .filter-pill {
+      display: none;
+    }
+
+    body.on-air-clean #btnToggleClean {
+      opacity: 0.35;
+      border-color: transparent;
+      background: transparent;
+    }
+
+    /* LIBRERIA ORIZZONTALE A 2 RIGHE (LOGHI TESTATE) */
+    main.ledwall-stage {
+      position: fixed;
+      top: calc(var(--header-h) + env(safe-area-inset-top));
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 20px 26px;
+      display: flex;
+      align-items: center;
+      scrollbar-width: none;
+    }
+
+    main.ledwall-stage::-webkit-scrollbar {
+      display: none;
+    }
+
+    .wall-grid {
+      height: 100%;
+      display: grid;
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      grid-auto-flow: column;
+      grid-auto-columns: max-content;
+      gap: 20px 22px;
+      align-items: center;
+      padding-right: 26px;
+    }
+
+    .site-card {
+      position: relative;
+      height: 100%;
+      aspect-ratio: 1.45 / 1;
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 8px 22px rgba(15, 28, 46, 0.12), 0 1px 3px rgba(15, 28, 46, 0.08);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s ease;
+      border-top: 4px solid var(--accent-color, #0b3d75);
+    }
+
+    .site-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 16px 32px rgba(11, 61, 117, 0.2);
+    }
+
+    .site-card:active {
+      transform: scale(0.97);
+    }
+
+    .site-logo-wrap {
+      width: 68px;
+      height: 68px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .site-logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .site-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      text-align: center;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+
+    .site-cat-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef2f7;
+      color: #475569;
+    }
+
+    /* BROWSER INTERNO A TUTTO SCHERMO */
+    .browser-overlay {
+      position: fixed;
+      top: calc(var(--header-h) + env(safe-area-inset-top));
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fff;
+      z-index: 90;
+      display: none;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96);
+      transition: opacity 0.25s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .browser-overlay.active {
+      display: flex;
+    }
+
+    .browser-overlay.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* MINI BARRA INDIRIZZO / STATO DEL BROWSER INTERNO */
+    .browser-addressbar {
+      height: 34px;
+      background: #f1f5f9;
+      border-bottom: 1px solid #cbd5e1;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #334155;
+      flex-shrink: 0;
+      gap: 10px;
+    }
+
+    .url-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 5px;
+      padding: 2px 10px;
+      max-width: 65%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+    }
+
+    .shield-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+      font-weight: 700;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* AREA CONTENUTO WEB + LAYER EVIDENZIATORE */
+    .browser-viewport {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    #webFrame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: #fff;
+      transform-origin: top center;
+      transition: transform 0.2s ease;
+    }
+
+    .browser-loader {
+      position: absolute;
+      inset: 0;
+      background: rgba(248, 250, 252, 0.94);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      gap: 10px;
+    }
+
+    .spinner {
+      width: 34px;
+      height: 34px;
+      border: 3px solid #d0dbe8;
+      border-top-color: var(--brand-blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* CANVAS EVIDENZIATORE SOPRA LA PAGINA WEB */
+    #highlightCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+      z-index: 20;
+    }
+
+    .browser-viewport.draw-mode #highlightCanvas {
+      pointer-events: auto;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    /* DOCK STRUMENTI IN BASSO */
+    .viewer-dock {
+      position: fixed;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(11, 61, 117, 0.96);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 28px rgba(7, 42, 82, 0.35);
+      z-index: 96;
+      max-width: 96vw;
+      overflow-x: auto;
+    }
+
+    .dock-btn {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .dock-btn.primary-back {
+      background: #fff;
+      color: var(--brand-blue);
+      border-color: #fff;
+    }
+
+    .dock-btn.active-tool {
+      background: #ffeb3b;
+      color: #072a52;
+      border-color: #ffeb3b;
+    }
+
+    .dock-sep {
+      width: 1px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.22);
+      flex-shrink: 0;
+    }
+
+    .color-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s;
+    }
+
+    .color-dot.selected {
+      transform: scale(1.2);
+      border-color: #fff;
+      box-shadow: 0 0 0 2px #0b3d75, 0 0 0 4px #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA SUPERIORE -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+      <span class="brand-title" id="brandLogo">br.it/ledwall</span>
+      <span class="brand-divider"></span>
+      <span class="view-subtitle" id="headerSubtitle">Quotidiani Online</span>
+    </div>
+    <div class="topbar-right">
+      <button class="filter-pill active" data-filter="all">Tutti</button>
+      <button class="filter-pill" data-filter="italiani">Italiani</button>
+      <button class="filter-pill" data-filter="economici">Economici</button>
+      <button class="filter-pill" data-filter="esteri">Esteri</button>
+      <button class="btn-icon-only" id="btnToggleClean" title="Nascondi filtri in onda">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- LIBRERIA LOGHI TESTATE -->
+  <main class="ledwall-stage" id="ledwallStage">
+    <div class="wall-grid" id="wallGrid"></div>
+  </main>
+
+  <!-- BROWSER INTERNO -->
+  <div class="browser-overlay" id="browserOverlay">
+    <div class="browser-addressbar">
+      <div class="url-pill">
+        <span>🔒</span>
+        <span id="currentUrlText">https://...</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="shield-badge" id="modeBadge">Anti-Paywall &amp; Cookie Blocker Attivo</span>
+        <a id="externalFallbackLink" href="#" target="_blank" rel="noopener" style="color:#0b3d75; font-weight:700; text-decoration:none; font-size:11px;">Apri esterno ↗</a>
+      </div>
+    </div>
+
+    <div class="browser-viewport" id="browserViewport">
+      <div class="browser-loader" id="browserLoader">
+        <div class="spinner"></div>
+        <div style="font-weight:700; color:#0b3d75;">Caricamento testata e rimozione blocchi...</div>
+        <div style="font-size:12px; color:#64748b;" id="loaderSubtext">Inizializzazione browser interno</div>
+      </div>
+      <iframe id="webFrame" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+      <canvas id="highlightCanvas"></canvas>
+    </div>
+
+    <div class="viewer-dock">
+      <button class="dock-btn primary-back" id="btnBack">&#8592; Torna indietro</button>
+      <div class="dock-sep"></div>
+      <button class="dock-btn" id="btnReaderSwitch" title="Alterna tra sito completo e vista lettura pulita">Vista Pulita</button>
+      <button class="dock-btn" id="btnZoomPageOut" title="Riduci testo">&#8722;</button>
+      <button class="dock-btn" id="btnZoomPageIn" title="Ingrandisci testo">&#43;</button>
+      <div class="dock-sep"></div>
+      <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
+      <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.55)" style="background:#ffee00;"></span>
+      <span class="color-dot" data-color="rgba(0, 230, 118, 0.45)" style="background:#00e676;"></span>
+      <span class="color-dot" data-color="rgba(255, 82, 82, 0.45)" style="background:#ff5252;"></span>
+      <button class="dock-btn" id="btnClearMarks">Pulisci</button>
+    </div>
+  </div>
+
+  <script>
+    const NEWSPAPER_SITES = [
+      // ITALIANI
+      { name: 'Corriere della Sera', domain: 'corriere.it', url: 'https://www.corriere.it', cat: 'italiani', color: '#004b87' },
+      { name: 'la Repubblica', domain: 'repubblica.it', url: 'https://www.repubblica.it', cat: 'italiani', color: '#0066b3' },
+      { name: 'La Stampa', domain: 'lastampa.it', url: 'https://www.lastampa.it', cat: 'italiani', color: '#1e3a8a' },
+      { name: 'Il Fatto Quotidiano', domain: 'ilfattoquotidiano.it', url: 'https://www.ilfattoquotidiano.it', cat: 'italiani', color: '#b91c1c' },
+      { name: 'il Giornale', domain: 'ilgiornale.it', url: 'https://www.ilgiornale.it', cat: 'italiani', color: '#0369a1' },
+      { name: 'Libero Quotidiano', domain: 'liberoquotidiano.it', url: 'https://www.liberoquotidiano.it', cat: 'italiani', color: '#dc2626' },
+      { name: 'La Verità', domain: 'laverita.info', url: 'https://www.laverita.info', cat: 'italiani', color: '#991b1b' },
+      { name: 'Il Messaggero', domain: 'ilmessaggero.it', url: 'https://www.ilmessaggero.it', cat: 'italiani', color: '#1d4ed8' },
+      { name: 'Avvenire', domain: 'avvenire.it', url: 'https://www.avvenire.it', cat: 'italiani', color: '#0284c7' },
+      { name: 'Domani', domain: 'editorialedomani.it', url: 'https://www.editorialedomani.it', cat: 'italiani', color: '#ea580c' },
+      { name: 'Il Foglio', domain: 'ilfoglio.it', url: 'https://www.ilfoglio.it', cat: 'italiani', color: '#b45309' },
+      { name: 'il manifesto', domain: 'ilmanifesto.it', url: 'https://ilmanifesto.it', cat: 'italiani', color: '#be123c' },
+      { name: 'ANSA', domain: 'ansa.it', url: 'https://www.ansa.it', cat: 'italiani', color: '#15803d' },
+      { name: 'La Gazzetta dello Sport', domain: 'gazzetta.it', url: 'https://www.gazzetta.it', cat: 'italiani', color: '#e11d48' },
+
+      // ECONOMICI
+      { name: 'Il Sole 24 Ore', domain: 'ilsole24ore.com', url: 'https://www.ilsole24ore.com', cat: 'economici', color: '#c2410c' },
+      { name: 'Milano Finanza', domain: 'milanofinanza.it', url: 'https://www.milanofinanza.it', cat: 'economici', color: '#0f766e' },
+      { name: 'ItaliaOggi', domain: 'italiaoggi.it', url: 'https://www.italiaoggi.it', cat: 'economici', color: '#0369a1' },
+      { name: 'Financial Times', domain: 'ft.com', url: 'https://www.ft.com', cat: 'economici', color: '#be185d' },
+      { name: 'Wall Street Journal', domain: 'wsj.com', url: 'https://www.wsj.com', cat: 'economici', color: '#1e293b' },
+      { name: 'Bloomberg', domain: 'bloomberg.com', url: 'https://www.bloomberg.com', cat: 'economici', color: '#111827' },
+      { name: 'The Economist', domain: 'economist.com', url: 'https://www.economist.com', cat: 'economici', color: '#dc2626' },
+
+      // ESTERI
+      { name: 'The New York Times', domain: 'nytimes.com', url: 'https://www.nytimes.com', cat: 'esteri', color: '#0f172a' },
+      { name: 'The Washington Post', domain: 'washingtonpost.com', url: 'https://www.washingtonpost.com', cat: 'esteri', color: '#1e293b' },
+      { name: 'Le Monde', domain: 'lemonde.fr', url: 'https://www.lemonde.fr', cat: 'esteri', color: '#0284c7' },
+      { name: 'Le Figaro', domain: 'lefigaro.fr', url: 'https://www.lefigaro.fr', cat: 'esteri', color: '#1d4ed8' },
+      { name: 'El País', domain: 'elpais.com', url: 'https://elpais.com', cat: 'esteri', color: '#0369a1' },
+      { name: 'The Guardian', domain: 'theguardian.com', url: 'https://www.theguardian.com', cat: 'esteri', color: '#052962' },
+      { name: 'BBC News', domain: 'bbc.com', url: 'https://www.bbc.com/news', cat: 'esteri', color: '#b91c1c' },
+      { name: 'Politico Europe', domain: 'politico.eu', url: 'https://www.politico.eu', cat: 'esteri', color: '#dc2626' }
+    ];
+
+    let activeFilter = 'all';
+    let currentSite = null;
+    let isCleanReaderMode = false;
+    let pageZoom = 1;
+    let isDrawMode = false;
+    let currentColor = 'rgba(255, 238, 0, 0.55)';
+
+    const ledwallStage = document.getElementById('ledwallStage');
+    const wallGrid = document.getElementById('wallGrid');
+    const headerSubtitle = document.getElementById('headerSubtitle');
+    const browserOverlay = document.getElementById('browserOverlay');
+    const browserViewport = document.getElementById('browserViewport');
+    const browserLoader = document.getElementById('browserLoader');
+    const loaderSubtext = document.getElementById('loaderSubtext');
+    const webFrame = document.getElementById('webFrame');
+    const currentUrlText = document.getElementById('currentUrlText');
+    const externalFallbackLink = document.getElementById('externalFallbackLink');
+    const highlightCanvas = document.getElementById('highlightCanvas');
+    const ctx = highlightCanvas.getContext('2d');
+
+    // Pulizia topbar in onda
+    const toggleClean = () => document.body.classList.toggle('on-air-clean');
+    document.getElementById('btnToggleClean').addEventListener('click', toggleClean);
+    document.getElementById('brandLogo').addEventListener('dblclick', toggleClean);
+
+    // Scorrimento orizzontale con rotellina mouse
+    ledwallStage.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        ledwallStage.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+
+    // Filtri categoria
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        ledwallStage.scrollLeft = 0;
+        renderGrid();
+      });
+    });
+
+    function getLogoUrl(domain) {
+      return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+    }
+
+    function renderGrid() {
+      wallGrid.innerHTML = '';
+      const list = activeFilter === 'all'
+        ? NEWSPAPER_SITES
+        : NEWSPAPER_SITES.filter(s => s.cat === activeFilter);
+
+      list.forEach(site => {
+        const card = document.createElement('div');
+        card.className = 'site-card';
+        card.style.setProperty('--accent-color', site.color);
+
+        const catLabel = site.cat === 'italiani' ? 'Quotidiano Italiano'
+          : site.cat === 'economici' ? 'Economia & Finanza'
+          : 'Stampa Estera';
+
+        card.innerHTML = `
+          <div class="site-logo-wrap">
+            <img src="${getLogoUrl(site.domain)}" alt="${site.name}" loading="lazy" />
+          </div>
+          <div class="site-name">${site.name}</div>
+          <span class="site-cat-tag">${catLabel}</span>
+        `;
+
+        card.addEventListener('click', () => openSiteInBrowser(site));
+        wallGrid.appendChild(card);
+      });
+    }
+
+    // Inietta CSS & JS anti-paywall e anti-cookie banner dentro l'HTML estratto
+    function sanitizeAndBypassHtml(rawHtml, baseUrl) {
+      const antiPaywallInjection = `
+        <base href="${baseUrl}/" target="_self" />
+        <style id="ledwall-anti-paywall">
+          html, body {
+            overflow: auto !important;
+            position: static !important;
+            height: auto !important;
+            max-height: none !important;
+            filter: none !important;
+            -webkit-filter: none !important;
+            user-select: text !important;
+          }
+          /* Rimozione paywall, backdrop blur e cookie modal */
+          [class*="paywall"], [id*="paywall"],
+          [class*="piano-"], [id*="piano-"],
+          [class*="tp-modal"], [class*="tp-backdrop"],
+          [class*="cookie"], [id*="cookie"],
+          [class*="consent"], [id*="consent"],
+          [class*="gdpr"], [id*="gdpr"],
+          [class*="didomi"], [id*="didomi"],
+          [class*="iubenda"], [id*="iubenda"],
+          [class*="onetrust"], [id*="onetrust"],
+          .fc-consent-root, .qc-cmp2-container,
+          [class*="modal-backdrop"], [class*="overlay-wall"],
+          [class*="subscriber-wall"], [class*="gated"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            z-index: -9999 !important;
+          }
+          * {
+            filter: none !important;
+            -webkit-filter: none !important;
+            backdrop-filter: none !important;
+          }
+        </style>
+        <script>
+          // Sblocca continuamente eventuali script che ribloccano lo scroll
+          setInterval(() => {
+            document.documentElement.style.setProperty('overflow', 'auto', 'important');
+            document.body.style.setProperty('overflow', 'auto', 'important');
+            document.body.style.setProperty('position', 'static', 'important');
+          }, 800);
+
+          // Intercetta i click sui link interni per continuare a navigare senza paywall
+          document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (link && link.href && link.href.startsWith('http')) {
+              e.preventDefault();
+              window.parent.postMessage({ type: 'LEDWALL_NAVIGATE', url: link.href }, '*');
+            }
+          }, true);
+        <\/script>
+      `;
+
+      let cleaned = rawHtml
+        // Rimuove script noti di paywall (Piano, Tinypass, Zephr, Pelcro, Poool)
+        .replace(/<script[^>]+(tinypass|piano\.io|zephr|poool|pelcro|didomi|iubenda|onetrust)[^>]*><\/script>/gi, '');
+
+      if (cleaned.includes('<head>')) {
+        cleaned = cleaned.replace('<head>', '<head>' + antiPaywallInjection);
+      } else {
+        cleaned = antiPaywallInjection + cleaned;
+      }
+      return cleaned;
+    }
+
+    async function fetchHtmlThroughProxies(targetUrl) {
+      const proxies = [
+        {
+          url: `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
+          parse: async (res) => (await res.json()).contents
+        },
+        {
+          url: `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+          parse: async (res) => await res.text()
+        },
+        {
+          url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
+          parse: async (res) => await res.text()
+        }
+      ];
+
+      for (const p of proxies) {
+        try {
+          const controller = new AbortController();
+          const id = setTimeout(() => controller.abort(), 7500);
+          const res = await fetch(p.url, { signal: controller.signal });
+          clearTimeout(id);
+          if (!res.ok) continue;
+          const html = await p.parse(res);
+          if (html && html.length > 500) return html;
+        } catch (err) {}
+      }
+      throw new Error('Proxy non disponibile');
+    }
+
+    async function loadUrlInInternalBrowser(targetUrl) {
+      browserLoader.style.display = 'flex';
+      currentUrlText.textContent = targetUrl;
+      externalFallbackLink.href = targetUrl;
+
+      if (isCleanReaderMode) {
+        loaderSubtext.textContent = 'Estrazione testo pulito senza paywall (Jina Reader)...';
+        webFrame.removeAttribute('srcdoc');
+        webFrame.src = `https://r.jina.ai/${targetUrl}`;
+        webFrame.onload = () => { browserLoader.style.display = 'none'; };
+        return;
+      }
+
+      loaderSubtext.textContent = 'Bypass X-Frame-Options, cookie e paywall...';
+      try {
+        const rawHtml = await fetchHtmlThroughProxies(targetUrl);
+        const origin = new URL(targetUrl).origin;
+        const bypassedHtml = sanitizeAndBypassHtml(rawHtml, origin);
+        webFrame.removeAttribute('src');
+        webFrame.srcdoc = bypassedHtml;
+        setTimeout(() => { browserLoader.style.display = 'none'; }, 600);
+      } catch (e) {
+        // Fallback automatico su Reader No-Paywall se il sito blocca i proxy
+        loaderSubtext.textContent = 'Passaggio automatico a Vista Lettura Pulita...';
+        webFrame.removeAttribute('srcdoc');
+        webFrame.src = `https://r.jina.ai/${targetUrl}`;
+        setTimeout(() => { browserLoader.style.display = 'none'; }, 900);
+      }
+    }
+
+    // Ascolta click sui link interni dentro l'iframe
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'LEDWALL_NAVIGATE' && event.data.url) {
+        loadUrlInInternalBrowser(event.data.url);
+      }
+    });
+
+    function openSiteInBrowser(site) {
+      currentSite = site;
+      headerSubtitle.textContent = site.name;
+      pageZoom = 1;
+      webFrame.style.transform = 'scale(1)';
+      webFrame.style.width = '100%';
+      webFrame.style.height = '100%';
+
+      browserOverlay.classList.add('active');
+      requestAnimationFrame(() => {
+        browserOverlay.classList.add('visible');
+        resizeCanvas();
+      });
+
+      loadUrlInInternalBrowser(site.url);
+    }
+
+    function closeBrowser() {
+      if (isDrawMode) {
+        isDrawMode = false;
+        btnDrawToggle.classList.remove('active-tool');
+        browserViewport.classList.remove('draw-mode');
+      }
+      browserOverlay.classList.remove('visible');
+      setTimeout(() => {
+        browserOverlay.classList.remove('active');
+        webFrame.srcdoc = '';
+        webFrame.src = 'about:blank';
+        clearCanvas();
+        headerSubtitle.textContent = 'Quotidiani Online';
+        currentSite = null;
+      }, 260);
+    }
+
+    document.getElementById('btnBack').addEventListener('click', closeBrowser);
+
+    // Switch tra Sito Completo Bypassato e Vista Lettura Pulita (Jina Reader)
+    const btnReaderSwitch = document.getElementById('btnReaderSwitch');
+    btnReaderSwitch.addEventListener('click', () => {
+      isCleanReaderMode = !isCleanReaderMode;
+      btnReaderSwitch.classList.toggle('active-tool', isCleanReaderMode);
+      btnReaderSwitch.textContent = isCleanReaderMode ? 'Sito Completo' : 'Vista Pulita';
+      const urlToReload = currentUrlText.textContent || (currentSite && currentSite.url);
+      if (urlToReload) loadUrlInInternalBrowser(urlToReload);
+    });
+
+    // Zoom contenuti browser
+    function applyBrowserZoom() {
+      webFrame.style.transform = `scale(${pageZoom})`;
+      webFrame.style.width = (100 / pageZoom) + '%';
+      webFrame.style.height = (100 / pageZoom) + '%';
+    }
+
+    document.getElementById('btnZoomPageIn').addEventListener('click', () => {
+      pageZoom = Math.min(2.0, +(pageZoom + 0.15).toFixed(2));
+      applyBrowserZoom();
+    });
+
+    document.getElementById('btnZoomPageOut').addEventListener('click', () => {
+      pageZoom = Math.max(0.7, +(pageZoom - 0.15).toFixed(2));
+      applyBrowserZoom();
+    });
+
+    // EVIDENZIATORE A MANO LIBERA SOPRA IL BROWSER
+    const btnDrawToggle = document.getElementById('btnDrawToggle');
+    btnDrawToggle.addEventListener('click', () => {
+      isDrawMode = !isDrawMode;
+      btnDrawToggle.classList.toggle('active-tool', isDrawMode);
+      browserViewport.classList.toggle('draw-mode', isDrawMode);
+    });
+
+    document.querySelectorAll('.color-dot').forEach(dot => {
+      dot.addEventListener('click', () => {
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+        dot.classList.add('selected');
+        currentColor = dot.dataset.color;
+        if (!isDrawMode) btnDrawToggle.click();
+      });
+    });
+
+    function resizeCanvas() {
+      highlightCanvas.width = browserViewport.clientWidth;
+      highlightCanvas.height = browserViewport.clientHeight;
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, highlightCanvas.width, highlightCanvas.height);
+    }
+
+    document.getElementById('btnClearMarks').addEventListener('click', clearCanvas);
+
+    let drawing = false;
+    highlightCanvas.addEventListener('pointerdown', (e) => {
+      if (!isDrawMode) return;
+      drawing = true;
+      highlightCanvas.setPointerCapture(e.pointerId);
+      const rect = highlightCanvas.getBoundingClientRect();
+      ctx.strokeStyle = currentColor;
+      ctx.lineWidth = 22;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    highlightCanvas.addEventListener('pointermove', (e) => {
+      if (!drawing || !isDrawMode) return;
+      const rect = highlightCanvas.getBoundingClientRect();
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      ctx.stroke();
+    });
+
+    highlightCanvas.addEventListener('pointerup', () => { drawing = false; });
+    highlightCanvas.addEventListener('pointercancel', () => { drawing = false; });
+
+    window.addEventListener('resize', () => {
+      if (browserOverlay.classList.contains('active')) resizeCanvas();
+    });
+
+    // Avvio iniziale
+    renderGrid();
+  </script>
+</body>
+</html>
