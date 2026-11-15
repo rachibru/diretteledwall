@@ -281,7 +281,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(226, 232, 240, 0.86);
+      background: rgba(226, 232, 240, 0.88);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       z-index: 90;
@@ -312,13 +312,12 @@
       box-shadow: 0 22px 55px rgba(10, 25, 47, 0.28);
       overflow: hidden;
       touch-action: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .zoom-layer {
-      position: relative;
+      position: absolute;
+      top: 0;
+      left: 0;
       transform-origin: 0 0;
       will-change: transform;
       display: inline-block;
@@ -485,7 +484,7 @@
 
     <div class="viewport-frame" id="viewportFrame">
       <div class="zoom-layer" id="zoomLayer">
-        <img id="activeImage" alt="Prima Pagina" crossorigin="anonymous" />
+        <img id="activeImage" alt="Prima Pagina" />
         <canvas class="draw-canvas" id="drawCanvas"></canvas>
       </div>
     </div>
@@ -509,10 +508,9 @@
     const TARGET_PAGE_URL = 'https://www.brunorachiele.it/p/prime-pagine-dei-giornali.html';
     const BLOG_ORIGIN = 'https://www.brunorachiele.it';
 
-    let newspapers = []; // { id, title, url, strokes: [] }
+    let newspapers = [];
     let currentIndex = -1;
 
-    // Stato zoom/pan interno alla foto
     let scale = 1;
     let panX = 0;
     let panY = 0;
@@ -529,12 +527,10 @@
     const drawCanvas = document.getElementById('drawCanvas');
     const ctx = drawCanvas.getContext('2d');
 
-    // Pulizia schermo in onda
     const toggleClean = () => document.body.classList.toggle('on-air-clean');
     document.getElementById('btnToggleClean').addEventListener('click', toggleClean);
     document.getElementById('brandLogo').addEventListener('dblclick', toggleClean);
 
-    // Converte URL immagine Blogger in alta risoluzione
     function upgradeBloggerImg(src) {
       if (!src) return '';
       if (src.startsWith('//')) src = 'https:' + src;
@@ -568,13 +564,13 @@
           id: 'np-' + idx,
           title: rawTitle || `Quotidiano ${results.length + 1}`,
           url: highRes,
+          fallbackUrl: src.startsWith('//') ? 'https:' + src : src,
           strokes: []
         });
       });
       return results;
     }
 
-    // Estrazione tramite JSONP ufficiale Blogger (nessun problema CORS)
     function fetchViaBloggerJsonp() {
       return new Promise((resolve, reject) => {
         const cbName = 'brJsonpCb_' + Date.now();
@@ -620,7 +616,6 @@
       });
     }
 
-    // Fallback tramite proxy CORS sull'URL diretto della pagina
     async function fetchViaProxy() {
       const proxies = [
         `https://api.allorigins.win/get?url=${encodeURIComponent(TARGET_PAGE_URL)}`,
@@ -678,29 +673,44 @@
       newspapers.forEach((paper, idx) => {
         const card = document.createElement('div');
         card.className = 'paper-card' + (paper.strokes.length ? ' has-marks' : '');
-        card.innerHTML = `
-          <img src="${paper.url}" alt="${paper.title}" loading="lazy" />
-          <span class="paper-badge-edited" title="Evidenziato"></span>
-        `;
+        const img = document.createElement('img');
+        img.src = paper.url;
+        img.alt = paper.title;
+        img.loading = 'lazy';
+        img.onerror = () => {
+          if (img.src !== paper.fallbackUrl) img.src = paper.fallbackUrl;
+        };
+        const badge = document.createElement('span');
+        badge.className = 'paper-badge-edited';
+        badge.title = 'Evidenziato';
+        card.appendChild(img);
+        card.appendChild(badge);
         card.addEventListener('click', () => openNewspaper(idx));
         wallGrid.appendChild(card);
       });
     }
 
-    // APERTURA SINGOLA PAGINA
     function openNewspaper(index) {
       if (index < 0 || index >= newspapers.length) return;
       currentIndex = index;
       const paper = newspapers[currentIndex];
       headerSubtitle.textContent = paper.title;
 
-      resetZoom(false);
+      scale = 1;
+      panX = 0;
+      panY = 0;
       viewerOverlay.classList.add('active');
 
       activeImage.onload = () => {
-        drawCanvas.width = activeImage.naturalWidth || activeImage.clientWidth;
-        drawCanvas.height = activeImage.naturalHeight || activeImage.clientHeight;
+        drawCanvas.width = activeImage.naturalWidth || activeImage.clientWidth || 800;
+        drawCanvas.height = activeImage.naturalHeight || activeImage.clientHeight || 1100;
+        applyTransform();
         redrawStrokes();
+      };
+      activeImage.onerror = () => {
+        if (activeImage.src !== paper.fallbackUrl) {
+          activeImage.src = paper.fallbackUrl;
+        }
       };
       activeImage.src = paper.url;
     }
@@ -725,12 +735,11 @@
       openNewspaper(nextIdx);
     });
 
-    // GESTIONE ZOOM E PAN INTERNO ALLA FOTO
     function applyTransform() {
       const frameW = viewportFrame.clientWidth;
       const frameH = viewportFrame.clientHeight;
-      const imgW = activeImage.clientWidth * scale;
-      const imgH = activeImage.clientHeight * scale;
+      const imgW = (activeImage.clientWidth || frameW * 0.7) * scale;
+      const imgH = (activeImage.clientHeight || frameH * 0.95) * scale;
 
       if (imgW <= frameW) {
         panX = (frameW - imgW) / 2;
@@ -786,7 +795,6 @@
       zoomBy(factor, e.clientX, e.clientY);
     }, { passive: false });
 
-    // GESTURE TOUCH & MOUSE (PAN + PINCH-TO-ZOOM SULLA FOTO)
     let isDragging = false;
     let dragStartX = 0;
     let dragStartY = 0;
@@ -848,7 +856,6 @@
 
     window.addEventListener('mouseup', () => { isDragging = false; });
 
-    // EVIDENZIATORE A MANO LIBERA ANCORATO ALLA PAGINA
     const btnDrawToggle = document.getElementById('btnDrawToggle');
     btnDrawToggle.addEventListener('click', () => {
       isDrawMode = !isDrawMode;
@@ -942,7 +949,6 @@
       if (viewerOverlay.classList.contains('active')) applyTransform();
     });
 
-    // Avvio automatico
     loadNewspapers();
   </script>
 </body>
