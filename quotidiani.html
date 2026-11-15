@@ -276,7 +276,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: #f8fafc;
+      background: #fff;
       z-index: 90;
       display: none;
       flex-direction: column;
@@ -294,7 +294,7 @@
       transform: scale(1);
     }
 
-    /* MINI BARRA INDIRIZZO PULITA */
+    /* MINI BARRA INDIRIZZO */
     .browser-addressbar {
       height: 34px;
       background: #eef2f6;
@@ -325,13 +325,13 @@
       font-size: 11px;
     }
 
-    /* AREA CONTENUTO WEB + LAYER EVIDENZIATORE */
+    /* AREA CONTENUTO WEB */
     .browser-viewport {
       position: relative;
       flex: 1;
       width: 100%;
       overflow: hidden;
-      background: #f8fafc;
+      background: #fff;
     }
 
     #webFrame {
@@ -344,161 +344,6 @@
       transition: transform 0.2s ease;
     }
 
-    /* EDIZIONE DIGITALE IMPAGINATA (FALLBACK PER SITI CHE BLOCCANO IFRAME) */
-    #digitalEditionView {
-      position: absolute;
-      inset: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding: 24px 24px 90px;
-      background: #f4f6f9;
-      display: none;
-      transform-origin: top center;
-    }
-
-    .edition-container {
-      max-width: 1160px;
-      margin: 0 auto;
-    }
-
-    .edition-masthead {
-      background: #fff;
-      border-top: 5px solid var(--masthead-color, #0b3d75);
-      border-radius: 8px;
-      padding: 18px 24px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
-      gap: 16px;
-    }
-
-    .edition-masthead-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .edition-masthead-left img {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      object-fit: contain;
-      background: #f8fafc;
-      padding: 4px;
-      border: 1px solid #e2e8f0;
-    }
-
-    .edition-title {
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 26px;
-      font-weight: 700;
-      color: #0f172a;
-      margin: 0;
-    }
-
-    .edition-date {
-      font-size: 12px;
-      color: #64748b;
-      margin-top: 2px;
-      text-transform: capitalize;
-    }
-
-    .news-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-
-    @media (max-width: 900px) {
-      .news-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 600px) {
-      .news-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .news-card {
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
-      display: flex;
-      flex-direction: column;
-      cursor: pointer;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .news-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 24px rgba(11, 61, 117, 0.14);
-    }
-
-    .news-card.featured {
-      grid-column: span 2;
-    }
-
-    @media (max-width: 600px) {
-      .news-card.featured {
-        grid-column: span 1;
-      }
-    }
-
-    .news-thumb {
-      width: 100%;
-      height: 175px;
-      object-fit: cover;
-      background: #e2e8f0;
-      display: block;
-    }
-
-    .news-card.featured .news-thumb {
-      height: 240px;
-    }
-
-    .news-body {
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex: 1;
-    }
-
-    .news-time {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--brand-blue);
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    .news-headline {
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 1.28;
-      color: #0f172a;
-      margin: 0;
-      user-select: text;
-    }
-
-    .news-card.featured .news-headline {
-      font-size: 23px;
-    }
-
-    .news-excerpt {
-      font-size: 13.5px;
-      line-height: 1.48;
-      color: #475569;
-      margin: 0;
-      user-select: text;
-    }
-
     .browser-loader {
       position: absolute;
       inset: 0;
@@ -509,6 +354,8 @@
       justify-content: center;
       z-index: 10;
       gap: 10px;
+      text-align: center;
+      padding: 20px;
     }
 
     .spinner {
@@ -522,23 +369,6 @@
 
     @keyframes spin {
       to { transform: rotate(360deg); }
-    }
-
-    /* CANVAS EVIDENZIATORE SOPRA LA PAGINA */
-    #highlightCanvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      mix-blend-mode: multiply;
-      z-index: 20;
-    }
-
-    .browser-viewport.draw-mode #highlightCanvas {
-      pointer-events: auto;
-      cursor: crosshair;
-      touch-action: none;
     }
 
     /* DOCK STRUMENTI IN BASSO */
@@ -645,22 +475,20 @@
         <span>🔒</span>
         <span id="currentUrlText">https://...</span>
       </div>
-      <a id="externalFallbackLink" href="#" target="_blank" rel="noopener" style="color:#0b3d75; font-weight:700; text-decoration:none; font-size:11px; white-space:nowrap;">Apri nel browser ↗</a>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button id="btnReloadPage" style="background:none; border:none; color:#0b3d75; font-weight:700; font-size:11px; cursor:pointer; padding:0;">↻ Ricarica</button>
+        <a id="externalFallbackLink" href="#" target="_blank" rel="noopener" style="color:#0b3d75; font-weight:700; text-decoration:none; font-size:11px; white-space:nowrap;">Apri esterno ↗</a>
+      </div>
     </div>
 
     <div class="browser-viewport" id="browserViewport">
       <div class="browser-loader" id="browserLoader">
         <div class="spinner"></div>
-        <div style="font-weight:700; color:#0b3d75;" id="loaderTitle">Apertura testata...</div>
+        <div style="font-weight:700; color:#0b3d75;" id="loaderTitle">Apertura homepage...</div>
+        <div style="font-size:12px; color:#64748b;" id="loaderSub">Caricamento impaginazione originale del quotidiano</div>
       </div>
 
-      <!-- Iframe per siti che supportano l'incorporamento diretto -->
-      <iframe id="webFrame"></iframe>
-
-      <!-- Edizione digitale impaginata per siti con X-Frame-Options -->
-      <div id="digitalEditionView"></div>
-
-      <canvas id="highlightCanvas"></canvas>
+      <iframe id="webFrame" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
     </div>
 
     <div class="viewer-dock">
@@ -680,43 +508,45 @@
   <script>
     const NEWSPAPER_SITES = [
       // ITALIANI
-      { name: 'Corriere della Sera', domain: 'corriere.it', url: 'https://www.corriere.it', rss: 'https://www.corriere.it/rss/homepage.xml', cat: 'italiani', color: '#004b87' },
-      { name: 'la Repubblica', domain: 'repubblica.it', url: 'https://www.repubblica.it', rss: 'https://www.repubblica.it/rss/homepage/rss2.0.xml', cat: 'italiani', color: '#0066b3' },
-      { name: 'La Stampa', domain: 'lastampa.it', url: 'https://www.lastampa.it', rss: 'https://www.lastampa.it/rss.xml', cat: 'italiani', color: '#1e3a8a' },
-      { name: 'Il Fatto Quotidiano', domain: 'ilfattoquotidiano.it', url: 'https://www.ilfattoquotidiano.it', rss: 'https://www.ilfattoquotidiano.it/feed/', cat: 'italiani', color: '#b91c1c', embeddable: true },
-      { name: 'il Giornale', domain: 'ilgiornale.it', url: 'https://www.ilgiornale.it', rss: 'https://www.ilgiornale.it/feed.xml', cat: 'italiani', color: '#0369a1' },
-      { name: 'Libero Quotidiano', domain: 'liberoquotidiano.it', url: 'https://www.liberoquotidiano.it', rss: 'https://www.liberoquotidiano.it/rss.xml', cat: 'italiani', color: '#dc2626' },
-      { name: 'La Verità', domain: 'laverita.info', url: 'https://www.laverita.info', rss: 'https://www.laverita.info/feed/', cat: 'italiani', color: '#991b1b' },
-      { name: 'Il Messaggero', domain: 'ilmessaggero.it', url: 'https://www.ilmessaggero.it', rss: 'https://www.ilmessaggero.it/rss/home.xml', cat: 'italiani', color: '#1d4ed8' },
-      { name: 'Avvenire', domain: 'avvenire.it', url: 'https://www.avvenire.it', rss: 'https://www.avvenire.it/rss', cat: 'italiani', color: '#0284c7' },
-      { name: 'Domani', domain: 'editorialedomani.it', url: 'https://www.editorialedomani.it', rss: 'https://www.editorialedomani.it/rss', cat: 'italiani', color: '#ea580c' },
-      { name: 'Il Foglio', domain: 'ilfoglio.it', url: 'https://www.ilfoglio.it', rss: 'https://www.ilfoglio.it/rss.xml', cat: 'italiani', color: '#b45309' },
-      { name: 'il manifesto', domain: 'ilmanifesto.it', url: 'https://ilmanifesto.it', rss: 'https://ilmanifesto.it/feed', cat: 'italiani', color: '#be123c' },
-      { name: 'ANSA', domain: 'ansa.it', url: 'https://www.ansa.it', rss: 'https://www.ansa.it/sito/ansait_rss.xml', cat: 'italiani', color: '#15803d' },
-      { name: 'Il Post', domain: 'ilpost.it', url: 'https://www.ilpost.it', rss: 'https://www.ilpost.it/feed/', cat: 'italiani', color: '#0284c7', embeddable: true },
-      { name: 'La Gazzetta dello Sport', domain: 'gazzetta.it', url: 'https://www.gazzetta.it', rss: 'https://www.gazzetta.it/rss/home.xml', cat: 'italiani', color: '#e11d48' },
+      { name: 'Corriere della Sera', domain: 'corriere.it', url: 'https://www.corriere.it', cat: 'italiani', color: '#004b87' },
+      { name: 'la Repubblica', domain: 'repubblica.it', url: 'https://www.repubblica.it', cat: 'italiani', color: '#0066b3' },
+      { name: 'La Stampa', domain: 'lastampa.it', url: 'https://www.lastampa.it', cat: 'italiani', color: '#1e3a8a' },
+      { name: 'Il Fatto Quotidiano', domain: 'ilfattoquotidiano.it', url: 'https://www.ilfattoquotidiano.it', cat: 'italiani', color: '#b91c1c' },
+      { name: 'il Giornale', domain: 'ilgiornale.it', url: 'https://www.ilgiornale.it', cat: 'italiani', color: '#0369a1' },
+      { name: 'Libero Quotidiano', domain: 'liberoquotidiano.it', url: 'https://www.liberoquotidiano.it', cat: 'italiani', color: '#dc2626' },
+      { name: 'La Verità', domain: 'laverita.info', url: 'https://www.laverita.info', cat: 'italiani', color: '#991b1b' },
+      { name: 'Il Messaggero', domain: 'ilmessaggero.it', url: 'https://www.ilmessaggero.it', cat: 'italiani', color: '#1d4ed8' },
+      { name: 'Avvenire', domain: 'avvenire.it', url: 'https://www.avvenire.it', cat: 'italiani', color: '#0284c7' },
+      { name: 'Domani', domain: 'editorialedomani.it', url: 'https://www.editorialedomani.it', cat: 'italiani', color: '#ea580c' },
+      { name: 'Il Foglio', domain: 'ilfoglio.it', url: 'https://www.ilfoglio.it', cat: 'italiani', color: '#b45309' },
+      { name: 'il manifesto', domain: 'ilmanifesto.it', url: 'https://ilmanifesto.it', cat: 'italiani', color: '#be123c' },
+      { name: 'ANSA', domain: 'ansa.it', url: 'https://www.ansa.it', cat: 'italiani', color: '#15803d' },
+      { name: 'Il Post', domain: 'ilpost.it', url: 'https://www.ilpost.it', cat: 'italiani', color: '#0284c7' },
+      { name: 'La Gazzetta dello Sport', domain: 'gazzetta.it', url: 'https://www.gazzetta.it', cat: 'italiani', color: '#e11d48' },
 
       // ECONOMICI
-      { name: 'Il Sole 24 Ore', domain: 'ilsole24ore.com', url: 'https://www.ilsole24ore.com', rss: 'https://www.ilsole24ore.com/rss/italia--attualita.xml', cat: 'economici', color: '#c2410c' },
-      { name: 'Milano Finanza', domain: 'milanofinanza.it', url: 'https://www.milanofinanza.it', rss: 'https://www.milanofinanza.it/rss', cat: 'economici', color: '#0f766e' },
-      { name: 'ItaliaOggi', domain: 'italiaoggi.it', url: 'https://www.italiaoggi.it', rss: 'https://www.italiaoggi.it/rss', cat: 'economici', color: '#0369a1' },
-      { name: 'Financial Times', domain: 'ft.com', url: 'https://www.ft.com', rss: 'https://www.ft.com/rss/home', cat: 'economici', color: '#be185d' },
-      { name: 'Wall Street Journal', domain: 'wsj.com', url: 'https://www.wsj.com', rss: 'https://feeds.a.dj.com/rss/RSSWorldNews.xml', cat: 'economici', color: '#1e293b' },
-      { name: 'The Economist', domain: 'economist.com', url: 'https://www.economist.com', rss: 'https://www.economist.com/leaders/rss.xml', cat: 'economici', color: '#dc2626' },
+      { name: 'Il Sole 24 Ore', domain: 'ilsole24ore.com', url: 'https://www.ilsole24ore.com', cat: 'economici', color: '#c2410c' },
+      { name: 'Milano Finanza', domain: 'milanofinanza.it', url: 'https://www.milanofinanza.it', cat: 'economici', color: '#0f766e' },
+      { name: 'ItaliaOggi', domain: 'italiaoggi.it', url: 'https://www.italiaoggi.it', cat: 'economici', color: '#0369a1' },
+      { name: 'Financial Times', domain: 'ft.com', url: 'https://www.ft.com', cat: 'economici', color: '#be185d' },
+      { name: 'Wall Street Journal', domain: 'wsj.com', url: 'https://www.wsj.com', cat: 'economici', color: '#1e293b' },
+      { name: 'Bloomberg', domain: 'bloomberg.com', url: 'https://www.bloomberg.com', cat: 'economici', color: '#111827' },
+      { name: 'The Economist', domain: 'economist.com', url: 'https://www.economist.com', cat: 'economici', color: '#dc2626' },
 
       // ESTERI
-      { name: 'The New York Times', domain: 'nytimes.com', url: 'https://www.nytimes.com', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml', cat: 'esteri', color: '#0f172a' },
-      { name: 'The Washington Post', domain: 'washingtonpost.com', url: 'https://www.washingtonpost.com', rss: 'https://feeds.washingtonpost.com/rss/world', cat: 'esteri', color: '#1e293b' },
-      { name: 'Le Monde', domain: 'lemonde.fr', url: 'https://www.lemonde.fr', rss: 'https://www.lemonde.fr/rss/une.xml', cat: 'esteri', color: '#0284c7' },
-      { name: 'Le Figaro', domain: 'lefigaro.fr', url: 'https://www.lefigaro.fr', rss: 'https://www.lefigaro.fr/rss/figaro_actualites.xml', cat: 'esteri', color: '#1d4ed8' },
-      { name: 'El País', domain: 'elpais.com', url: 'https://elpais.com', rss: 'https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada', cat: 'esteri', color: '#0369a1' },
-      { name: 'The Guardian', domain: 'theguardian.com', url: 'https://www.theguardian.com', rss: 'https://www.theguardian.com/world/rss', cat: 'esteri', color: '#052962' },
-      { name: 'BBC News', domain: 'bbc.com', url: 'https://www.bbc.com/news', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml', cat: 'esteri', color: '#b91c1c' },
-      { name: 'Politico Europe', domain: 'politico.eu', url: 'https://www.politico.eu', rss: 'https://www.politico.eu/feed/', cat: 'esteri', color: '#dc2626' }
+      { name: 'The New York Times', domain: 'nytimes.com', url: 'https://www.nytimes.com', cat: 'esteri', color: '#0f172a' },
+      { name: 'The Washington Post', domain: 'washingtonpost.com', url: 'https://www.washingtonpost.com', cat: 'esteri', color: '#1e293b' },
+      { name: 'Le Monde', domain: 'lemonde.fr', url: 'https://www.lemonde.fr', cat: 'esteri', color: '#0284c7' },
+      { name: 'Le Figaro', domain: 'lefigaro.fr', url: 'https://www.lefigaro.fr', cat: 'esteri', color: '#1d4ed8' },
+      { name: 'El País', domain: 'elpais.com', url: 'https://elpais.com', cat: 'esteri', color: '#0369a1' },
+      { name: 'The Guardian', domain: 'theguardian.com', url: 'https://www.theguardian.com', cat: 'esteri', color: '#052962' },
+      { name: 'BBC News', domain: 'bbc.com', url: 'https://www.bbc.com/news', cat: 'esteri', color: '#b91c1c' },
+      { name: 'Politico Europe', domain: 'politico.eu', url: 'https://www.politico.eu', cat: 'esteri', color: '#dc2626' }
     ];
 
     let activeFilter = 'all';
     let currentSite = null;
+    let currentUrl = '';
     let pageZoom = 1;
     let isDrawMode = false;
     let currentColor = 'rgba(255, 238, 0, 0.55)';
@@ -725,15 +555,12 @@
     const wallGrid = document.getElementById('wallGrid');
     const headerSubtitle = document.getElementById('headerSubtitle');
     const browserOverlay = document.getElementById('browserOverlay');
-    const browserViewport = document.getElementById('browserViewport');
     const browserLoader = document.getElementById('browserLoader');
     const loaderTitle = document.getElementById('loaderTitle');
+    const loaderSub = document.getElementById('loaderSub');
     const webFrame = document.getElementById('webFrame');
-    const digitalEditionView = document.getElementById('digitalEditionView');
     const currentUrlText = document.getElementById('currentUrlText');
     const externalFallbackLink = document.getElementById('externalFallbackLink');
-    const highlightCanvas = document.getElementById('highlightCanvas');
-    const ctx = highlightCanvas.getContext('2d');
 
     const toggleClean = () => document.body.classList.toggle('on-air-clean');
     document.getElementById('btnToggleClean').addEventListener('click', toggleClean);
@@ -788,144 +615,291 @@
       });
     }
 
-    function stripHtml(html) {
-      const div = document.createElement('div');
-      div.innerHTML = html || '';
-      return (div.textContent || div.innerText || '').trim();
+    // Inietta CSS anti-paywall/cookie + Canvas Evidenziatore ANCÒRATO AL DOCUMENTO (scorre con la pagina!)
+    function prepareHomepageHtml(rawHtml, pageUrl) {
+      const urlObj = new URL(pageUrl);
+      const baseOrigin = urlObj.origin;
+
+      const injectedHead = `
+        <base href="${baseOrigin}/" target="_self" />
+        <style id="ledwall-injected-style">
+          html, body {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            position: relative !important;
+            height: auto !important;
+            max-height: none !important;
+            filter: none !important;
+            -webkit-filter: none !important;
+          }
+          /* Rimozione paywall e modali che bloccano la lettura */
+          [class*="paywall"], [id*="paywall"],
+          [class*="piano-"], [id*="piano-"],
+          [class*="tp-modal"], [class*="tp-backdrop"],
+          [class*="subscriber-wall"], [class*="overlay-wall"],
+          [class*="cookie"], [id*="cookie"],
+          [class*="consent"], [id*="consent"],
+          [class*="didomi"], [id*="didomi"],
+          [class*="iubenda"], [id*="iubenda"],
+          [class*="onetrust"], [id*="onetrust"],
+          .fc-consent-root, .qc-cmp2-container {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+          }
+          * {
+            filter: none !important;
+            -webkit-filter: none !important;
+          }
+          #ledwall-doc-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+            z-index: 2147483647;
+          }
+          body.ledwall-draw-active #ledwall-doc-canvas {
+            pointer-events: auto !important;
+            cursor: crosshair !important;
+            touch-action: none !important;
+          }
+        </style>
+      `;
+
+      const injectedBodyEnd = `
+        <canvas id="ledwall-doc-canvas"></canvas>
+        <script>
+          (function() {
+            const canvas = document.getElementById('ledwall-doc-canvas');
+            const ctx = canvas.getContext('2d');
+            let drawEnabled = ${isDrawMode ? 'true' : 'false'};
+            let strokeColor = '${currentColor}';
+            let isDrawing = false;
+            let strokes = [];
+            let currentStroke = null;
+
+            if (drawEnabled) document.body.classList.add('ledwall-draw-active');
+
+            function syncCanvasSize() {
+              const docW = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth, window.innerWidth);
+              const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, window.innerHeight);
+              if (canvas.width !== docW || canvas.height !== docH) {
+                canvas.width = docW;
+                canvas.height = docH;
+                canvas.style.width = docW + 'px';
+                canvas.style.height = docH + 'px';
+                redrawAll();
+              }
+            }
+
+            function redrawAll() {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              strokes.forEach(s => {
+                if (!s.points.length) return;
+                ctx.save();
+                ctx.strokeStyle = s.color;
+                ctx.lineWidth = 22;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.beginPath();
+                ctx.moveTo(s.points[0].x, s.points[0].y);
+                for (let i = 1; i < s.points.length; i++) {
+                  ctx.lineTo(s.points[i].x, s.points[i].y);
+                }
+                if (s.points.length === 1) {
+                  ctx.lineTo(s.points[0].x + 0.1, s.points[0].y);
+                }
+                ctx.stroke();
+                ctx.restore();
+              });
+            }
+
+            window.addEventListener('load', syncCanvasSize);
+            window.addEventListener('resize', syncCanvasSize);
+            setInterval(() => {
+              syncCanvasSize();
+              document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
+              document.body.style.setProperty('overflow-y', 'auto', 'important');
+            }, 1000);
+
+            canvas.addEventListener('pointerdown', (e) => {
+              if (!drawEnabled) return;
+              isDrawing = true;
+              canvas.setPointerCapture(e.pointerId);
+              currentStroke = { color: strokeColor, points: [{ x: e.pageX, y: e.pageY }] };
+              strokes.push(currentStroke);
+              redrawAll();
+            });
+
+            canvas.addEventListener('pointermove', (e) => {
+              if (!isDrawing || !drawEnabled || !currentStroke) return;
+              currentStroke.points.push({ x: e.pageX, y: e.pageY });
+              redrawAll();
+            });
+
+            canvas.addEventListener('pointerup', () => { isDrawing = false; currentStroke = null; });
+            canvas.addEventListener('pointercancel', () => { isDrawing = false; currentStroke = null; });
+
+            // Riceve comandi dalla barra strumenti esterna
+            window.addEventListener('message', (ev) => {
+              const msg = ev.data || {};
+              if (msg.type === 'SET_DRAW_MODE') {
+                drawEnabled = !!msg.enabled;
+                document.body.classList.toggle('ledwall-draw-active', drawEnabled);
+              } else if (msg.type === 'SET_COLOR') {
+                strokeColor = msg.color;
+              } else if (msg.type === 'CLEAR_MARKS') {
+                strokes = [];
+                redrawAll();
+              }
+            });
+
+            // Navigazione interna quando clicchi su un articolo
+            document.addEventListener('click', function(e) {
+              if (drawEnabled) return;
+              const link = e.target.closest('a');
+              if (link && link.href && link.href.startsWith('http')) {
+                e.preventDefault();
+                window.parent.postMessage({ type: 'LEDWALL_NAVIGATE', url: link.href }, '*');
+              }
+            }, true);
+          })();
+        <\/script>
+      `;
+
+      // Rimuove solo gli script che bloccano l'iframe o attivano il paywall, mantenendo tutta la grafica e pubblicità
+      let html = rawHtml
+        .replace(/<meta[^>]+http-equiv=["']Content-Security-Policy["'][^>]*>/gi, '')
+        .replace(/<script[^>]+(tinypass|piano\.io|zephr|poool|pelcro|didomi|iubenda|onetrust)[^>]*><\/script>/gi, '');
+
+      if (html.includes('<head>')) {
+        html = html.replace('<head>', '<head>' + injectedHead);
+      } else {
+        html = injectedHead + html;
+      }
+
+      if (html.includes('</body>')) {
+        html = html.replace('</body>', injectedBodyEnd + '</body>');
+      } else {
+        html = html + injectedBodyEnd;
+      }
+
+      return html;
     }
 
-    async function loadDigitalEdition(site) {
-      webFrame.style.display = 'none';
-      digitalEditionView.style.display = 'block';
-      digitalEditionView.scrollTop = 0;
+    async function fetchRawHtml(targetUrl) {
+      const proxies = [
+        {
+          url: `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
+          extract: async (r) => (await r.json()).contents
+        },
+        {
+          url: `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+          extract: async (r) => await r.text()
+        },
+        {
+          url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
+          extract: async (r) => await r.text()
+        }
+      ];
 
-      const todayLabel = new Date().toLocaleDateString('it-IT', {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-      });
+      for (const p of proxies) {
+        try {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 9000);
+          const res = await fetch(p.url, { signal: controller.signal });
+          clearTimeout(timer);
+          if (!res.ok) continue;
+          const content = await p.extract(res);
+          if (content && content.length > 400) return content;
+        } catch (err) {}
+      }
+      throw new Error('Timeout caricamento pagina');
+    }
+
+    async function loadUrlInBrowser(targetUrl) {
+      currentUrl = targetUrl;
+      currentUrlText.textContent = targetUrl;
+      externalFallbackLink.href = targetUrl;
+      browserLoader.style.display = 'flex';
+      loaderTitle.textContent = `Caricamento ${currentSite ? currentSite.name : 'pagina'}...`;
+      loaderSub.textContent = 'Caricamento impaginazione originale del sito';
 
       try {
-        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(site.rss)}`;
-        const res = await fetch(apiUrl);
-        const data = await res.json();
-
-        if (data.status !== 'ok' || !data.items || !data.items.length) {
-          throw new Error('Feed non disponibile');
-        }
-
-        const cardsHtml = data.items.slice(0, 14).map((item, idx) => {
-          const thumb = item.thumbnail || (item.enclosure && item.enclosure.link) || '';
-          const pubTime = item.pubDate
-            ? new Date(item.pubDate.replace(' ', 'T')).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
-            : 'In evidenza';
-          const cleanDesc = stripHtml(item.description).slice(0, 190);
-          const isFeatured = idx === 0;
-
-          return `
-            <article class="news-card ${isFeatured ? 'featured' : ''}" onclick="window.open('${item.link}', '_blank')">
-              ${thumb ? `<img class="news-thumb" src="${thumb}" alt="" loading="lazy" onerror="this.style.display='none'" />` : ''}
-              <div class="news-body">
-                <span class="news-time">${pubTime}</span>
-                <h2 class="news-headline">${item.title}</h2>
-                ${cleanDesc ? `<p class="news-excerpt">${cleanDesc}...</p>` : ''}
-              </div>
-            </article>
-          `;
-        }).join('');
-
-        digitalEditionView.innerHTML = `
-          <div class="edition-container">
-            <div class="edition-masthead" style="--masthead-color:${site.color};">
-              <div class="edition-masthead-left">
-                <img src="${getLogoUrl(site.domain)}" alt="${site.name}" />
-                <div>
-                  <h1 class="edition-title">${site.name}</h1>
-                  <div class="edition-date">${todayLabel} &bull; Edizione Digitale</div>
-                </div>
-              </div>
-            </div>
-            <div class="news-grid">${cardsHtml}</div>
+        const rawHtml = await fetchRawHtml(targetUrl);
+        const fullHtml = prepareHomepageHtml(rawHtml, targetUrl);
+        webFrame.srcdoc = fullHtml;
+        webFrame.onload = () => {
+          browserLoader.style.display = 'none';
+        };
+        setTimeout(() => { browserLoader.style.display = 'none'; }, 1800);
+      } catch (e) {
+        browserLoader.innerHTML = `
+          <div style="font-weight:700; color:#b91c1c; font-size:15px;">Impossibile caricare l'anteprima diretta</div>
+          <div style="font-size:12px; color:#475569; max-width:380px;">Il server del giornale sta limitando le richieste esterne in questo momento.</div>
+          <div style="display:flex; gap:10px; margin-top:8px;">
+            <button onclick="loadUrlInBrowser('${targetUrl}')" style="background:#0b3d75; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:700; cursor:pointer;">Riprova</button>
+            <a href="${targetUrl}" target="_blank" rel="noopener" style="background:#fff; color:#0b3d75; border:1px solid #0b3d75; padding:8px 16px; border-radius:6px; font-weight:700; text-decoration:none;">Apri nel browser ↗</a>
           </div>
         `;
-      } catch (err) {
-        digitalEditionView.innerHTML = `
-          <div class="edition-container">
-            <div class="edition-masthead" style="--masthead-color:${site.color};">
-              <div class="edition-masthead-left">
-                <img src="${getLogoUrl(site.domain)}" alt="${site.name}" />
-                <div>
-                  <h1 class="edition-title">${site.name}</h1>
-                  <div class="edition-date">${todayLabel}</div>
-                </div>
-              </div>
-              <a href="${site.url}" target="_blank" rel="noopener" style="background:#0b3d75; color:#fff; padding:10px 18px; border-radius:6px; text-decoration:none; font-weight:700; font-size:13px;">Apri sito ufficiale ↗</a>
-            </div>
-          </div>
-        `;
-      } finally {
-        browserLoader.style.display = 'none';
       }
     }
+
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'LEDWALL_NAVIGATE' && event.data.url) {
+        loadUrlInBrowser(event.data.url);
+      }
+    });
 
     function openSiteInBrowser(site) {
       currentSite = site;
       headerSubtitle.textContent = site.name;
-      currentUrlText.textContent = site.url;
-      externalFallbackLink.href = site.url;
       pageZoom = 1;
-
       webFrame.style.transform = 'scale(1)';
       webFrame.style.width = '100%';
       webFrame.style.height = '100%';
-      digitalEditionView.style.zoom = 1;
 
-      browserLoader.style.display = 'flex';
-      loaderTitle.textContent = `Caricamento ${site.name}...`;
+      // Ripristina contenuto standard del loader
+      browserLoader.innerHTML = `
+        <div class="spinner"></div>
+        <div style="font-weight:700; color:#0b3d75;" id="loaderTitle">Apertura ${site.name}...</div>
+        <div style="font-size:12px; color:#64748b;" id="loaderSub">Caricamento impaginazione originale del sito</div>
+      `;
 
       browserOverlay.classList.add('active');
       requestAnimationFrame(() => {
         browserOverlay.classList.add('visible');
-        resizeCanvas();
       });
 
-      if (site.embeddable) {
-        digitalEditionView.style.display = 'none';
-        webFrame.style.display = 'block';
-        webFrame.src = site.url;
-        webFrame.onload = () => { browserLoader.style.display = 'none'; };
-        setTimeout(() => { browserLoader.style.display = 'none'; }, 2500);
-      } else {
-        loadDigitalEdition(site);
-      }
+      loadUrlInBrowser(site.url);
     }
 
     function closeBrowser() {
       if (isDrawMode) {
         isDrawMode = false;
         btnDrawToggle.classList.remove('active-tool');
-        browserViewport.classList.remove('draw-mode');
       }
       browserOverlay.classList.remove('visible');
       setTimeout(() => {
         browserOverlay.classList.remove('active');
-        webFrame.src = 'about:blank';
-        digitalEditionView.innerHTML = '';
-        clearCanvas();
+        webFrame.srcdoc = '';
         headerSubtitle.textContent = 'Quotidiani Online';
         currentSite = null;
       }, 260);
     }
 
     document.getElementById('btnBack').addEventListener('click', closeBrowser);
+    document.getElementById('btnReloadPage').addEventListener('click', () => {
+      if (currentUrl) loadUrlInBrowser(currentUrl);
+    });
 
-    // Zoom contenuti
+    // Zoom browser
     function applyBrowserZoom() {
-      if (webFrame.style.display !== 'none') {
-        webFrame.style.transform = `scale(${pageZoom})`;
-        webFrame.style.width = (100 / pageZoom) + '%';
-        webFrame.style.height = (100 / pageZoom) + '%';
-      } else {
-        digitalEditionView.style.zoom = pageZoom;
-      }
+      webFrame.style.transform = `scale(${pageZoom})`;
+      webFrame.style.width = (100 / pageZoom) + '%';
+      webFrame.style.height = (100 / pageZoom) + '%';
     }
 
     document.getElementById('btnZoomPageIn').addEventListener('click', () => {
@@ -934,16 +908,22 @@
     });
 
     document.getElementById('btnZoomPageOut').addEventListener('click', () => {
-      pageZoom = Math.max(0.75, +(pageZoom - 0.15).toFixed(2));
+      pageZoom = Math.max(0.7, +(pageZoom - 0.15).toFixed(2));
       applyBrowserZoom();
     });
 
-    // EVIDENZIATORE A MANO LIBERA
+    // Controlli Evidenziatore (invia comandi al canvas ancorato dentro la pagina del giornale)
+    function sendToFrame(payload) {
+      if (webFrame && webFrame.contentWindow) {
+        webFrame.contentWindow.postMessage(payload, '*');
+      }
+    }
+
     const btnDrawToggle = document.getElementById('btnDrawToggle');
     btnDrawToggle.addEventListener('click', () => {
       isDrawMode = !isDrawMode;
       btnDrawToggle.classList.toggle('active-tool', isDrawMode);
-      browserViewport.classList.toggle('draw-mode', isDrawMode);
+      sendToFrame({ type: 'SET_DRAW_MODE', enabled: isDrawMode });
     });
 
     document.querySelectorAll('.color-dot').forEach(dot => {
@@ -951,47 +931,13 @@
         document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
         dot.classList.add('selected');
         currentColor = dot.dataset.color;
+        sendToFrame({ type: 'SET_COLOR', color: currentColor });
         if (!isDrawMode) btnDrawToggle.click();
       });
     });
 
-    function resizeCanvas() {
-      highlightCanvas.width = browserViewport.clientWidth;
-      highlightCanvas.height = browserViewport.clientHeight;
-    }
-
-    function clearCanvas() {
-      ctx.clearRect(0, 0, highlightCanvas.width, highlightCanvas.height);
-    }
-
-    document.getElementById('btnClearMarks').addEventListener('click', clearCanvas);
-
-    let drawing = false;
-    highlightCanvas.addEventListener('pointerdown', (e) => {
-      if (!isDrawMode) return;
-      drawing = true;
-      highlightCanvas.setPointerCapture(e.pointerId);
-      const rect = highlightCanvas.getBoundingClientRect();
-      ctx.strokeStyle = currentColor;
-      ctx.lineWidth = 22;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.beginPath();
-      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-    });
-
-    highlightCanvas.addEventListener('pointermove', (e) => {
-      if (!drawing || !isDrawMode) return;
-      const rect = highlightCanvas.getBoundingClientRect();
-      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-      ctx.stroke();
-    });
-
-    highlightCanvas.addEventListener('pointerup', () => { drawing = false; });
-    highlightCanvas.addEventListener('pointercancel', () => { drawing = false; });
-
-    window.addEventListener('resize', () => {
-      if (browserOverlay.classList.contains('active')) resizeCanvas();
+    document.getElementById('btnClearMarks').addEventListener('click', () => {
+      sendToFrame({ type: 'CLEAR_MARKS' });
     });
 
     renderGrid();
