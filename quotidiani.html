@@ -207,7 +207,7 @@
       height: 100%;
       aspect-ratio: 1.45 / 1;
       background: #fff;
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 16px;
       box-shadow: 0 8px 22px rgba(15, 28, 46, 0.12), 0 1px 3px rgba(15, 28, 46, 0.08);
       cursor: pointer;
@@ -216,46 +216,25 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
-      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s ease;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
       border-top: 4px solid var(--accent-color, #0b3d75);
-    }
-
-    .site-card:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 16px 32px rgba(11, 61, 117, 0.2);
+      text-decoration: none;
     }
 
     .site-card:active {
-      transform: scale(0.97);
-    }
-
-    /* Pallino verde discreto quando la pagina è già pronta in cache */
-    .ready-dot {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #22c55e;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .site-card.is-cached .ready-dot {
-      opacity: 1;
+      transform: scale(0.96);
     }
 
     .site-logo-wrap {
-      width: 68px;
-      height: 68px;
-      border-radius: 14px;
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 10px;
+      padding: 12px;
       box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
     }
 
@@ -280,36 +259,28 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.7px;
-      padding: 3px 8px;
+      padding: 3px 9px;
       border-radius: 999px;
       background: #eef2f7;
       color: #475569;
     }
 
-    /* VIEWER SCREENSHOT LIVE HOMEPAGE */
-    .viewer-overlay {
+    /* LAVAGNA SCREENSHOT / EVIDENZIATORE ISTANTANEO 60FPS */
+    .board-overlay {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(231, 235, 240, 0.94);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: #e7ebf0;
       z-index: 90;
       display: none;
       overflow: hidden;
       touch-action: none;
-      opacity: 0;
-      transition: opacity 0.22s ease;
     }
 
-    .viewer-overlay.active {
+    .board-overlay.active {
       display: block;
-    }
-
-    .viewer-overlay.visible {
-      opacity: 1;
     }
 
     .pdf-canvas-surface {
@@ -319,15 +290,6 @@
       height: 100%;
       overflow: hidden;
       touch-action: none;
-      cursor: grab;
-    }
-
-    .pdf-canvas-surface:active {
-      cursor: grabbing;
-    }
-
-    .pdf-canvas-surface.draw-mode {
-      cursor: crosshair;
     }
 
     .zoom-layer {
@@ -337,7 +299,7 @@
       transform-origin: 0 0;
       will-change: transform;
       display: inline-block;
-      box-shadow: 0 22px 60px rgba(10, 25, 47, 0.28);
+      box-shadow: 0 22px 60px rgba(10, 25, 47, 0.25);
       background: #fff;
     }
 
@@ -360,33 +322,6 @@
 
     .pdf-canvas-surface.draw-mode .draw-canvas {
       pointer-events: auto;
-    }
-
-    /* LOADER */
-    .snapshot-loader {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      z-index: 5;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .spinner {
-      width: 36px;
-      height: 36px;
-      border: 3px solid #cbd5e1;
-      border-top-color: var(--brand-blue);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
     }
 
     /* BARRA STRUMENTI IN BASSO */
@@ -422,7 +357,6 @@
       gap: 5px;
       cursor: pointer;
       white-space: nowrap;
-      text-decoration: none;
     }
 
     .dock-btn.primary-back {
@@ -451,7 +385,6 @@
       border: 2px solid rgba(255, 255, 255, 0.5);
       cursor: pointer;
       flex-shrink: 0;
-      transition: transform 0.15s;
     }
 
     .color-dot.selected {
@@ -476,45 +409,39 @@
       <button class="filter-pill" data-filter="italiani">Italiani</button>
       <button class="filter-pill" data-filter="economici">Economici</button>
       <button class="filter-pill" data-filter="esteri">Esteri</button>
+      <button class="filter-pill" id="btnPasteBoard" style="background:#ffeb3b; color:#072a52; border-color:#ffeb3b;">+ Incolla Screenshot</button>
       <button class="btn-icon-only" id="btnToggleClean" title="Nascondi filtri in onda">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
       </button>
     </div>
   </header>
 
-  <!-- LIBRERIA LOGHI TESTATE -->
+  <!-- LIBRERIA LOGHI TESTATE (APERTURA DIRETTA ISTANTANEA) -->
   <main class="ledwall-stage" id="ledwallStage">
     <div class="wall-grid" id="wallGrid"></div>
   </main>
 
-  <!-- VIEWER SCREENSHOT LIVE HOMEPAGE -->
-  <div class="viewer-overlay" id="viewerOverlay">
-    <div class="snapshot-loader" id="snapshotLoader">
-      <div class="spinner"></div>
-      <div style="font-weight:700; color:#0b3d75; font-size:15px;" id="loaderTitle">Apertura homepage...</div>
-    </div>
-
+  <!-- LAVAGNA SCREENSHOT / ARTICOLO (ZOOM + EVIDENZIATORE 60FPS) -->
+  <div class="board-overlay" id="boardOverlay">
     <div class="pdf-canvas-surface" id="pdfSurface">
       <div class="zoom-layer" id="zoomLayer">
-        <img id="activeImage" alt="Homepage Quotidiano" />
+        <img id="activeImage" alt="Articolo" />
         <canvas class="draw-canvas" id="drawCanvas"></canvas>
       </div>
     </div>
 
     <div class="viewer-dock">
-      <button class="dock-btn primary-back" id="btnBack">&#8592; Torna indietro</button>
+      <button class="dock-btn primary-back" id="btnBack">&#8592; Torna ai giornali</button>
       <div class="dock-sep"></div>
-      <button class="dock-btn" id="btnZoomOut" title="Riduci">&#8722;</button>
-      <button class="dock-btn" id="btnZoomReset" title="Adatta">100%</button>
-      <button class="dock-btn" id="btnZoomIn" title="Ingrandisci">&#43;</button>
+      <button class="dock-btn" id="btnZoomOut">&#8722;</button>
+      <button class="dock-btn" id="btnZoomReset">100%</button>
+      <button class="dock-btn" id="btnZoomIn">&#43;</button>
       <div class="dock-sep"></div>
-      <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
-      <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.55)" style="background:#ffee00;"></span>
-      <span class="color-dot" data-color="rgba(0, 230, 118, 0.45)" style="background:#00e676;"></span>
-      <span class="color-dot" data-color="rgba(255, 82, 82, 0.45)" style="background:#ff5252;"></span>
+      <button class="dock-btn active-tool" id="btnDrawToggle">Evidenzia</button>
+      <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.45)" style="background:#ffee00;"></span>
+      <span class="color-dot" data-color="rgba(0, 230, 118, 0.38)" style="background:#00e676;"></span>
+      <span class="color-dot" data-color="rgba(255, 82, 82, 0.38)" style="background:#ff5252;"></span>
       <button class="dock-btn" id="btnClearMarks">Pulisci</button>
-      <div class="dock-sep"></div>
-      <a class="dock-btn" id="btnOpenExternal" href="#" target="_blank" rel="noopener">Apri sito ↗</a>
     </div>
   </div>
 
@@ -557,50 +484,18 @@
       { name: 'Politico Europe', domain: 'politico.eu', url: 'https://www.politico.eu', cat: 'esteri', color: '#dc2626' }
     ];
 
-    // Cache in memoria degli screenshot già caricati (apertura istantanea a 0s)
-    const snapshotCache = new Map(); // domain -> resolvedImgUrl
-    const strokesByDomain = new Map();
-
     let activeFilter = 'all';
-    let currentSite = null;
-    let strokes = [];
-
-    let baseWidth = 1100;
-    let baseHeight = 1500;
-    let fitScale = 1;
-    let scale = 1;
-    let panX = 0;
-    let panY = 0;
-    let isDrawMode = false;
-    let currentColor = 'rgba(255, 238, 0, 0.55)';
-
-    const ledwallStage = document.getElementById('ledwallStage');
     const wallGrid = document.getElementById('wallGrid');
+    const ledwallStage = document.getElementById('ledwallStage');
     const headerSubtitle = document.getElementById('headerSubtitle');
-    const viewerOverlay = document.getElementById('viewerOverlay');
-    const snapshotLoader = document.getElementById('snapshotLoader');
-    const loaderTitle = document.getElementById('loaderTitle');
-    const pdfSurface = document.getElementById('pdfSurface');
-    const zoomLayer = document.getElementById('zoomLayer');
-    const activeImage = document.getElementById('activeImage');
-    const drawCanvas = document.getElementById('drawCanvas');
-    const btnOpenExternal = document.getElementById('btnOpenExternal');
-    const ctx = drawCanvas.getContext('2d');
 
     const toggleClean = () => document.body.classList.toggle('on-air-clean');
     document.getElementById('btnToggleClean').addEventListener('click', toggleClean);
     document.getElementById('brandLogo').addEventListener('dblclick', toggleClean);
 
-    ledwallStage.addEventListener('wheel', (e) => {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        ledwallStage.scrollLeft += e.deltaY;
-      }
-    }, { passive: false });
-
-    document.querySelectorAll('.filter-pill').forEach(btn => {
+    document.querySelectorAll('.filter-pill[data-filter]').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.filter-pill[data-filter]').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         activeFilter = btn.dataset.filter;
         ledwallStage.scrollLeft = 0;
@@ -612,50 +507,6 @@
       return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
     }
 
-    // URL veloci (senza fullPage lento): mShots CDN di WordPress + Microlink viewport
-    function getFastScreenshotUrls(targetUrl) {
-      return [
-        `https://s0.wp.com/mshots/v1/${encodeURIComponent(targetUrl)}?w=1100&h=1500`,
-        `https://api.microlink.io/?url=${encodeURIComponent(targetUrl)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1100&viewport.height=1500`
-      ];
-    }
-
-    // Pre-caricamento silenzioso in background delle prime testate
-    function preloadBatch(sitesList) {
-      let idx = 0;
-      const loadNext = () => {
-        if (idx >= sitesList.length) return;
-        const site = sitesList[idx++];
-        if (snapshotCache.has(site.domain)) {
-          loadNext();
-          return;
-        }
-        const candidates = getFastScreenshotUrls(site.url);
-        const preImg = new Image();
-        preImg.onload = () => {
-          snapshotCache.set(site.domain, preImg.src);
-          const card = wallGrid.querySelector(`[data-domain="${site.domain}"]`);
-          if (card) card.classList.add('is-cached');
-          setTimeout(loadNext, 250);
-        };
-        preImg.onerror = () => {
-          const fallbackImg = new Image();
-          fallbackImg.onload = () => {
-            snapshotCache.set(site.domain, fallbackImg.src);
-            const card = wallGrid.querySelector(`[data-domain="${site.domain}"]`);
-            if (card) card.classList.add('is-cached');
-            setTimeout(loadNext, 250);
-          };
-          fallbackImg.onerror = () => setTimeout(loadNext, 250);
-          fallbackImg.src = candidates[1];
-        };
-        preImg.src = candidates[0];
-      };
-      // Avvia 2 worker paralleli in background
-      loadNext();
-      setTimeout(loadNext, 150);
-    }
-
     function renderGrid() {
       wallGrid.innerHTML = '';
       const list = activeFilter === 'all'
@@ -663,9 +514,11 @@
         : NEWSPAPER_SITES.filter(s => s.cat === activeFilter);
 
       list.forEach(site => {
-        const card = document.createElement('div');
-        card.className = 'site-card' + (snapshotCache.has(site.domain) ? ' is-cached' : '');
-        card.dataset.domain = site.domain;
+        const card = document.createElement('a');
+        card.className = 'site-card';
+        card.href = site.url;
+        card.target = '_blank';
+        card.rel = 'noopener';
         card.style.setProperty('--accent-color', site.color);
 
         const catLabel = site.cat === 'italiani' ? 'Quotidiano Italiano'
@@ -673,7 +526,6 @@
           : 'Stampa Estera';
 
         card.innerHTML = `
-          <span class="ready-dot" title="Pronto in cache"></span>
           <div class="site-logo-wrap">
             <img src="${getLogoUrl(site.domain)}" alt="${site.name}" loading="lazy" />
           </div>
@@ -681,213 +533,163 @@
           <span class="site-cat-tag">${catLabel}</span>
         `;
 
-        card.addEventListener('click', () => openSiteSnapshot(site));
         wallGrid.appendChild(card);
       });
-
-      // Precarica i primi 10 visibili in background
-      preloadBatch(list.slice(0, 10));
     }
 
-    function computeFitTransform() {
-      const surfW = pdfSurface.clientWidth;
-      const surfH = pdfSurface.clientHeight;
-      fitScale = Math.min((surfW - 32) / baseWidth, (surfH - 28) / baseHeight, 1);
-      const x = (surfW - baseWidth * fitScale) / 2;
-      const y = (surfH - baseHeight * fitScale) / 2;
-      return { s: fitScale, x, y };
-    }
+    // LAVAGNA SCREENSHOT / ARTICOLO CON EVIDENZIATORE VELOCISSIMO (DISEGNO INCREMENTALE 60FPS)
+    const boardOverlay = document.getElementById('boardOverlay');
+    const pdfSurface = document.getElementById('pdfSurface');
+    const zoomLayer = document.getElementById('zoomLayer');
+    const activeImage = document.getElementById('activeImage');
+    const drawCanvas = document.getElementById('drawCanvas');
+    const ctx = drawCanvas.getContext('2d');
 
-    function applyTransform() {
-      zoomLayer.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
-      const pct = Math.round((scale / fitScale) * 100);
-      document.getElementById('btnZoomReset').textContent = pct + '%';
-    }
+    let baseWidth = 1000;
+    let baseHeight = 1400;
+    let fitScale = 1;
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isDrawMode = true;
+    let currentColor = 'rgba(255, 238, 0, 0.45)';
 
-    function openSiteSnapshot(site) {
-      currentSite = site;
-      strokes = strokesByDomain.get(site.domain) || [];
-      headerSubtitle.textContent = site.name;
-      btnOpenExternal.href = site.url;
-
-      const isAlreadyCached = snapshotCache.has(site.domain);
-      snapshotLoader.style.display = isAlreadyCached ? 'none' : 'flex';
-      loaderTitle.textContent = `Apertura ${site.name}...`;
-      zoomLayer.style.visibility = isAlreadyCached ? 'visible' : 'hidden';
-
-      viewerOverlay.classList.add('active');
-      requestAnimationFrame(() => viewerOverlay.classList.add('visible'));
-
-      const candidates = getFastScreenshotUrls(site.url);
-      let attempt = 0;
+    function openImageOnBoard(imgSrc, label = 'Articolo in evidenza') {
+      headerSubtitle.textContent = label;
+      boardOverlay.classList.add('active');
+      pdfSurface.classList.toggle('draw-mode', isDrawMode);
 
       activeImage.onload = () => {
-        snapshotCache.set(site.domain, activeImage.src);
-        const card = wallGrid.querySelector(`[data-domain="${site.domain}"]`);
-        if (card) card.classList.add('is-cached');
-
-        baseWidth = activeImage.naturalWidth || 1100;
-        baseHeight = activeImage.naturalHeight || 1500;
+        baseWidth = activeImage.naturalWidth || 1000;
+        baseHeight = activeImage.naturalHeight || 1400;
         activeImage.style.width = baseWidth + 'px';
         activeImage.style.height = baseHeight + 'px';
         drawCanvas.width = baseWidth;
         drawCanvas.height = baseHeight;
-        redrawStrokes();
-
-        const initT = computeFitTransform();
-        scale = initT.s;
-        panX = initT.x;
-        panY = initT.y;
-        applyTransform();
-
-        snapshotLoader.style.display = 'none';
-        zoomLayer.style.visibility = 'visible';
+        ctx.clearRect(0, 0, baseWidth, baseHeight);
+        resetZoom(false);
       };
+      activeImage.src = imgSrc;
+    }
 
-      activeImage.onerror = () => {
-        attempt++;
-        if (attempt < candidates.length) {
-          activeImage.src = candidates[attempt];
-        } else {
-          snapshotLoader.innerHTML = `
-            <div style="font-weight:700; color:#b91c1c; font-size:15px;">Anteprima non disponibile</div>
-            <a href="${site.url}" target="_blank" rel="noopener" style="margin-top:8px; background:#0b3d75; color:#fff; padding:9px 18px; border-radius:6px; text-decoration:none; font-weight:700;">Apri ${site.name} ↗</a>
-          `;
+    // Incolla screenshot direttamente dagli appunti iPad (o seleziona foto)
+    document.getElementById('btnPasteBoard').addEventListener('click', async () => {
+      try {
+        const items = await navigator.clipboard.read();
+        for (const item of items) {
+          const imgType = item.types.find(t => t.startsWith('image/'));
+          if (imgType) {
+            const blob = await item.getType(imgType);
+            openImageOnBoard(URL.createObjectURL(blob), 'Ritaglio in evidenza');
+            return;
+          }
         }
+      } catch (e) {}
+      // Fallback: apre selettore rullino/file iPad
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = (ev) => {
+        const file = ev.target.files[0];
+        if (file) openImageOnBoard(URL.createObjectURL(file), 'Articolo in evidenza');
       };
+      input.click();
+    });
 
-      activeImage.src = isAlreadyCached ? snapshotCache.get(site.domain) : candidates[0];
+    window.addEventListener('paste', (e) => {
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          const blob = item.getAsFile();
+          openImageOnBoard(URL.createObjectURL(blob), 'Ritaglio in evidenza');
+          break;
+        }
+      }
+    });
+
+    document.getElementById('btnBack').addEventListener('click', () => {
+      boardOverlay.classList.remove('active');
+      activeImage.src = '';
+      headerSubtitle.textContent = 'Quotidiani Online';
+    });
+
+    function computeFitTransform() {
+      const surfW = pdfSurface.clientWidth;
+      const surfH = pdfSurface.clientHeight;
+      fitScale = Math.min((surfW - 24) / baseWidth, (surfH - 24) / baseHeight, 1);
+      return {
+        s: fitScale,
+        x: (surfW - baseWidth * fitScale) / 2,
+        y: (surfH - baseHeight * fitScale) / 2
+      };
     }
 
-    function closeViewer() {
-      if (currentSite) {
-        strokesByDomain.set(currentSite.domain, strokes);
-      }
-      if (isDrawMode) {
-        isDrawMode = false;
-        btnDrawToggle.classList.remove('active-tool');
-        pdfSurface.classList.remove('draw-mode');
-      }
-      viewerOverlay.classList.remove('visible');
-      setTimeout(() => {
-        viewerOverlay.classList.remove('active');
-        headerSubtitle.textContent = 'Quotidiani Online';
-        currentSite = null;
-        snapshotLoader.innerHTML = `
-          <div class="spinner"></div>
-          <div style="font-weight:700; color:#0b3d75; font-size:15px;" id="loaderTitle">Apertura homepage...</div>
-        `;
-      }, 220);
+    function applyTransform() {
+      zoomLayer.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
+      document.getElementById('btnZoomReset').textContent = Math.round((scale / fitScale) * 100) + '%';
     }
-
-    document.getElementById('btnBack').addEventListener('click', closeViewer);
 
     function resetZoom(animate = true) {
-      const targetT = computeFitTransform();
-      zoomLayer.style.transition = animate ? 'transform 0.24s ease-out' : 'none';
-      scale = targetT.s;
-      panX = targetT.x;
-      panY = targetT.y;
+      const t = computeFitTransform();
+      zoomLayer.style.transition = animate ? 'transform 0.2s ease-out' : 'none';
+      scale = t.s;
+      panX = t.x;
+      panY = t.y;
       applyTransform();
-      if (animate) {
-        setTimeout(() => { zoomLayer.style.transition = 'none'; }, 250);
-      }
+      if (animate) setTimeout(() => { zoomLayer.style.transition = 'none'; }, 210);
     }
 
-    function zoomBy(factor, centerX, centerY) {
-      const minScale = fitScale * 0.45;
-      const maxScale = fitScale * 5.0;
+    function zoomBy(factor, cx, cy) {
       const oldScale = scale;
-      const newScale = Math.min(maxScale, Math.max(minScale, oldScale * factor));
+      const newScale = Math.min(fitScale * 5, Math.max(fitScale * 0.5, oldScale * factor));
       if (newScale === oldScale) return;
-
       const rect = pdfSurface.getBoundingClientRect();
-      const cx = (centerX !== undefined ? centerX - rect.left : rect.width / 2);
-      const cy = (centerY !== undefined ? centerY - rect.top : rect.height / 2);
-
-      panX = cx - (cx - panX) * (newScale / oldScale);
-      panY = cy - (cy - panY) * (newScale / oldScale);
+      const x = cx !== undefined ? cx - rect.left : rect.width / 2;
+      const y = cy !== undefined ? cy - rect.top : rect.height / 2;
+      panX = x - (x - panX) * (newScale / oldScale);
+      panY = y - (y - panY) * (newScale / oldScale);
       scale = newScale;
       applyTransform();
     }
 
-    document.getElementById('btnZoomIn').addEventListener('click', () => zoomBy(1.35));
-    document.getElementById('btnZoomOut').addEventListener('click', () => zoomBy(1 / 1.35));
+    document.getElementById('btnZoomIn').addEventListener('click', () => zoomBy(1.3));
+    document.getElementById('btnZoomOut').addEventListener('click', () => zoomBy(1 / 1.3));
     document.getElementById('btnZoomReset').addEventListener('click', () => resetZoom(true));
 
-    pdfSurface.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      if (e.ctrlKey || e.metaKey) {
-        const factor = e.deltaY < 0 ? 1.14 : 1 / 1.14;
-        zoomBy(factor, e.clientX, e.clientY);
-      } else {
-        panX -= e.deltaX;
-        panY -= e.deltaY;
-        applyTransform();
-      }
-    }, { passive: false });
-
-    let isDragging = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
-    let initialPinchDist = 0;
-    let initialPinchScale = 1;
+    // Gesture Pan & Pinch su iPad
+    let isDragging = false, dragX = 0, dragY = 0, pinchDist = 0, pinchScale = 1;
 
     pdfSurface.addEventListener('touchstart', (e) => {
-      if (isDrawMode) return;
+      if (isDrawMode && e.touches.length === 1) return;
       if (e.touches.length === 2) {
         isDragging = false;
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        initialPinchDist = Math.hypot(dx, dy);
-        initialPinchScale = scale;
+        pinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        pinchScale = scale;
       } else if (e.touches.length === 1) {
         isDragging = true;
-        dragStartX = e.touches[0].clientX - panX;
-        dragStartY = e.touches[0].clientY - panY;
+        dragX = e.touches[0].clientX - panX;
+        dragY = e.touches[0].clientY - panY;
       }
     }, { passive: true });
 
     pdfSurface.addEventListener('touchmove', (e) => {
-      if (isDrawMode) return;
-      if (e.touches.length === 2 && initialPinchDist > 0) {
+      if (e.touches.length === 2 && pinchDist > 0) {
         e.preventDefault();
-        const dx = e.touches[0].clientX - e.touches[1].clientX;
-        const dy = e.touches[0].clientY - e.touches[1].clientY;
-        const dist = Math.hypot(dx, dy);
-        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-        const targetScale = initialPinchScale * (dist / initialPinchDist);
-        zoomBy(targetScale / scale, midX, midY);
-      } else if (e.touches.length === 1 && isDragging) {
+        const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const my = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        zoomBy((pinchScale * (dist / pinchDist)) / scale, mx, my);
+      } else if (e.touches.length === 1 && isDragging && !isDrawMode) {
         e.preventDefault();
-        panX = e.touches[0].clientX - dragStartX;
-        panY = e.touches[0].clientY - dragStartY;
+        panX = e.touches[0].clientX - dragX;
+        panY = e.touches[0].clientY - dragY;
         applyTransform();
       }
     }, { passive: false });
 
-    pdfSurface.addEventListener('touchend', () => {
-      isDragging = false;
-      initialPinchDist = 0;
-    });
+    pdfSurface.addEventListener('touchend', () => { isDragging = false; pinchDist = 0; });
 
-    pdfSurface.addEventListener('mousedown', (e) => {
-      if (isDrawMode) return;
-      isDragging = true;
-      dragStartX = e.clientX - panX;
-      dragStartY = e.clientY - panY;
-    });
-
-    window.addEventListener('mousemove', (e) => {
-      if (!isDragging || isDrawMode) return;
-      panX = e.clientX - dragStartX;
-      panY = e.clientY - dragStartY;
-      applyTransform();
-    });
-
-    window.addEventListener('mouseup', () => { isDragging = false; });
-
+    // EVIDENZIATORE INCREMENTALE AD ALTA VELOCITÀ (ZERO LAG SU IPAD)
     const btnDrawToggle = document.getElementById('btnDrawToggle');
     btnDrawToggle.addEventListener('click', () => {
       isDrawMode = !isDrawMode;
@@ -905,79 +707,49 @@
     });
 
     document.getElementById('btnClearMarks').addEventListener('click', () => {
-      strokes = [];
-      if (currentSite) strokesByDomain.set(currentSite.domain, []);
-      redrawStrokes();
+      ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
     });
 
-    let activeStroke = null;
+    let drawing = false;
+    let lastPt = null;
 
-    function getCanvasCoords(clientX, clientY) {
+    function getPt(clientX, clientY) {
       const rect = drawCanvas.getBoundingClientRect();
-      const x = ((clientX - rect.left) / rect.width) * drawCanvas.width;
-      const y = ((clientY - rect.top) / rect.height) * drawCanvas.height;
-      return { x, y };
-    }
-
-    function startStroke(clientX, clientY) {
-      if (!isDrawMode) return;
-      const pt = getCanvasCoords(clientX, clientY);
-      const brushSize = Math.max(20, drawCanvas.width * 0.022);
-      activeStroke = { color: currentColor, size: brushSize, points: [pt] };
-      strokes.push(activeStroke);
-      redrawStrokes();
-    }
-
-    function moveStroke(clientX, clientY) {
-      if (!activeStroke) return;
-      activeStroke.points.push(getCanvasCoords(clientX, clientY));
-      redrawStrokes();
-    }
-
-    function endStroke() {
-      activeStroke = null;
+      return {
+        x: ((clientX - rect.left) / rect.width) * drawCanvas.width,
+        y: ((clientY - rect.top) / rect.height) * drawCanvas.height
+      };
     }
 
     drawCanvas.addEventListener('pointerdown', (e) => {
+      if (!isDrawMode) return;
       e.stopPropagation();
       drawCanvas.setPointerCapture(e.pointerId);
-      startStroke(e.clientX, e.clientY);
+      drawing = true;
+      lastPt = getPt(e.clientX, e.clientY);
+      ctx.strokeStyle = currentColor;
+      ctx.lineWidth = Math.max(22, drawCanvas.width * 0.025);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(lastPt.x, lastPt.y);
+      ctx.lineTo(lastPt.x + 0.1, lastPt.y);
+      ctx.stroke();
     });
 
     drawCanvas.addEventListener('pointermove', (e) => {
-      if (!activeStroke) return;
+      if (!drawing || !isDrawMode || !lastPt) return;
       e.stopPropagation();
-      moveStroke(e.clientX, e.clientY);
+      const pt = getPt(e.clientX, e.clientY);
+      ctx.beginPath();
+      ctx.moveTo(lastPt.x, lastPt.y);
+      ctx.lineTo(pt.x, pt.y);
+      ctx.stroke();
+      lastPt = pt;
     });
 
-    drawCanvas.addEventListener('pointerup', endStroke);
-    drawCanvas.addEventListener('pointercancel', endStroke);
-
-    function redrawStrokes() {
-      ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-      strokes.forEach(s => {
-        if (!s.points.length) return;
-        ctx.save();
-        ctx.strokeStyle = s.color;
-        ctx.lineWidth = s.size;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.beginPath();
-        ctx.moveTo(s.points[0].x, s.points[0].y);
-        for (let i = 1; i < s.points.length; i++) {
-          ctx.lineTo(s.points[i].x, s.points[i].y);
-        }
-        if (s.points.length === 1) {
-          ctx.lineTo(s.points[0].x + 0.1, s.points[0].y);
-        }
-        ctx.stroke();
-        ctx.restore();
-      });
-    }
-
-    window.addEventListener('resize', () => {
-      if (viewerOverlay.classList.contains('active')) resetZoom(false);
-    });
+    drawCanvas.addEventListener('pointerup', () => { drawing = false; lastPt = null; });
+    drawCanvas.addEventListener('pointercancel', () => { drawing = false; lastPt = null; });
 
     renderGrid();
   </script>
