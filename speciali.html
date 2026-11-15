@@ -125,9 +125,7 @@
       scrollbar-width: none;
     }
 
-    .topbar-right::-webkit-scrollbar {
-      display: none;
-    }
+    .topbar-right::-webkit-scrollbar { display: none; }
 
     .nav-pill {
       height: 26px;
@@ -164,9 +162,7 @@
     }
 
     body.on-air-clean .nav-pill:not(.active),
-    body.on-air-clean .brand-divider {
-      display: none;
-    }
+    body.on-air-clean .brand-divider { display: none; }
 
     body.on-air-clean #btnToggleClean {
       opacity: 0.35;
@@ -174,18 +170,18 @@
       background: transparent;
     }
 
-    /* HUB DI TUTTI I FOGLI DEL DOCUMENTO */
+    /* HUB CON SCORRIMENTO ORIZZONTALE (CAROSELLO TOUCH) */
     .sheets-hub {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
       left: 0;
       right: 0;
       bottom: 0;
-      padding: 22px 26px max(24px, env(safe-area-inset-bottom));
+      padding: 20px 0 max(22px, env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      overflow-y: auto;
+      gap: 16px;
+      overflow: hidden;
     }
 
     .hub-header {
@@ -193,7 +189,7 @@
       align-items: baseline;
       justify-content: space-between;
       border-bottom: 2px solid rgba(11, 61, 117, 0.14);
-      padding-bottom: 10px;
+      padding: 0 28px 10px;
       flex-shrink: 0;
     }
 
@@ -213,67 +209,102 @@
       letter-spacing: 0.5px;
     }
 
-    .sheets-grid {
+    /* CONTENITORE SCORREVOLE ORIZZONTALE */
+    .sheets-carousel {
       flex: 1;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
       gap: 20px;
-      align-content: stretch;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 8px 28px 18px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .sheets-carousel::-webkit-scrollbar {
+      display: none;
     }
 
     .sheet-card {
+      flex: 0 0 295px;
+      max-width: 82vw;
+      scroll-snap-align: start;
       background: #fff;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 12px 30px rgba(15, 28, 46, 0.1), 0 2px 5px rgba(15, 28, 46, 0.06);
-      border-top: 6px solid var(--card-accent, #0b3d75);
+      border-radius: 20px;
+      padding: 26px 24px;
+      box-shadow: 0 14px 32px rgba(15, 28, 46, 0.11), 0 2px 6px rgba(15, 28, 46, 0.06);
+      border-top: 7px solid var(--card-accent, #0b3d75);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 14px;
+      gap: 16px;
       cursor: pointer;
       transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
 
     .sheet-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 18px 38px rgba(11, 61, 117, 0.18);
+      transform: translateY(-5px);
+      box-shadow: 0 20px 42px rgba(11, 61, 117, 0.2);
     }
 
     .sheet-card:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
+    }
+
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .sheet-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eff6ff;
+      color: var(--card-accent, #0b3d75);
+      flex-shrink: 0;
     }
 
     .sheet-badge {
-      align-self: flex-start;
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      padding: 4px 10px;
+      letter-spacing: 0.7px;
+      padding: 5px 11px;
       border-radius: 999px;
-      background: #eff6ff;
+      background: #f1f5f9;
       color: var(--card-accent, #0b3d75);
     }
 
     .sheet-name {
-      font-size: 23px;
+      font-size: 25px;
       font-weight: 900;
       color: #0f172a;
-      line-height: 1.2;
-      letter-spacing: -0.4px;
+      line-height: 1.18;
+      letter-spacing: -0.5px;
+      word-break: break-word;
     }
 
-    .sheet-preview {
-      font-size: 13px;
-      font-weight: 600;
-      color: #64748b;
-      line-height: 1.4;
+    .sheet-footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
       border-top: 1px solid #f1f5f9;
-      padding-top: 10px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--card-accent, #0b3d75);
     }
 
-    /* VIEWER DATAWALL */
+    /* VIEWER DATAWALL A SCHERMO PIENO */
     .sheet-viewer {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
@@ -287,9 +318,7 @@
       background: radial-gradient(circle at 50% 25%, var(--studio-bg-light) 0%, var(--studio-bg) 75%, #d6dde6 100%);
     }
 
-    .sheet-viewer.active {
-      display: flex;
-    }
+    .sheet-viewer.active { display: flex; }
 
     .viewer-card {
       flex: 1;
@@ -346,7 +375,7 @@
       flex-direction: column;
     }
 
-    /* GRAFICA 1: BARRE VERTICALI TV */
+    /* 1. BARRE VERTICALI TV */
     .vbars-stage {
       flex: 1;
       display: flex;
@@ -369,231 +398,73 @@
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
-    .vbars-stage.has-focus .vbar-col:not(.focused) {
-      opacity: 0.22;
-    }
+    .vbars-stage.has-focus .vbar-col:not(.focused) { opacity: 0.22; }
+    .vbar-col.focused { transform: scale(1.04); }
+    .vbar-diff { font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 5px; margin-bottom: 5px; white-space: nowrap; }
+    .vbar-val { font-size: 23px; font-weight: 900; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .vbar-fill { width: 68%; max-width: 74px; border-radius: 8px 8px 2px 2px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14); min-height: 8px; }
+    .vbar-label { margin-top: 10px; font-size: 14px; font-weight: 900; color: #1e293b; text-align: center; line-height: 1.2; }
+    .vbar-sub { font-size: 11.5px; font-weight: 600; color: #64748b; text-align: center; margin-top: 2px; }
 
-    .vbar-col.focused {
-      transform: scale(1.04);
-    }
+    /* 2. BARRE ORIZZONTALI TV */
+    .hbars-list { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+    .hbar-row { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; display: flex; flex-direction: column; gap: 7px; cursor: pointer; transition: opacity 0.2s; }
+    .hbars-list.has-focus .hbar-row:not(.focused) { opacity: 0.24; }
+    .hbar-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .hbar-track { width: 100%; height: 18px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+    .hbar-fill { height: 100%; border-radius: 999px; }
 
-    .vbar-diff {
-      font-size: 12px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 5px;
-      margin-bottom: 5px;
-      white-space: nowrap;
-    }
+    /* 3. NOTIZIE IN DIRETTA */
+    .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; align-content: start; }
+    .news-card { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 6px solid var(--brand-blue); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; cursor: pointer; }
+    .news-card.urgent { background: #fef2f2; border-color: #fecaca; border-left-color: var(--live-red); }
+    .news-card.expanded { grid-column: 1 / -1; background: #fff; border: 2px solid var(--brand-blue); border-left: 8px solid var(--live-red); box-shadow: 0 14px 34px rgba(11, 61, 117, 0.16); }
+    .news-card.expanded .news-title { font-size: 24px; }
+    .news-card.expanded .news-body { font-size: 17px; line-height: 1.5; }
+    .news-meta-line { display: flex; align-items: center; gap: 8px; }
+    .news-time { background: var(--brand-blue); color: #fff; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 4px; }
+    .news-card.urgent .news-time { background: var(--live-red); }
+    .news-tag { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: var(--live-red); }
+    .news-title { font-size: 18px; font-weight: 900; color: #0f172a; line-height: 1.25; }
+    .news-body { font-size: 14px; font-weight: 500; color: #334155; line-height: 1.4; }
 
-    .vbar-val {
-      font-size: 23px;
-      font-weight: 900;
-      color: #0f172a;
-      margin-bottom: 8px;
-      letter-spacing: -0.5px;
-    }
+    /* 4. TABELLA BROADCAST */
+    .tv-table-wrap { width: 100%; overflow-x: auto; border-radius: 12px; border: 1px solid #cbd5e1; }
+    table.tv-table { width: 100%; border-collapse: collapse; text-align: left; }
+    table.tv-table th { background: var(--brand-blue); color: #fff; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 13px 16px; white-space: nowrap; }
+    table.tv-table td { padding: 13px 16px; font-size: 16px; font-weight: 700; color: #0f172a; border-bottom: 1px solid #e2e8f0; }
+    table.tv-table tr:nth-child(even) td { background: #f8fafc; }
+    table.tv-table tr.row-focused td { background: #fef08a; }
 
-    .vbar-fill {
-      width: 68%;
-      max-width: 74px;
-      border-radius: 8px 8px 2px 2px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
-      transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-      min-height: 8px;
-    }
+    /* 5. BALLOTTAGGIO / REFERENDUM */
+    .ballot-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 22px; padding: 8px 12px; }
+    .ballot-cards { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; }
+    .ballot-cand { background: #f8fafc; border-radius: 16px; padding: 22px; border-top: 8px solid #0b3d75; box-shadow: 0 8px 24px rgba(15, 28, 46, 0.08); }
+    .ballot-vs { width: 50px; height: 50px; border-radius: 50%; background: #0b3d75; color: #fff; font-weight: 900; font-size: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+    .ballot-bar-wrap { position: relative; height: 36px; border-radius: 999px; overflow: hidden; display: flex; background: #e2e8f0; box-shadow: inset 0 2px 6px rgba(0,0,0,0.12); }
+    .ballot-50-line { position: absolute; left: 50%; top: -6px; bottom: -6px; width: 3px; background: #0f172a; z-index: 5; }
 
-    .vbar-label {
-      margin-top: 10px;
-      font-size: 14px;
-      font-weight: 900;
-      color: #1e293b;
-      text-align: center;
-      line-height: 1.2;
-      max-width: 100%;
-      word-break: break-word;
-    }
+    /* 6. RIPARTIZIONE SEGGI */
+    .seggi-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 22px; }
+    .seggi-bar-box { position: relative; padding-top: 26px; }
+    .seggi-maj-marker { position: absolute; left: 50%; top: 0; bottom: -8px; border-left: 2.5px dashed #0f172a; z-index: 5; padding-left: 6px; font-size: 11px; font-weight: 900; color: #0f172a; }
+    .seggi-bar { height: 46px; border-radius: 10px; overflow: hidden; display: flex; background: #e2e8f0; gap: 2px; }
+    .seggi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; }
+    .seggi-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
 
-    .vbar-sub {
-      font-size: 11.5px;
-      font-weight: 600;
-      color: #64748b;
-      text-align: center;
-      margin-top: 2px;
-    }
+    /* 7. SCRUTINIO & AFFLUENZA ORARIA */
+    .aff-grid { flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 16px; align-content: center; }
+    .aff-card { background: #f8fafc; border: 1px solid #e2e8f0; border-top: 6px solid #0b3d75; border-radius: 14px; padding: 20px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
 
-    /* GRAFICA 2: BARRE ORIZZONTALI TV */
-    .hbars-list {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 12px;
-    }
+    /* 8. COMUNI & QUARTIERI */
+    .comuni-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; align-content: start; }
+    .comune-card { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 7px solid #0b3d75; border-radius: 12px; padding: 15px 18px; display: flex; flex-direction: column; gap: 6px; }
 
-    .hbar-row {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 12px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
+    /* 9. FORCHETTA EXIT POLL */
+    .range-track { position: relative; width: 100%; height: 22px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+    .range-band { position: absolute; top: 0; bottom: 0; border-radius: 999px; opacity: 0.9; }
 
-    .hbars-list.has-focus .hbar-row:not(.focused) {
-      opacity: 0.24;
-    }
-
-    .hbar-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-    }
-
-    .hbar-track {
-      width: 100%;
-      height: 18px;
-      background: #e2e8f0;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .hbar-fill {
-      height: 100%;
-      border-radius: 999px;
-    }
-
-    /* GRAFICA 3: NOTIZIE IN DIRETTA */
-    .news-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-      gap: 16px;
-      align-content: start;
-    }
-
-    .news-card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-left: 6px solid var(--brand-blue);
-      border-radius: 12px;
-      padding: 16px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      cursor: pointer;
-      transition: transform 0.16s ease, box-shadow 0.16s ease;
-    }
-
-    .news-card.urgent {
-      background: #fef2f2;
-      border-color: #fecaca;
-      border-left-color: var(--live-red);
-    }
-
-    .news-card.expanded {
-      grid-column: 1 / -1;
-      background: #fff;
-      border: 2px solid var(--brand-blue);
-      border-left: 8px solid var(--live-red);
-      box-shadow: 0 14px 34px rgba(11, 61, 117, 0.16);
-    }
-
-    .news-card.expanded .news-title {
-      font-size: 24px;
-    }
-
-    .news-card.expanded .news-body {
-      font-size: 17px;
-      line-height: 1.5;
-    }
-
-    .news-meta-line {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .news-time {
-      background: var(--brand-blue);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 4px;
-    }
-
-    .news-card.urgent .news-time {
-      background: var(--live-red);
-    }
-
-    .news-tag {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
-      color: var(--live-red);
-    }
-
-    .news-title {
-      font-size: 18px;
-      font-weight: 900;
-      color: #0f172a;
-      line-height: 1.25;
-    }
-
-    .news-body {
-      font-size: 14px;
-      font-weight: 500;
-      color: #334155;
-      line-height: 1.4;
-    }
-
-    /* GRAFICA 4: TABELLA BROADCAST */
-    .tv-table-wrap {
-      width: 100%;
-      overflow-x: auto;
-      border-radius: 12px;
-      border: 1px solid #cbd5e1;
-    }
-
-    table.tv-table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    table.tv-table th {
-      background: var(--brand-blue);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 13px 16px;
-      white-space: nowrap;
-    }
-
-    table.tv-table td {
-      padding: 13px 16px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #0f172a;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    table.tv-table tr:nth-child(even) td {
-      background: #f8fafc;
-    }
-
-    table.tv-table tr.row-focused td {
-      background: #fef08a;
-    }
-
-    /* DOCK IN BASSO */
+    /* DOCK IN BASSO PULITO (SOLO INDIETRO + EVIDENZIATORE) */
     .viewer-dock {
       position: fixed;
       bottom: max(12px, env(safe-area-inset-bottom));
@@ -601,72 +472,36 @@
       transform: translateX(-50%);
       background: rgba(11, 61, 117, 0.96);
       color: #fff;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 999px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       box-shadow: 0 10px 28px rgba(7, 42, 82, 0.35);
       z-index: 110;
-      max-width: 97vw;
-      overflow-x: auto;
+      max-width: 96vw;
     }
 
     .dock-btn {
       height: 30px;
-      padding: 0 10px;
+      padding: 0 12px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.22);
       background: rgba(255, 255, 255, 0.12);
       color: #fff;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
     }
 
-    .dock-btn.primary-back {
-      background: #fff;
-      color: var(--brand-blue);
-      border-color: #fff;
-    }
+    .dock-btn.primary-back { background: #fff; color: var(--brand-blue); border-color: #fff; }
+    .dock-btn.active-tool { background: #ffeb3b; color: #072a52; border-color: #ffeb3b; }
+    .dock-sep { width: 1px; height: 18px; background: rgba(255, 255, 255, 0.22); flex-shrink: 0; }
+    .color-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.5); cursor: pointer; flex-shrink: 0; }
+    .color-dot.selected { transform: scale(1.2); border-color: #fff; box-shadow: 0 0 0 2px #0b3d75, 0 0 0 4px #fff; }
 
-    .dock-btn.active-tool {
-      background: #ffeb3b;
-      color: #072a52;
-      border-color: #ffeb3b;
-    }
-
-    .dock-sep {
-      width: 1px;
-      height: 18px;
-      background: rgba(255, 255, 255, 0.22);
-      flex-shrink: 0;
-    }
-
-    .color-dot {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.5);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .color-dot.selected {
-      transform: scale(1.2);
-      border-color: #fff;
-      box-shadow: 0 0 0 2px #0b3d75, 0 0 0 4px #fff;
-    }
-
-    .status-box {
-      margin: auto;
-      text-align: center;
-      background: #fff;
-      padding: 26px 32px;
-      border-radius: 14px;
-      box-shadow: 0 10px 28px rgba(11, 61, 117, 0.12);
-    }
+    .status-box { margin: auto; text-align: center; background: #fff; padding: 26px 32px; border-radius: 14px; box-shadow: 0 10px 28px rgba(11, 61, 117, 0.12); }
   </style>
 </head>
 <body>
@@ -691,14 +526,14 @@
     </div>
   </header>
 
-  <!-- SCHERMATA 1: TUTTI I FOGLI DEL GOOGLE SHEET -->
+  <!-- SCHERMATA 1: CAROSELLO ORIZZONTALE DI TUTTI I FOGLI -->
   <main class="sheets-hub" id="sheetsHub">
     <div class="hub-header">
       <h1>Fogli Diretta Speciale</h1>
       <span class="hub-meta" id="hubMeta">Sincronizzazione...</span>
     </div>
     <div id="hubStatus" class="status-box">Caricamento rapido fogli...</div>
-    <div class="sheets-grid" id="sheetsGrid" style="display:none;"></div>
+    <div class="sheets-carousel" id="sheetsCarousel" style="display:none;"></div>
   </main>
 
   <!-- SCHERMATA 2: GRAFICA INTERATTIVA DEL FOGLIO -->
@@ -707,18 +542,13 @@
       <canvas class="draw-canvas" id="drawCanvas"></canvas>
       <div class="viewer-top">
         <h2 class="viewer-title" id="viewerTitle">Titolo Foglio</h2>
-        <span class="hub-meta" id="viewerTypeMeta">Tocca un elemento per metterlo in evidenza</span>
+        <span class="hub-meta" id="viewerTypeMeta">Diretta Speciale</span>
       </div>
       <div class="viewer-body" id="viewerBody"></div>
     </div>
 
     <div class="viewer-dock">
       <button class="dock-btn primary-back" id="btnBackToSheets">&#8592; Tutti i fogli</button>
-      <div class="dock-sep"></div>
-      <button class="dock-btn mode-btn active-tool" data-mode="vbars">Colonne</button>
-      <button class="dock-btn mode-btn" data-mode="hbars">Barre</button>
-      <button class="dock-btn mode-btn" data-mode="news">Notizie</button>
-      <button class="dock-btn mode-btn" data-mode="table">Tabella</button>
       <div class="dock-sep"></div>
       <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
       <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.5)" style="background:#ffee00;"></span>
@@ -737,10 +567,9 @@
 
     let allSheets = [];
     let currentSheet = null;
-    let currentMode = 'vbars';
 
     const hubStatus = document.getElementById('hubStatus');
-    const sheetsGrid = document.getElementById('sheetsGrid');
+    const sheetsCarousel = document.getElementById('sheetsCarousel');
     const hubMeta = document.getElementById('hubMeta');
     const sheetViewer = document.getElementById('sheetViewer');
     const viewerTitle = document.getElementById('viewerTitle');
@@ -748,14 +577,21 @@
     const viewerBody = document.getElementById('viewerBody');
     const headerSubtitle = document.getElementById('headerSubtitle');
 
-    // Carica subito eventuale cache locale in 0 millisecondi mentre aggiorna in background
-    const initialCache = JSON.parse(localStorage.getItem('br_ledwall_speciali_v5') || 'null');
+    const initialCache = JSON.parse(localStorage.getItem('br_ledwall_speciali_v7') || 'null');
     if (initialCache && initialCache.length) {
       allSheets = initialCache;
-      renderSheetsGrid();
+      renderSheetsCarousel();
     }
 
     function parseNum(str) {
+      if (str === null || str === undefined) return null;
+      const s = String(str).trim().replace('%', '').replace(/\./g, '').replace(/\s+/g, '').replace(',', '.');
+      if (!s || s === '-') return null;
+      const n = parseFloat(s);
+      return isNaN(n) ? null : n;
+    }
+
+    function parseDecimal(str) {
       if (str === null || str === undefined) return null;
       const s = String(str).trim().replace('%', '').replace(/\s+/g, '').replace(',', '.');
       if (!s || s === '-') return null;
@@ -786,7 +622,6 @@
       return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(timer));
     }
 
-    // Lancia tutti i proxy in parallelo e prende il primo che risponde (velocissimo!)
     async function fetchFast(targetUrl) {
       const urlTs = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
       const raceTasks = [
@@ -899,11 +734,11 @@
 
       if (discovered.length > 0) {
         allSheets = discovered;
-        localStorage.setItem('br_ledwall_speciali_v5', JSON.stringify(discovered));
+        localStorage.setItem('br_ledwall_speciali_v7', JSON.stringify(discovered));
       }
 
       btn.textContent = '↻';
-      renderSheetsGrid();
+      renderSheetsCarousel();
 
       if (currentSheet) {
         const updated = allSheets.find(s => s.id === currentSheet.id || s.title === currentSheet.title);
@@ -914,39 +749,99 @@
       }
     }
 
-    // Riconosce con precisione assoluta il tag in cella A1 ([NOTIZIE], [COLONNE], [BARRE], [TABELLA])
-    function detectBestMode(rows, sheetTitle = '') {
+    function detectLayout(rows, sheetTitle = '') {
       if (!rows || rows.length === 0) return 'table';
       const a1 = (rows[0][0] || '').toUpperCase().trim();
       const titleUp = sheetTitle.toUpperCase();
 
+      if (a1.includes('[BALLOTTAGG') || titleUp.includes('BALLOTTAGG')) return 'ballot';
+      if (a1.includes('[REFEREND') || titleUp.includes('REFEREND')) return 'referendum';
+      if (a1.includes('[SEGG') || titleUp.includes('SEGG') || titleUp.includes('CONSIGLI')) return 'seggi';
+      if (a1.includes('[SCRUTIN') || titleUp.includes('SCRUTIN')) return 'scrutinio';
+      if (a1.includes('[COMUN') || titleUp.includes('COMUN')) return 'comuni';
+      if (a1.includes('[QUARTIER') || titleUp.includes('QUARTIER')) return 'quartieri';
+      if (a1.includes('[FORCHETT') || titleUp.includes('PROIEZION') || titleUp.includes('EXIT')) return 'forchetta';
+      if (a1.includes('[PREFERENZ') || titleUp.includes('PREFERENZ')) return 'preferenze';
+      if (a1.includes('[FLUSS') || titleUp.includes('FLUSS')) return 'flussi';
+      if (a1.includes('[AFFLUENZA_OR') || titleUp.includes('ORARI')) return 'affluenza_ore';
       if (a1.includes('[NOTIZI') || titleUp.includes('NOTIZI')) return 'news';
       if (a1.includes('[COLONN') || titleUp.includes('SPOGLI')) return 'vbars';
       if (a1.includes('[BARR') || titleUp.includes('AFFLUENZ')) return 'hbars';
-      if (a1.includes('[TABELL') || titleUp.includes('TABELL') || titleUp.includes('COMUN')) return 'table';
+      if (a1.includes('[TABELL') || titleUp.includes('TABELL')) return 'table';
 
       if (rows.length < 2) return 'table';
       const headers = rows[0].map(h => h.toUpperCase());
       if (headers.some(h => h.includes('TITOL') || h.includes('OCCHIELL') || h.includes('DETTAGL'))) return 'news';
-
-      const dataRows = rows.slice(1);
-      let numericCols = 0;
-      for (let c = 1; c < rows[0].length; c++) {
-        const nums = dataRows.map(r => parseNum(r[c])).filter(v => v !== null);
-        if (nums.length >= Math.max(1, Math.floor(dataRows.length * 0.5))) numericCols++;
-      }
-
-      if (numericCols === 0) return 'news';
-      if (numericCols <= 2 && dataRows.length <= 6) return 'vbars';
-      if (numericCols <= 2) return 'hbars';
       return 'table';
     }
 
     function cleanHeaderLabel(h) {
-      return String(h || '').replace(/\[(NOTIZIE|COLONNE|BARRE|TABELLA)\]/gi, '').trim();
+      return String(h || '').replace(/\[[A-Z_]+\]/gi, '').trim();
     }
 
-    function renderSheetsGrid() {
+    function getLayoutInfo(mode) {
+      const icons = {
+        news: {
+          label: 'Notizie Live',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>'
+        },
+        vbars: {
+          label: 'Spoglio & Colonne',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>'
+        },
+        hbars: {
+          label: 'Affluenza & Barre',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="15" y2="12"/><line x1="4" y1="18" x2="18" y2="18"/></svg>'
+        },
+        ballot: {
+          label: 'Sfida Ballottaggio',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/></svg>'
+        },
+        seggi: {
+          label: 'Ripartizione Seggi',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10H2A10 10 0 0 1 12 2Z"/><path d="M12 12v8"/><path d="M8 20h8"/></svg>'
+        },
+        referendum: {
+          label: 'Referendum SÌ / NO',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'
+        },
+        scrutinio: {
+          label: 'Stato Scrutinio',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+        },
+        comuni: {
+          label: 'Comuni al Voto',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
+        },
+        quartieri: {
+          label: 'Mappa Quartieri',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>'
+        },
+        forchetta: {
+          label: 'Proiezioni & Forchette',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="2.5"/><circle cx="16" cy="12" r="2.5"/></svg>'
+        },
+        preferenze: {
+          label: 'Classifica Preferenze',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>'
+        },
+        flussi: {
+          label: 'Flussi Elettorali',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>'
+        },
+        affluenza_ore: {
+          label: 'Affluenza Oraria',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
+        },
+        table: {
+          label: 'Tabella Dati',
+          svg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>'
+        }
+      };
+      return icons[mode] || icons.table;
+    }
+
+    function renderSheetsCarousel() {
       if (!allSheets.length) {
         hubStatus.style.display = 'block';
         hubStatus.innerHTML = `
@@ -954,54 +849,43 @@
           <div style="font-size:13px; color:#475569; margin-bottom:14px;">Premi il pulsante qui sotto per riprovare.</div>
           <button onclick="loadAllSheets()" style="background:#0b3d75; color:#fff; border:none; padding:9px 18px; border-radius:8px; font-weight:800; cursor:pointer;">Riprova adesso</button>
         `;
-        sheetsGrid.style.display = 'none';
+        sheetsCarousel.style.display = 'none';
         hubMeta.textContent = '0 fogli';
         return;
       }
 
       hubStatus.style.display = 'none';
-      sheetsGrid.style.display = 'grid';
-      hubMeta.textContent = `${allSheets.length} ${allSheets.length === 1 ? 'foglio pronto' : 'fogli pronti'}`;
+      sheetsCarousel.style.display = 'flex';
+      hubMeta.textContent = `Scorri in orizzontale • ${allSheets.length} schede`;
 
-      sheetsGrid.innerHTML = allSheets.map((sh, idx) => {
-        const mode = detectBestMode(sh.rows, sh.title);
-        const badgeText = mode === 'vbars' ? 'Grafico a Colonne' : mode === 'hbars' ? 'Grafico a Barre' : mode === 'news' ? 'Notizie Live' : 'Tabella Dati';
+      sheetsCarousel.innerHTML = allSheets.map((sh, idx) => {
+        const mode = detectLayout(sh.rows, sh.title);
+        const info = getLayoutInfo(mode);
         const color = PALETTE[idx % PALETTE.length];
-        const previewCols = (sh.rows[0] || []).map(cleanHeaderLabel).filter(Boolean).slice(0, 4).join(' • ');
         const countRows = Math.max(0, sh.rows.length - 1);
 
         return `
           <div class="sheet-card" data-idx="${idx}" style="--card-accent:${color};">
-            <span class="sheet-badge" style="color:${color};">${badgeText} &bull; ${countRows} voci</span>
+            <div class="card-top-row">
+              <div class="sheet-icon-box" style="color:${color};">${info.svg}</div>
+              <span class="sheet-badge" style="color:${color};">${info.label}</span>
+            </div>
             <div class="sheet-name">${sh.title}</div>
-            <div class="sheet-preview">${previewCols || 'Foglio vuoto — tocca per aprire'}</div>
+            <div class="sheet-footer-row" style="color:${color};">
+              <span>${countRows} ${countRows === 1 ? 'elemento' : 'elementi'}</span>
+              <span>Apri in onda &rarr;</span>
+            </div>
           </div>
         `;
       }).join('');
 
-      sheetsGrid.querySelectorAll('.sheet-card').forEach(card => {
+      sheetsCarousel.querySelectorAll('.sheet-card').forEach(card => {
         card.addEventListener('click', () => {
           currentSheet = allSheets[parseInt(card.dataset.idx, 10)];
-          currentMode = detectBestMode(currentSheet.rows, currentSheet.title);
-          updateModeButtons();
           openSheetViewer();
         });
       });
     }
-
-    function updateModeButtons() {
-      document.querySelectorAll('.mode-btn').forEach(b => {
-        b.classList.toggle('active-tool', b.dataset.mode === currentMode);
-      });
-    }
-
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentMode = btn.dataset.mode;
-        updateModeButtons();
-        renderOpenSheet();
-      });
-    });
 
     function openSheetViewer() {
       if (!currentSheet) return;
@@ -1025,19 +909,19 @@
       const dataRows = rows.slice(1);
       let numCol = 1;
       for (let c = 1; c < headers.length; c++) {
-        if (dataRows.some(r => parseNum(r[c]) !== null)) { numCol = c; break; }
+        if (dataRows.some(r => parseDecimal(r[c]) !== null)) { numCol = c; break; }
       }
       let prevCol = -1;
       for (let c = numCol + 1; c < headers.length; c++) {
-        if (dataRows.some(r => parseNum(r[c]) !== null)) { prevCol = c; break; }
+        if (dataRows.some(r => parseDecimal(r[c]) !== null)) { prevCol = c; break; }
       }
 
       return dataRows.map((r, i) => {
         const label = r[0] || `Voce ${i + 1}`;
         const sub = numCol > 1 ? (r[1] || '') : '';
         const rawVal = r[numCol] || '0';
-        const val = parseNum(rawVal) ?? 0;
-        const prevVal = prevCol >= 0 ? parseNum(r[prevCol]) : null;
+        const val = parseDecimal(rawVal) ?? 0;
+        const prevVal = prevCol >= 0 ? parseDecimal(r[prevCol]) : null;
         const customColor = r.find(cell => /^#[0-9A-Fa-f]{6}$/.test(cell));
         return { label, sub, rawVal, val, prevVal, color: customColor || PALETTE[i % PALETTE.length] };
       });
@@ -1047,13 +931,14 @@
       if (!currentSheet) return;
       viewerTitle.textContent = currentSheet.title;
       const rows = currentSheet.rows;
+      const mode = detectLayout(rows, currentSheet.title);
 
       if (!rows.length) {
         viewerBody.innerHTML = `<div style="margin:auto; color:#64748b; font-weight:700;">Questo foglio è ancora vuoto.</div>`;
         return;
       }
 
-      if (currentMode === 'vbars') {
+      if (mode === 'vbars') {
         viewerTypeMeta.textContent = 'Tocca una colonna per isolarla';
         const items = extractChartItems(rows);
         const maxVal = Math.max(...items.map(it => it.val), 1);
@@ -1093,14 +978,14 @@
           });
         });
 
-      } else if (currentMode === 'hbars') {
-        viewerTypeMeta.textContent = 'Tocca una barra per isolarla';
+      } else if (mode === 'hbars' || mode === 'flussi' || mode === 'preferenze') {
+        viewerTypeMeta.textContent = mode === 'preferenze' ? 'Classifica preferenze candidati' : mode === 'flussi' ? 'Analisi flussi elettorali' : 'Tocca una barra per isolarla';
         const items = extractChartItems(rows);
         const maxVal = Math.max(...items.map(it => it.val), 1);
 
         viewerBody.innerHTML = `
           <div class="hbars-list" id="hbarsList">
-            ${items.map(it => {
+            ${items.map((it, idx) => {
               const wPct = Math.max(4, Math.min(100, Math.round((it.val / maxVal) * 100)));
               let diffHtml = '';
               if (it.prevVal !== null) {
@@ -1109,10 +994,12 @@
                 const sign = diff > 0 ? '+' : '';
                 diffHtml = `<span style="font-size:13px; font-weight:800; color:${fg}; margin-right:8px;">(${sign}${String(diff).replace('.', ',')})</span>`;
               }
+              const rankBadge = mode === 'preferenze' ? `<span style="background:${it.color}; color:#fff; font-size:12px; font-weight:900; padding:2px 8px; border-radius:6px; margin-right:8px;">#${idx + 1}</span>` : '';
               return `
                 <div class="hbar-row">
                   <div class="hbar-top">
                     <div>
+                      ${rankBadge}
                       <span style="font-size:17px; font-weight:900; color:#0f172a;">${it.label}</span>
                       ${it.sub ? `<span style="font-size:13px; font-weight:600; color:#64748b; margin-left:8px;">${it.sub}</span>` : ''}
                     </div>
@@ -1137,7 +1024,7 @@
           });
         });
 
-      } else if (currentMode === 'news') {
+      } else if (mode === 'news') {
         viewerTypeMeta.textContent = 'Tocca una notizia per ingrandirla a schermo intero';
         const dataRows = rows.slice(1);
 
@@ -1167,6 +1054,206 @@
         viewerBody.querySelectorAll('.news-card').forEach(card => {
           card.addEventListener('click', () => card.classList.toggle('expanded'));
         });
+
+      } else if (mode === 'ballot' || mode === 'referendum') {
+        const r1 = rows[1] || ['Opzione 1', '', '50%', '', '#16a34a'];
+        const r2 = rows[2] || ['Opzione 2', '', '50%', '', '#e11d48'];
+        const p1 = parseDecimal(r1[2]) ?? 50;
+        const p2 = parseDecimal(r2[2]) ?? 50;
+        const tot = (p1 + p2) || 100;
+        const w1 = Math.round((p1 / tot) * 100);
+        const w2 = 100 - w1;
+        const c1 = r1.find(c => /^#[0-9A-Fa-f]{6}$/.test(c)) || (mode === 'referendum' ? '#16a34a' : '#0b3d75');
+        const c2 = r2.find(c => /^#[0-9A-Fa-f]{6}$/.test(c)) || '#e11d48';
+        const gap = Math.abs(p1 - p2).toFixed(1).replace('.', ',');
+        const quorumVal = mode === 'referendum' && r1[4] && !r1[4].startsWith('#') ? r1[4] : '';
+        viewerTypeMeta.textContent = quorumVal ? `Quorum attuale: ${quorumVal} (Soglia 50% + 1)` : 'Sfida Diretta • Soglia 50%';
+
+        viewerBody.innerHTML = `
+          <div class="ballot-stage">
+            <div class="ballot-cards">
+              <div class="ballot-cand" style="border-top-color:${c1};">
+                <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase;">${r1[1] || ''}</div>
+                <div style="font-size:28px; font-weight:900; color:#0f172a; margin:4px 0;">${r1[0]}</div>
+                <div style="font-size:46px; font-weight:900; color:${c1}; line-height:1;">${r1[2]}</div>
+                ${r1[3] && !r1[3].startsWith('#') ? `<div style="font-size:13px; font-weight:700; color:#475569; margin-top:8px;">${r1[3]}</div>` : ''}
+              </div>
+              <div style="text-align:center;">
+                <div class="ballot-vs">VS</div>
+                <div style="font-size:11px; font-weight:800; color:#64748b; margin-top:6px;">SCARTO<br>${gap} pt</div>
+              </div>
+              <div class="ballot-cand" style="border-top-color:${c2}; text-align:right;">
+                <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase;">${r2[1] || ''}</div>
+                <div style="font-size:28px; font-weight:900; color:#0f172a; margin:4px 0;">${r2[0]}</div>
+                <div style="font-size:46px; font-weight:900; color:${c2}; line-height:1;">${r2[2]}</div>
+                ${r2[3] && !r2[3].startsWith('#') ? `<div style="font-size:13px; font-weight:700; color:#475569; margin-top:8px;">${r2[3]}</div>` : ''}
+              </div>
+            </div>
+            <div style="position:relative;">
+              <div class="ballot-50-line"></div>
+              <div class="ballot-bar-wrap">
+                <div style="width:${w1}%; background:${c1};"></div>
+                <div style="width:${w2}%; background:${c2};"></div>
+              </div>
+              <div style="text-align:center; font-size:11px; font-weight:800; color:#475569; margin-top:6px;">SOGLIA MAGGIORANZA 50%</div>
+            </div>
+          </div>
+        `;
+
+      } else if (mode === 'seggi') {
+        const dataRows = rows.slice(1);
+        const items = dataRows.map((r, i) => ({
+          name: r[0] || `Lista ${i + 1}`,
+          seats: parseNum(r[1]) ?? 0,
+          group: r[2] || '',
+          color: r.find(c => /^#[0-9A-Fa-f]{6}$/.test(c)) || PALETTE[i % PALETTE.length]
+        }));
+        const totalSeats = items.reduce((acc, it) => acc + it.seats, 0) || 1;
+        const majority = Math.floor(totalSeats / 2) + 1;
+        viewerTypeMeta.textContent = `Totale: ${totalSeats} seggi • Maggioranza assoluta: ${majority}`;
+
+        viewerBody.innerHTML = `
+          <div class="seggi-stage">
+            <div class="seggi-bar-box">
+              <div class="seggi-maj-marker">Maggioranza: ${majority}</div>
+              <div class="seggi-bar">
+                ${items.map(it => {
+                  const pct = (it.seats / totalSeats) * 100;
+                  return `<div style="width:${pct}%; background:${it.color}; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:15px;">${it.seats > 0 ? it.seats : ''}</div>`;
+                }).join('')}
+              </div>
+            </div>
+            <div class="seggi-grid">
+              ${items.map(it => `
+                <div class="seggi-item" style="border-left:6px solid ${it.color};">
+                  <div>
+                    <div style="font-size:16px; font-weight:900; color:#0f172a;">${it.name}</div>
+                    ${it.group ? `<div style="font-size:12px; font-weight:600; color:#64748b;">${it.group}</div>` : ''}
+                  </div>
+                  <div style="font-size:28px; font-weight:900; color:${it.color};">${it.seats}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+
+      } else if (mode === 'scrutinio' || mode === 'affluenza_ore') {
+        viewerTypeMeta.textContent = mode === 'scrutinio' ? 'Avanzamento spoglio e riepilogo schede' : 'Confronto orario affluenza alle urne';
+        const dataRows = rows.slice(1);
+        viewerBody.innerHTML = `
+          <div class="aff-grid">
+            ${dataRows.map((r, idx) => {
+              const title = r[0] || `Dato ${idx + 1}`;
+              const valStr = r[1] || '';
+              const subStr = r[2] || '';
+              let badge = '';
+              if (mode === 'affluenza_ore') {
+                const v1 = parseDecimal(valStr);
+                const v2 = parseDecimal(subStr);
+                if (v1 !== null && v2 !== null) {
+                  const diff = +(v1 - v2).toFixed(2);
+                  const bg = diff > 0 ? '#dcfce7' : diff < 0 ? '#fee2e2' : '#f1f5f9';
+                  const fg = diff > 0 ? '#15803d' : diff < 0 ? '#b91c1c' : '#64748b';
+                  const sign = diff > 0 ? '▲ +' : diff < 0 ? '▼ ' : '• ';
+                  badge = `<span style="background:${bg}; color:${fg}; font-size:13px; font-weight:800; padding:4px 10px; border-radius:999px;">${sign}${String(diff).replace('.', ',')} pt</span>`;
+                }
+              }
+              return `
+                <div class="aff-card">
+                  <div style="font-size:13px; font-weight:800; text-transform:uppercase; color:#64748b;">${title}</div>
+                  <div style="font-size:36px; font-weight:900; color:#0b3d75; line-height:1.05;">${valStr}</div>
+                  ${subStr ? `<div style="font-size:13px; font-weight:700; color:#475569;">${mode === 'affluenza_ore' ? 'Precedente: ' : ''}${subStr}</div>` : ''}
+                  ${badge}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+
+      } else if (mode === 'comuni' || mode === 'quartieri') {
+        viewerTypeMeta.textContent = mode === 'comuni' ? 'Situazione nei comuni al voto' : 'Risultati per quartieri / collegi';
+        const dataRows = rows.slice(1);
+        viewerBody.innerHTML = `
+          <div class="comuni-grid">
+            ${dataRows.map((r, i) => {
+              const color = r.find(c => /^#[0-9A-Fa-f]{6}$/.test(c)) || PALETTE[i % PALETTE.length];
+              if (mode === 'comuni') {
+                const comune = r[0] || '';
+                const uscente = r[1] || '';
+                const sindaco = r[2] || '';
+                const partito = r[3] || '';
+                const perc = r[4] || '';
+                const esito = r[5] || '';
+                const isRibaltone = esito.toUpperCase().includes('RIBALTON');
+                return `
+                  <div class="comune-card" style="border-left-color:${color};">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-size:19px; font-weight:900; color:#0f172a;">${comune}</span>
+                      ${esito ? `<span style="font-size:11px; font-weight:800; padding:3px 8px; border-radius:6px; background:${isRibaltone ? '#fee2e2' : '#dcfce7'}; color:${isRibaltone ? '#b91c1c' : '#15803d'};">${esito.toUpperCase()}</span>` : ''}
+                    </div>
+                    <div style="font-size:16px; font-weight:800; color:${color};">${sindaco} ${perc ? `(${perc})` : ''}</div>
+                    <div style="font-size:12.5px; font-weight:600; color:#64748b;">${partito}${uscente ? ` • Uscente: ${uscente}` : ''}</div>
+                  </div>
+                `;
+              } else {
+                const zona = r[0] || '';
+                const leader = r[1] || '';
+                const perc = r[2] || '';
+                const secondo = r[3] || '';
+                const sezioni = r[4] || '';
+                return `
+                  <div class="comune-card" style="border-left-color:${color};">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-size:18px; font-weight:900; color:#0f172a;">${zona}</span>
+                      ${sezioni ? `<span style="font-size:11px; font-weight:800; color:#64748b;">Sez. ${sezioni}</span>` : ''}
+                    </div>
+                    <div style="font-size:18px; font-weight:900; color:${color};">${leader} — ${perc}</div>
+                    ${secondo ? `<div style="font-size:12.5px; font-weight:600; color:#64748b;">2°: ${secondo}</div>` : ''}
+                  </div>
+                `;
+              }
+            }).join('')}
+          </div>
+        `;
+
+      } else if (mode === 'forchetta') {
+        viewerTypeMeta.textContent = 'Proiezioni & Exit Poll (Forchetta Min – Max)';
+        const dataRows = rows.slice(1);
+        const items = dataRows.map((r, i) => ({
+          name: r[0] || '',
+          sub: r[1] || '',
+          min: parseDecimal(r[2]) ?? 0,
+          max: parseDecimal(r[3]) ?? 0,
+          minStr: r[2] || '0%',
+          maxStr: r[3] || '0%',
+          note: r[4] && !r[4].startsWith('#') ? r[4] : '',
+          color: r.find(c => /^#[0-9A-Fa-f]{6}$/.test(c)) || PALETTE[i % PALETTE.length]
+        }));
+        const scaleMax = Math.max(...items.map(it => it.max), 60);
+
+        viewerBody.innerHTML = `
+          <div class="hbars-list">
+            ${items.map(it => {
+              const leftPct = Math.max(0, (it.min / scaleMax) * 100);
+              const widthPct = Math.max(4, ((it.max - it.min) / scaleMax) * 100);
+              return `
+                <div class="hbar-row">
+                  <div class="hbar-top">
+                    <div>
+                      <span style="font-size:18px; font-weight:900; color:#0f172a;">${it.name}</span>
+                      ${it.sub ? `<span style="font-size:13px; font-weight:600; color:#64748b; margin-left:8px;">${it.sub}</span>` : ''}
+                    </div>
+                    <div style="font-size:20px; font-weight:900; color:${it.color};">${it.minStr} &ndash; ${it.maxStr}</div>
+                  </div>
+                  <div class="range-track">
+                    <div class="range-band" style="left:${leftPct}%; width:${widthPct}%; background:${it.color};"></div>
+                  </div>
+                  ${it.note ? `<div style="font-size:11.5px; font-weight:700; color:#64748b;">${it.note}</div>` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
 
       } else {
         viewerTypeMeta.textContent = 'Tocca una riga per evidenziarla';
