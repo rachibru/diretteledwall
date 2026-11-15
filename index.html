@@ -1,1229 +1,949 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>br.it/ledwall - Rassegna Stampa TV</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Inter & Playfair Display -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --brand-blue: #0b3d75;
-            --brand-blue-dark: #082d57;
-            --brand-blue-border: #165296;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="br.it/ledwall" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>br.it/ledwall - Rassegna Stampa</title>
+  <style>
+    :root {
+      --brand-blue: #0b3d75;
+      --brand-blue-dark: #072a52;
+      --brand-accent: #1d6fd1;
+      --studio-bg: #e7ebf0;
+      --studio-bg-light: #f5f7fa;
+      --live-red: #e52521;
+      --header-h: 44px;
+    }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            /* Sfondo chiaro studio TV stile Sky TG24 */
-            background-color: #e5e7eb;
-            color: #0f172a;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
-        }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at 50% 25%, var(--studio-bg-light) 0%, var(--studio-bg) 75%, #d6dde6 100%);
+      color: #1a2433;
+    }
 
-        /* Sfondo architettonico studio televisivo chiaro (grigio-argento / bianco perla) */
-        .sky-studio-bg {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background:
-                radial-gradient(ellipse at 50% 38%, #f8fafc 0%, #f1f5f9 35%, #e2e8f0 70%, #cbd5e1 100%);
-            pointer-events: none;
-        }
+    /* TOP BAR SOTTILE SU UNICA RIGA */
+    header.topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: calc(var(--header-h) + env(safe-area-inset-top));
+      padding-top: env(safe-area-inset-top);
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
+      background: linear-gradient(180deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(7, 42, 82, 0.25);
+    }
 
-        /* Sottili pannelli e linee di fuga architettoniche del ledwall */
-        .sky-studio-grid {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background-image:
-                linear-gradient(to right, rgba(148, 163, 184, 0.14) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(148, 163, 184, 0.14) 1px, transparent 1px),
-                radial-gradient(circle at 50% 100%, rgba(11, 61, 117, 0.06) 0%, transparent 60%);
-            background-size: 120px 120px, 120px 120px, 100% 100%;
-            pointer-events: none;
-        }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
 
-        /* Barra superiore blu istituzionale brunorachiele.it (52px) */
-        #top-header {
-            height: 52px;
-            background: linear-gradient(180deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
-            border-bottom: 1px solid var(--brand-blue-border);
-            box-shadow: 0 4px 16px rgba(8, 45, 87, 0.25);
-        }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--live-red);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(229, 37, 33, 0.5);
+    }
 
-        /* Card delle prime pagine sul Ledwall */
-        .newspaper-card {
-            background: #ffffff;
-            border-radius: 4px;
-            box-shadow:
-                0 10px 24px -4px rgba(15, 23, 42, 0.22),
-                0 4px 8px -2px rgba(15, 23, 42, 0.12),
-                0 0 0 1px rgba(148, 163, 184, 0.45);
-            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease;
-            overflow: hidden;
-            position: relative;
-        }
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse 1.4s infinite ease-in-out;
+    }
 
-        .newspaper-card:hover, .newspaper-card:active {
-            transform: translateY(-5px) scale(1.025);
-            box-shadow:
-                0 20px 35px -5px rgba(11, 61, 117, 0.32),
-                0 8px 15px -3px rgba(15, 23, 42, 0.18),
-                0 0 0 2px #0b3d75;
-            z-index: 10;
-        }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.8); }
+    }
 
-        /* Effetto sfocatura del muro quando si apre un quotidiano */
-        .wall-blurred {
-            filter: blur(10px) brightness(0.88);
-            transform: scale(0.98);
-            pointer-events: none;
-        }
+    .brand-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      color: #fff;
+      white-space: nowrap;
+      cursor: pointer;
+    }
 
-        /* Viewport del giornale aperto: contiene lo zoom interno senza ingrandire lo schermo */
-        #reader-viewport {
-            touch-action: none; /* Disabilita gesti nativi browser dentro l'area di lettura/disegno */
-            overflow: hidden;
-            position: relative;
-        }
+    .brand-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.25);
+      flex-shrink: 0;
+    }
 
-        /* Contenitore foto + canvas evidenziatore che si trasforma insieme */
-        #paper-transform-layer {
-            transform-origin: center center;
-            will-change: transform;
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.38), 0 0 0 1px rgba(148, 163, 184, 0.5);
-            background: #ffffff;
-        }
+    .view-subtitle {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.82);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-        #paper-transform-layer.smooth-anim {
-            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-        }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
 
-        /* Fusione realistica dell'inchiostro evidenziatore sulla carta del giornale */
-        #freehand-canvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            mix-blend-mode: multiply;
-            pointer-events: none;
-        }
+    .btn-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.2s;
+    }
 
-        /* Barra flottante inferiore stile broadcast */
-        #reader-toolbar {
-            transition: opacity 0.25s ease, transform 0.25s ease;
-        }
+    .btn-top:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
 
-        #reader-toolbar.hud-hidden {
-            opacity: 0;
-            transform: translate(-50%, 24px);
-            pointer-events: none;
-        }
+    .btn-top:active {
+      transform: scale(0.97);
+    }
 
-        /* Scrollbar discreta per griglia su schermi piccoli */
-        #ledwall-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        #ledwall-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        #ledwall-scroll::-webkit-scrollbar-thumb {
-            background: rgba(100, 116, 139, 0.35);
-            border-radius: 9999px;
-        }
-    </style>
+    .btn-icon-only {
+      padding: 0 7px;
+    }
+
+    body.on-air-clean #btnRefresh {
+      display: none;
+    }
+
+    body.on-air-clean #btnToggleClean {
+      opacity: 0.35;
+      border-color: transparent;
+      background: transparent;
+    }
+
+    /* MURO LEDWALL / GRIGLIA GIORNALI */
+    main.ledwall-stage {
+      position: fixed;
+      top: calc(var(--header-h) + env(safe-area-inset-top));
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 18px 20px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .wall-grid {
+      width: 100%;
+      max-width: 1520px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (min-width: 1024px) {
+      .wall-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .wall-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+    }
+
+    .paper-card {
+      position: relative;
+      background: #fff;
+      border-radius: 4px;
+      padding: 5px;
+      box-shadow: 0 8px 20px rgba(15, 28, 46, 0.14), 0 1px 3px rgba(15, 28, 46, 0.1);
+      cursor: pointer;
+      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s ease;
+      aspect-ratio: 1 / 1.38;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .paper-card:hover {
+      transform: translateY(-4px) scale(1.015);
+      box-shadow: 0 14px 28px rgba(11, 61, 117, 0.22);
+    }
+
+    .paper-card:active {
+      transform: scale(0.98);
+    }
+
+    .paper-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      border-radius: 2px;
+      display: block;
+      background: #f0f2f5;
+    }
+
+    .paper-badge-edited {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ffeb3b;
+      border: 1.5px solid #0b3d75;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      display: none;
+    }
+
+    .paper-card.has-marks .paper-badge-edited {
+      display: block;
+    }
+
+    /* STATO CARICAMENTO / ERRORE */
+    .status-banner {
+      margin: auto;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 24px 32px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(11, 61, 117, 0.12);
+      max-width: 440px;
+    }
+
+    .spinner {
+      width: 34px;
+      height: 34px;
+      border: 3px solid #d0dbe8;
+      border-top-color: var(--brand-blue);
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* VIEWER SINGOLO GIORNALE (ZOOM INTERNO + EVIDENZIATORE) */
+    .viewer-overlay {
+      position: fixed;
+      top: calc(var(--header-h) + env(safe-area-inset-top));
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(226, 232, 240, 0.86);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 90;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .viewer-overlay.active {
+      display: flex;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* RIQUADRO FISSO IN CUI LA FOTO SI INGRANDISCE INTERNAMENTE */
+    .viewport-frame {
+      position: relative;
+      width: min(92vw, 760px);
+      height: calc(100% - 76px);
+      margin-bottom: 58px;
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 22px 55px rgba(10, 25, 47, 0.28);
+      overflow: hidden;
+      touch-action: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .zoom-layer {
+      position: relative;
+      transform-origin: 0 0;
+      will-change: transform;
+      display: inline-block;
+    }
+
+    .zoom-layer img {
+      display: block;
+      max-width: min(92vw, 760px);
+      max-height: calc(100vh - var(--header-h) - 82px);
+      width: auto;
+      height: auto;
+      pointer-events: none;
+    }
+
+    .draw-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    .viewport-frame.draw-mode .draw-canvas {
+      pointer-events: auto;
+      cursor: crosshair;
+    }
+
+    /* FRECCE NAVIGAZIONE LATERALI */
+    .nav-arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-20%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(11, 61, 117, 0.18);
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--brand-blue);
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+      z-index: 95;
+    }
+
+    .nav-arrow:active {
+      transform: translateY(-20%) scale(0.92);
+    }
+
+    .nav-prev { left: max(12px, env(safe-area-inset-left)); }
+    .nav-next { right: max(12px, env(safe-area-inset-right)); }
+
+    /* BARRA STRUMENTI IN BASSO (TORNA INDIETRO, ZOOM FOTO, EVIDENZIATORI) */
+    .viewer-dock {
+      position: fixed;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(11, 61, 117, 0.96);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 28px rgba(7, 42, 82, 0.35);
+      z-index: 96;
+      max-width: 96vw;
+      overflow-x: auto;
+    }
+
+    .dock-btn {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .dock-btn.primary-back {
+      background: #fff;
+      color: var(--brand-blue);
+      border-color: #fff;
+    }
+
+    .dock-btn.active-tool {
+      background: #ffeb3b;
+      color: #072a52;
+      border-color: #ffeb3b;
+    }
+
+    .dock-sep {
+      width: 1px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.22);
+      flex-shrink: 0;
+    }
+
+    .color-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s;
+    }
+
+    .color-dot.selected {
+      transform: scale(1.2);
+      border-color: #fff;
+      box-shadow: 0 0 0 2px #0b3d75, 0 0 0 4px #fff;
+    }
+  </style>
 </head>
-<body class="flex flex-col h-screen w-screen">
+<body>
 
-    <!-- Sfondo studio televisivo chiaro stile Sky TG24 -->
-    <div class="sky-studio-bg"></div>
-    <div class="sky-studio-grid"></div>
+  <!-- BARRA SUPERIORE COMPATTA SU UNICA RIGA -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+      <span class="brand-title" id="brandLogo" title="Doppio tocco per mostrare/nascondere controlli">br.it/ledwall</span>
+      <span class="brand-divider"></span>
+      <span class="view-subtitle" id="headerSubtitle">Prime Pagine</span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-top" id="btnRefresh" title="Ricarica prime pagine dal sito">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        <span>Aggiorna</span>
+      </button>
+      <button class="btn-top btn-icon-only" id="btnToggleClean" title="Nascondi/Mostra tasto Aggiorna in onda">
+        <svg id="eyeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      </button>
+    </div>
+  </header>
 
-    <!-- BARRA SUPERIORE BLU ISTITUZIONALE (52px) -->
-    <header id="top-header" class="relative z-40 w-full px-3 sm:px-5 flex items-center justify-between shrink-0 text-white">
-        
-        <!-- Sinistra: Indicatore LIVE + br.it/ledwall -->
-        <div class="flex items-center gap-2.5 sm:gap-3">
-            <div class="flex items-center gap-1.5 bg-red-600 text-white text-[11px] sm:text-xs font-extrabold px-2.5 py-1 rounded tracking-wider uppercase shadow-sm">
-                <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-                <span>LIVE</span>
-            </div>
-            <div class="flex items-baseline gap-2">
-                <span class="font-extrabold text-base sm:text-lg tracking-tight text-white">br.it/ledwall</span>
-                <span id="edition-badge" class="hidden md:inline-block text-xs font-medium text-sky-200/90 border-l border-sky-400/30 pl-2">
-                    Prime Pagine
-                </span>
-            </div>
-        </div>
+  <!-- MURO GIORNALI -->
+  <main class="ledwall-stage" id="ledwallStage">
+    <div class="status-banner" id="statusBox">
+      <div class="spinner"></div>
+      <div style="font-weight:700; color:#0b3d75; margin-bottom:4px;">Caricamento Prime Pagine...</div>
+      <div style="font-size:12px; color:#52637a;">Estrazione da brunorachiele.it</div>
+    </div>
+    <div class="wall-grid" id="wallGrid" style="display:none;"></div>
+  </main>
 
-        <!-- Destra: Azioni principali touch-friendly -->
-        <div class="flex items-center gap-2">
-            <!-- Pulsante Torna Indietro (visibile quando un giornale è aperto) -->
-            <button id="header-back-btn" onclick="closeReader()" class="hidden items-center gap-1.5 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-bold text-xs sm:text-sm px-3.5 h-9 rounded-lg shadow transition cursor-pointer">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                <span>Torna indietro</span>
-            </button>
+  <!-- VIEWER SINGOLO GIORNALE -->
+  <div class="viewer-overlay" id="viewerOverlay">
+    <button class="nav-arrow nav-prev" id="btnPrev" title="Precedente">&#8249;</button>
+    <button class="nav-arrow nav-next" id="btnNext" title="Successivo">&#8250;</button>
 
-            <!-- Pulsante Aggiorna dal sito brunorachiele.it -->
-            <button id="btn-sync-blog" onclick="fetchFromBlog(true)" class="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 active:bg-white/30 text-white border border-white/20 text-xs sm:text-sm font-medium px-3 h-9 rounded-lg transition cursor-pointer" title="Ricarica le prime pagine da brunorachiele.it">
-                <svg id="sync-icon" class="w-4 h-4 text-sky-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                <span class="hidden sm:inline">Aggiorna dal sito</span>
-                <span class="sm:hidden">Aggiorna</span>
-            </button>
-
-            <!-- Caricamento manuale di backup -->
-            <input type="file" id="manual-file-input" multiple accept="image/*" class="hidden">
-            <button onclick="document.getElementById('manual-file-input').click()" class="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-sky-100 border border-white/15 text-xs sm:text-sm font-medium px-2.5 sm:px-3 h-9 rounded-lg transition cursor-pointer" title="Carica immagini dal dispositivo">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                <span class="hidden md:inline">Carica File</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- AREA 1: LEDWALL (GRIGLIA PRIME PAGINE) -->
-    <main id="ledwall-scroll" class="relative z-10 flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6 flex items-center justify-center transition-all duration-300">
-        
-        <!-- Loader iniziale durante estrazione da brunorachiele.it -->
-        <div id="loading-panel" class="flex flex-col items-center justify-center text-center bg-white/80 backdrop-blur-md border border-slate-200 px-8 py-7 rounded-2xl shadow-xl">
-            <div class="w-10 h-10 border-4 border-[#0b3d75] border-t-transparent rounded-full animate-spin mb-3"></div>
-            <p class="text-sm sm:text-base font-bold text-slate-800">Caricamento prime pagine in corso...</p>
-            <p class="text-xs text-slate-500 mt-1">Connessione a brunorachiele.it</p>
-        </div>
-
-        <!-- Griglia Responsive (Ottimizzata per iPad Landscape 4x2 / 5x2 e Portrait 2x4 / 3x3) -->
-        <div id="newspapers-grid" class="hidden w-full max-w-[1440px] mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 md:gap-6 place-items-center my-auto">
-            <!-- Card generate via JavaScript -->
-        </div>
-    </main>
-
-    <!-- AREA 2: LETTORE GIORNALE IN PRIMO PIANO (ZOOM SOLO SULLA FOTO + EVIDENZIATORE A MANO LIBERA) -->
-    <section id="reader-overlay" class="fixed inset-x-0 top-[52px] bottom-0 z-30 hidden flex-col items-center justify-center bg-slate-900/35 backdrop-blur-sm">
-        
-        <!-- Riquadro Viewport del giornale: lo zoom avviene SOLO qui dentro -->
-        <div id="reader-viewport" class="w-full h-full flex items-center justify-center p-2 sm:p-4">
-            
-            <!-- Livello trasformabile (Foto + Canvas solidali) -->
-            <div id="paper-transform-layer" class="rounded-sm overflow-hidden">
-                <img id="active-paper-img" src="" alt="Prima Pagina" class="block max-h-[calc(100vh-140px)] max-w-[94vw] w-auto h-auto object-contain pointer-events-none select-none" draggable="false">
-                <canvas id="freehand-canvas"></canvas>
-            </div>
-
-        </div>
-
-        <!-- Frecce Navigazione Laterali grandi per Tablet -->
-        <button id="btn-prev-paper" onclick="switchPaper(-1)" class="fixed left-2 sm:left-5 top-1/2 -translate-y-1/2 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0b3d75]/90 hover:bg-[#0b3d75] text-white border border-white/25 shadow-xl flex items-center justify-center transition active:scale-95 cursor-pointer" title="Quotidiano precedente">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
-        </button>
-
-        <button id="btn-next-paper" onclick="switchPaper(1)" class="fixed right-2 sm:right-5 top-1/2 -translate-y-1/2 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0b3d75]/90 hover:bg-[#0b3d75] text-white border border-white/25 shadow-xl flex items-center justify-center transition active:scale-95 cursor-pointer" title="Quotidiano successivo">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-        </button>
-
-        <!-- BARRA FLOTTANTE STRUMENTI TOUCH (Zoom foto, Evidenziatore mano libera, Torna indietro) -->
-        <div id="reader-toolbar" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 max-w-[96vw] bg-slate-900/92 backdrop-blur-xl text-white border border-slate-700/80 px-2.5 py-2 rounded-2xl shadow-2xl flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
-            
-            <!-- Pulsante Torna Indietro -->
-            <button onclick="closeReader()" class="flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-bold text-xs sm:text-sm px-3 h-11 rounded-xl transition cursor-pointer shrink-0">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                <span>Indietro</span>
-            </button>
-
-            <div class="h-7 w-px bg-slate-700 mx-0.5"></div>
-
-            <!-- Selettore Modalità: Mano (Sposta/Zoom) vs Evidenziatore a Mano Libera -->
-            <div class="flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700">
-                <button id="tool-pan" onclick="setTool('pan')" class="flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold bg-[#0b3d75] text-white shadow transition cursor-pointer" title="Sposta e ingrandisci la foto">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"></path></svg>
-                    <span class="hidden sm:inline">Sposta</span>
-                </button>
-                <button id="tool-draw" onclick="setTool('draw')" class="flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer" title="Evidenziatore a mano libera">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                    <span>Evidenzia</span>
-                </button>
-            </div>
-
-            <!-- Colori Evidenziatore (44px touch target) -->
-            <div class="flex items-center gap-1 bg-slate-800/80 px-2 h-11 rounded-xl border border-slate-700/70">
-                <button onclick="setBrushColor('#fde047', this)" class="swatch-btn w-7 h-7 rounded-full bg-[#fde047] ring-2 ring-white scale-110 transition cursor-pointer" aria-label="Giallo"></button>
-                <button onclick="setBrushColor('#86efac', this)" class="swatch-btn w-7 h-7 rounded-full bg-[#86efac] opacity-80 hover:opacity-100 transition cursor-pointer" aria-label="Verde"></button>
-                <button onclick="setBrushColor('#f9a8d4', this)" class="swatch-btn w-7 h-7 rounded-full bg-[#f9a8d4] opacity-80 hover:opacity-100 transition cursor-pointer" aria-label="Rosa"></button>
-                <button onclick="setBrushColor('#7dd3fc', this)" class="swatch-btn w-7 h-7 rounded-full bg-[#7dd3fc] opacity-80 hover:opacity-100 transition cursor-pointer" aria-label="Azzurro"></button>
-            </div>
-
-            <!-- Spessore tratto evidenziatore -->
-            <div class="hidden md:flex items-center gap-1 bg-slate-800/80 px-2 h-11 rounded-xl border border-slate-700/70" title="Spessore tratto">
-                <button onclick="setBrushSize(0.014, this)" class="size-btn w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:bg-slate-700 cursor-pointer">
-                    <span class="w-2 h-2 rounded-full bg-current"></span>
-                </button>
-                <button onclick="setBrushSize(0.024, this)" class="size-btn w-8 h-8 rounded-lg flex items-center justify-center bg-slate-700 text-white cursor-pointer">
-                    <span class="w-3.5 h-3.5 rounded-full bg-current"></span>
-                </button>
-                <button onclick="setBrushSize(0.038, this)" class="size-btn w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:bg-slate-700 cursor-pointer">
-                    <span class="w-5 h-5 rounded-full bg-current"></span>
-                </button>
-            </div>
-
-            <!-- Undo & Cancella tratti -->
-            <div class="flex items-center gap-1">
-                <button onclick="undoStroke()" class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center transition cursor-pointer" title="Annulla ultimo tratto">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
-                </button>
-                <button onclick="clearStrokes()" class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-red-900/60 text-slate-200 hover:text-red-300 border border-slate-700 flex items-center justify-center transition cursor-pointer" title="Cancella tutte le evidenziature">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                </button>
-            </div>
-
-            <div class="h-7 w-px bg-slate-700 mx-0.5 hidden sm:block"></div>
-
-            <!-- Controlli Zoom Foto -->
-            <div class="flex items-center gap-1 bg-slate-800 px-1.5 h-11 rounded-xl border border-slate-700">
-                <button onclick="changePhotoZoom(-0.35)" class="w-9 h-9 rounded-lg hover:bg-slate-700 flex items-center justify-center text-white font-bold text-lg cursor-pointer" title="Riduci foto">-</button>
-                <button onclick="resetPhotoZoom()" id="zoom-pct-btn" class="px-2 h-9 rounded-lg hover:bg-slate-700 font-mono text-xs text-sky-300 font-semibold cursor-pointer" title="Ripristina 100%">100%</button>
-                <button onclick="changePhotoZoom(0.35)" class="w-9 h-9 rounded-lg hover:bg-slate-700 flex items-center justify-center text-white font-bold text-lg cursor-pointer" title="Ingrandisci foto">+</button>
-            </div>
-
-            <!-- Modalità Diretta Pulita (nasconde barra flottante) -->
-            <button onclick="toggleCleanLiveHud()" class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 flex items-center justify-center transition cursor-pointer" title="Nascondi barra strumenti per diretta pulita">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-            </button>
-        </div>
-
-        <!-- Pulsante discreto per riaprire gli strumenti quando nascosti -->
-        <button id="show-hud-btn" onclick="toggleCleanLiveHud()" class="hidden fixed bottom-4 right-4 z-40 bg-[#0b3d75]/90 text-white border border-white/25 px-3.5 h-11 rounded-full shadow-xl text-xs font-semibold items-center gap-1.5 backdrop-blur-md cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-            <span>Strumenti</span>
-        </button>
-    </section>
-
-    <!-- Notifica Toast discreta -->
-    <div id="toast-banner" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white border border-slate-700 px-4 py-2 rounded-full text-xs font-medium shadow-xl opacity-0 pointer-events-none transition-opacity duration-300 text-center max-w-[90vw]">
-        Messaggio
+    <div class="viewport-frame" id="viewportFrame">
+      <div class="zoom-layer" id="zoomLayer">
+        <img id="activeImage" alt="Prima Pagina" crossorigin="anonymous" />
+        <canvas class="draw-canvas" id="drawCanvas"></canvas>
+      </div>
     </div>
 
-    <script>
-        /**
-         * CONFIGURAZIONE E STATO GLOBALE
-         */
-        const TARGET_BLOG_URL = 'https://www.brunorachiele.it/p/prime-pagine-dei-giornali.html';
-        const BLOGGER_FEED_URL = 'https://www.brunorachiele.it/feeds/pages/default?alt=json';
+    <div class="viewer-dock">
+      <button class="dock-btn primary-back" id="btnBack">&#8592; Torna indietro</button>
+      <div class="dock-sep"></div>
+      <button class="dock-btn" id="btnZoomOut" title="Riduci foto">&#8722;</button>
+      <button class="dock-btn" id="btnZoomReset" title="Adatta foto">100%</button>
+      <button class="dock-btn" id="btnZoomIn" title="Ingrandisci foto">&#43;</button>
+      <div class="dock-sep"></div>
+      <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
+      <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.55)" style="background:#ffee00;" title="Giallo"></span>
+      <span class="color-dot" data-color="rgba(0, 230, 118, 0.45)" style="background:#00e676;" title="Verde"></span>
+      <span class="color-dot" data-color="rgba(255, 82, 82, 0.45)" style="background:#ff5252;" title="Rosso"></span>
+      <button class="dock-btn" id="btnClearMarks" title="Cancella tratti">Pulisci</button>
+    </div>
+  </div>
 
-        const appState = {
-            papers: [],           // { id, title, src, strokes: [ { color, size, points: [{x, y}] } ], isDemo }
-            activeIndex: -1,
-            isReaderOpen: false,
-            activeTool: 'pan',    // 'pan' (sposta/zoom) | 'draw' (evidenziatore mano libera)
-            brushColor: '#fde047',
-            brushSize: 0.024,     // Spessore normalizzato rispetto alla larghezza immagine
-            isHudHidden: false,
+  <script>
+    const TARGET_PAGE_URL = 'https://www.brunorachiele.it/p/prime-pagine-dei-giornali.html';
+    const BLOG_ORIGIN = 'https://www.brunorachiele.it';
 
-            // Stato trasformazione interna SOLO della foto del giornale
-            scale: 1,
-            panX: 0,
-            panY: 0,
+    let newspapers = []; // { id, title, url, strokes: [] }
+    let currentIndex = -1;
 
-            // Gestione multi-touch / pointer unificati (Mouse, Dita, Apple Pencil)
-            pointers: new Map(),
-            isDraggingPan: false,
-            panStartX: 0,
-            panStartY: 0,
-            initialPinchDist: 0,
-            initialPinchScale: 1,
-            pinchCenter: { x: 0, y: 0 },
+    // Stato zoom/pan interno alla foto
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isDrawMode = false;
+    let currentColor = 'rgba(255, 238, 0, 0.55)';
 
-            // Stato tratto a mano libera corrente
-            isDrawingStroke: false,
-            currentStroke: null
+    const wallGrid = document.getElementById('wallGrid');
+    const statusBox = document.getElementById('statusBox');
+    const headerSubtitle = document.getElementById('headerSubtitle');
+    const viewerOverlay = document.getElementById('viewerOverlay');
+    const viewportFrame = document.getElementById('viewportFrame');
+    const zoomLayer = document.getElementById('zoomLayer');
+    const activeImage = document.getElementById('activeImage');
+    const drawCanvas = document.getElementById('drawCanvas');
+    const ctx = drawCanvas.getContext('2d');
+
+    // Pulizia schermo in onda
+    const toggleClean = () => document.body.classList.toggle('on-air-clean');
+    document.getElementById('btnToggleClean').addEventListener('click', toggleClean);
+    document.getElementById('brandLogo').addEventListener('dblclick', toggleClean);
+
+    // Converte URL immagine Blogger in alta risoluzione
+    function upgradeBloggerImg(src) {
+      if (!src) return '';
+      if (src.startsWith('//')) src = 'https:' + src;
+      return src
+        .replace(/\/s\d+(-c)?\//g, '/s1600/')
+        .replace(/\/w\d+-h\d+(-p-k-no-nu|-c)?\//g, '/s1600/')
+        .replace(/=s\d+(-c)?$/g, '=s1600')
+        .replace(/=w\d+-h\d+.*$/g, '=s1600');
+    }
+
+    function extractImagesFromHtml(htmlString) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlString, 'text/html');
+      const container = doc.querySelector('.post-body, .entry-content, article') || doc.body;
+      const imgs = Array.from(container.querySelectorAll('img'));
+      const seen = new Set();
+      const results = [];
+
+      imgs.forEach((img, idx) => {
+        let src = img.getAttribute('data-src') || img.getAttribute('src') || '';
+        if (!src || src.startsWith('data:')) return;
+        const lower = src.toLowerCase();
+        if (lower.includes('icon') || lower.includes('logo') || lower.includes('avatar') || lower.includes('badge') || lower.includes('button')) return;
+
+        const highRes = upgradeBloggerImg(src);
+        if (seen.has(highRes)) return;
+        seen.add(highRes);
+
+        const rawTitle = (img.getAttribute('alt') || img.getAttribute('title') || '').trim();
+        results.push({
+          id: 'np-' + idx,
+          title: rawTitle || `Quotidiano ${results.length + 1}`,
+          url: highRes,
+          strokes: []
+        });
+      });
+      return results;
+    }
+
+    // Estrazione tramite JSONP ufficiale Blogger (nessun problema CORS)
+    function fetchViaBloggerJsonp() {
+      return new Promise((resolve, reject) => {
+        const cbName = 'brJsonpCb_' + Date.now();
+        const script = document.createElement('script');
+        const timer = setTimeout(() => {
+          cleanup();
+          reject(new Error('Timeout JSONP'));
+        }, 7000);
+
+        function cleanup() {
+          clearTimeout(timer);
+          delete window[cbName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        window[cbName] = (data) => {
+          cleanup();
+          try {
+            const entries = (data && data.feed && data.feed.entry) || [];
+            const targetEntry = entries.find(e => {
+              const altLink = (e.link || []).find(l => l.rel === 'alternate');
+              return altLink && altLink.href && altLink.href.includes('prime-pagine-dei-giornali');
+            }) || entries[0];
+
+            if (!targetEntry || !targetEntry.content) {
+              reject(new Error('Pagina non trovata nel feed'));
+              return;
+            }
+            const items = extractImagesFromHtml(targetEntry.content.$t);
+            if (items.length > 0) resolve(items);
+            else reject(new Error('Nessuna immagine trovata'));
+          } catch (err) {
+            reject(err);
+          }
         };
 
-        // Riferimenti DOM
-        const ledwallScroll = document.getElementById('ledwall-scroll');
-        const loadingPanel = document.getElementById('loading-panel');
-        const newspapersGrid = document.getElementById('newspapers-grid');
-        const readerOverlay = document.getElementById('reader-overlay');
-        const readerViewport = document.getElementById('reader-viewport');
-        const transformLayer = document.getElementById('paper-transform-layer');
-        const activePaperImg = document.getElementById('active-paper-img');
-        const freehandCanvas = document.getElementById('freehand-canvas');
-        const canvasCtx = freehandCanvas.getContext('2d');
-        const headerBackBtn = document.getElementById('header-back-btn');
-        const zoomPctBtn = document.getElementById('zoom-pct-btn');
+        script.src = `${BLOG_ORIGIN}/feeds/pages/default?alt=json-in-script&max-results=30&callback=${cbName}`;
+        script.onerror = () => {
+          cleanup();
+          reject(new Error('Errore rete JSONP'));
+        };
+        document.body.appendChild(script);
+      });
+    }
 
-        /**
-         * AVVIO APPLICAZIONE
-         */
-        window.addEventListener('DOMContentLoaded', () => {
-            setupManualUpload();
-            setupViewportGestures();
-            setupKeyboardControls();
-            // Estrazione automatica dal sito brunorachiele.it all'apertura
-            fetchFromBlog(false);
-        });
+    // Fallback tramite proxy CORS sull'URL diretto della pagina
+    async function fetchViaProxy() {
+      const proxies = [
+        `https://api.allorigins.win/get?url=${encodeURIComponent(TARGET_PAGE_URL)}`,
+        `https://corsproxy.io/?${encodeURIComponent(TARGET_PAGE_URL)}`
+      ];
+      for (const proxyUrl of proxies) {
+        try {
+          const res = await fetch(proxyUrl);
+          if (!res.ok) continue;
+          const text = await res.text();
+          let html = text;
+          if (proxyUrl.includes('allorigins')) {
+            const parsed = JSON.parse(text);
+            html = parsed.contents || '';
+          }
+          const items = extractImagesFromHtml(html);
+          if (items.length > 0) return items;
+        } catch (e) {}
+      }
+      throw new Error('Impossibile raggiungere brunorachiele.it');
+    }
 
-        /**
-         * 1. ESTRAZIONE AUTOMATICA DAL SITO BRUNORACHIELE.IT
-         */
-        async function fetchFromBlog(isManualRefresh = false) {
-            const syncIcon = document.getElementById('sync-icon');
-            syncIcon.classList.add('animate-spin');
+    async function loadNewspapers() {
+      statusBox.style.display = 'block';
+      wallGrid.style.display = 'none';
+      statusBox.innerHTML = `
+        <div class="spinner"></div>
+        <div style="font-weight:700; color:#0b3d75; margin-bottom:4px;">Aggiornamento Prime Pagine...</div>
+        <div style="font-size:12px; color:#52637a;">brunorachiele.it</div>
+      `;
 
-            if (appState.papers.length === 0) {
-                loadingPanel.classList.remove('hidden');
-                newspapersGrid.classList.add('hidden');
-            }
-
-            try {
-                let extractedPapers = [];
-
-                // Strategia A: Feed JSONP nativo di Blogger (bypassa blocchi CORS su molti browser)
-                try {
-                    extractedPapers = await fetchViaBloggerJSONP();
-                } catch (e) {
-                    console.warn('JSONP Blogger non disponibile, passo ai proxy CORS:', e);
-                }
-
-                // Strategia B: Proxy CORS multipli sull'URL della pagina HTML
-                if (extractedPapers.length === 0) {
-                    const proxies = [
-                        `https://api.allorigins.win/get?url=${encodeURIComponent(TARGET_BLOG_URL)}`,
-                        `https://corsproxy.io/?${encodeURIComponent(TARGET_BLOG_URL)}`,
-                        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(TARGET_BLOG_URL)}`
-                    ];
-
-                    for (const proxyUrl of proxies) {
-                        try {
-                            const controller = new AbortController();
-                            const timeoutId = setTimeout(() => controller.abort(), 7000);
-                            const response = await fetch(proxyUrl, { signal: controller.signal });
-                            clearTimeout(timeoutId);
-
-                            if (!response.ok) continue;
-
-                            let htmlContent = '';
-                            if (proxyUrl.includes('allorigins.win')) {
-                                const json = await response.json();
-                                htmlContent = json.contents || '';
-                            } else {
-                                htmlContent = await response.text();
-                            }
-
-                            if (htmlContent && htmlContent.length > 500) {
-                                extractedPapers = parseBloggerHTML(htmlContent);
-                                if (extractedPapers.length > 0) break;
-                            }
-                        } catch (err) {
-                            console.warn('Tentativo proxy fallito:', proxyUrl);
-                        }
-                    }
-                }
-
-                if (extractedPapers.length > 0) {
-                    appState.papers = extractedPapers;
-                    if (appState.isReaderOpen) closeReader();
-                    renderLedwallGrid();
-                    showToast(`Caricate ${extractedPapers.length} prime pagine da brunorachiele.it`);
-                } else {
-                    throw new Error('Nessuna immagine estratta');
-                }
-
-            } catch (error) {
-                console.warn('Impossibile raggiungere brunorachiele.it in questo ambiente, carico modalità demo:', error);
-                if (appState.papers.length === 0) {
-                    loadFallbackDemoPages();
-                }
-                showToast('Anteprima offline: caricate pagine demo (usa "Aggiorna" su GitHub Pages)');
-            } finally {
-                syncIcon.classList.remove('animate-spin');
-                loadingPanel.classList.add('hidden');
-            }
+      try {
+        let items = [];
+        try {
+          items = await fetchViaBloggerJsonp();
+        } catch (e) {
+          items = await fetchViaProxy();
         }
+        newspapers = items;
+        renderWall();
+      } catch (err) {
+        statusBox.innerHTML = `
+          <div style="font-weight:700; color:#b91c1c; margin-bottom:6px;">Connessione non riuscita</div>
+          <div style="font-size:12px; color:#52637a; margin-bottom:14px;">Verifica la connessione internet e riprova.</div>
+          <button onclick="loadNewspapers()" style="background:#0b3d75; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:700; cursor:pointer;">Riprova ora</button>
+        `;
+      }
+    }
 
-        /**
-         * Estrazione tramite JSONP pubblico di Blogger (/feeds/pages/default?alt=json-in-script)
-         */
-        function fetchViaBloggerJSONP() {
-            return new Promise((resolve, reject) => {
-                const callbackName = 'bloggerCallback_' + Date.now();
-                const script = document.createElement('script');
-                const timer = setTimeout(() => {
-                    cleanup();
-                    reject(new Error('Timeout JSONP'));
-                }, 6000);
+    function renderWall() {
+      statusBox.style.display = 'none';
+      wallGrid.style.display = 'grid';
+      wallGrid.innerHTML = '';
 
-                function cleanup() {
-                    clearTimeout(timer);
-                    delete window[callbackName];
-                    if (script.parentNode) script.parentNode.removeChild(script);
-                }
+      newspapers.forEach((paper, idx) => {
+        const card = document.createElement('div');
+        card.className = 'paper-card' + (paper.strokes.length ? ' has-marks' : '');
+        card.innerHTML = `
+          <img src="${paper.url}" alt="${paper.title}" loading="lazy" />
+          <span class="paper-badge-edited" title="Evidenziato"></span>
+        `;
+        card.addEventListener('click', () => openNewspaper(idx));
+        wallGrid.appendChild(card);
+      });
+    }
 
-                window[callbackName] = (data) => {
-                    cleanup();
-                    try {
-                        const entries = (data.feed && data.feed.entry) || [];
-                        // Cerca la pagina "prime-pagine-dei-giornali"
-                        const targetEntry = entries.find(entry => {
-                            const altLink = (entry.link || []).find(l => l.rel === 'alternate');
-                            return altLink && altLink.href && altLink.href.includes('prime-pagine');
-                        }) || entries[0];
+    // APERTURA SINGOLA PAGINA
+    function openNewspaper(index) {
+      if (index < 0 || index >= newspapers.length) return;
+      currentIndex = index;
+      const paper = newspapers[currentIndex];
+      headerSubtitle.textContent = paper.title;
 
-                        if (targetEntry && targetEntry.content && targetEntry.content.$t) {
-                            const papers = parseBloggerHTML(targetEntry.content.$t);
-                            resolve(papers);
-                        } else {
-                            resolve([]);
-                        }
-                    } catch (e) {
-                        reject(e);
-                    }
-                };
+      resetZoom(false);
+      viewerOverlay.classList.add('active');
 
-                script.src = `https://www.brunorachiele.it/feeds/pages/default?alt=json-in-script&callback=${callbackName}`;
-                script.onerror = () => {
-                    cleanup();
-                    reject(new Error('Errore caricamento script JSONP'));
-                };
-                document.body.appendChild(script);
-            });
+      activeImage.onload = () => {
+        drawCanvas.width = activeImage.naturalWidth || activeImage.clientWidth;
+        drawCanvas.height = activeImage.naturalHeight || activeImage.clientHeight;
+        redrawStrokes();
+      };
+      activeImage.src = paper.url;
+    }
+
+    function closeNewspaper() {
+      viewerOverlay.classList.remove('active');
+      headerSubtitle.textContent = 'Prime Pagine';
+      currentIndex = -1;
+      renderWall();
+    }
+
+    document.getElementById('btnBack').addEventListener('click', closeNewspaper);
+    document.getElementById('btnRefresh').addEventListener('click', loadNewspapers);
+
+    document.getElementById('btnPrev').addEventListener('click', () => {
+      const nextIdx = (currentIndex - 1 + newspapers.length) % newspapers.length;
+      openNewspaper(nextIdx);
+    });
+
+    document.getElementById('btnNext').addEventListener('click', () => {
+      const nextIdx = (currentIndex + 1) % newspapers.length;
+      openNewspaper(nextIdx);
+    });
+
+    // GESTIONE ZOOM E PAN INTERNO ALLA FOTO
+    function applyTransform() {
+      const frameW = viewportFrame.clientWidth;
+      const frameH = viewportFrame.clientHeight;
+      const imgW = activeImage.clientWidth * scale;
+      const imgH = activeImage.clientHeight * scale;
+
+      if (imgW <= frameW) {
+        panX = (frameW - imgW) / 2;
+      } else {
+        const minX = frameW - imgW;
+        panX = Math.min(0, Math.max(minX, panX));
+      }
+
+      if (imgH <= frameH) {
+        panY = (frameH - imgH) / 2;
+      } else {
+        const minY = frameH - imgH;
+        panY = Math.min(0, Math.max(minY, panY));
+      }
+
+      zoomLayer.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
+      document.getElementById('btnZoomReset').textContent = Math.round(scale * 100) + '%';
+    }
+
+    function resetZoom(animate = true) {
+      scale = 1;
+      panX = 0;
+      panY = 0;
+      zoomLayer.style.transition = animate ? 'transform 0.2s ease-out' : 'none';
+      requestAnimationFrame(() => {
+        applyTransform();
+        setTimeout(() => { zoomLayer.style.transition = 'none'; }, 210);
+      });
+    }
+
+    function zoomBy(factor, centerX, centerY) {
+      const oldScale = scale;
+      const newScale = Math.min(4.5, Math.max(1, oldScale * factor));
+      if (newScale === oldScale) return;
+
+      const rect = viewportFrame.getBoundingClientRect();
+      const cx = (centerX !== undefined ? centerX - rect.left : rect.width / 2);
+      const cy = (centerY !== undefined ? centerY - rect.top : rect.height / 2);
+
+      panX = cx - (cx - panX) * (newScale / oldScale);
+      panY = cy - (cy - panY) * (newScale / oldScale);
+      scale = newScale;
+      applyTransform();
+    }
+
+    document.getElementById('btnZoomIn').addEventListener('click', () => zoomBy(1.35));
+    document.getElementById('btnZoomOut').addEventListener('click', () => zoomBy(1 / 1.35));
+    document.getElementById('btnZoomReset').addEventListener('click', () => resetZoom(true));
+
+    viewportFrame.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+      zoomBy(factor, e.clientX, e.clientY);
+    }, { passive: false });
+
+    // GESTURE TOUCH & MOUSE (PAN + PINCH-TO-ZOOM SULLA FOTO)
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let initialPinchDist = 0;
+    let initialPinchScale = 1;
+
+    viewportFrame.addEventListener('touchstart', (e) => {
+      if (isDrawMode) return;
+      if (e.touches.length === 2) {
+        isDragging = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        initialPinchDist = Math.hypot(dx, dy);
+        initialPinchScale = scale;
+      } else if (e.touches.length === 1 && scale > 1) {
+        isDragging = true;
+        dragStartX = e.touches[0].clientX - panX;
+        dragStartY = e.touches[0].clientY - panY;
+      }
+    }, { passive: true });
+
+    viewportFrame.addEventListener('touchmove', (e) => {
+      if (isDrawMode) return;
+      if (e.touches.length === 2 && initialPinchDist > 0) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        const targetScale = Math.min(4.5, Math.max(1, initialPinchScale * (dist / initialPinchDist)));
+        zoomBy(targetScale / scale, midX, midY);
+      } else if (e.touches.length === 1 && isDragging && scale > 1) {
+        e.preventDefault();
+        panX = e.touches[0].clientX - dragStartX;
+        panY = e.touches[0].clientY - dragStartY;
+        applyTransform();
+      }
+    }, { passive: false });
+
+    viewportFrame.addEventListener('touchend', () => {
+      isDragging = false;
+      initialPinchDist = 0;
+    });
+
+    viewportFrame.addEventListener('mousedown', (e) => {
+      if (isDrawMode || scale <= 1) return;
+      isDragging = true;
+      dragStartX = e.clientX - panX;
+      dragStartY = e.clientY - panY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging || isDrawMode) return;
+      panX = e.clientX - dragStartX;
+      panY = e.clientY - dragStartY;
+      applyTransform();
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    // EVIDENZIATORE A MANO LIBERA ANCORATO ALLA PAGINA
+    const btnDrawToggle = document.getElementById('btnDrawToggle');
+    btnDrawToggle.addEventListener('click', () => {
+      isDrawMode = !isDrawMode;
+      btnDrawToggle.classList.toggle('active-tool', isDrawMode);
+      viewportFrame.classList.toggle('draw-mode', isDrawMode);
+    });
+
+    document.querySelectorAll('.color-dot').forEach(dot => {
+      dot.addEventListener('click', () => {
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+        dot.classList.add('selected');
+        currentColor = dot.dataset.color;
+        if (!isDrawMode) btnDrawToggle.click();
+      });
+    });
+
+    document.getElementById('btnClearMarks').addEventListener('click', () => {
+      if (currentIndex < 0) return;
+      newspapers[currentIndex].strokes = [];
+      redrawStrokes();
+    });
+
+    let activeStroke = null;
+
+    function getCanvasCoords(clientX, clientY) {
+      const rect = drawCanvas.getBoundingClientRect();
+      const x = ((clientX - rect.left) / rect.width) * drawCanvas.width;
+      const y = ((clientY - rect.top) / rect.height) * drawCanvas.height;
+      return { x, y };
+    }
+
+    function startStroke(clientX, clientY) {
+      if (!isDrawMode || currentIndex < 0) return;
+      const pt = getCanvasCoords(clientX, clientY);
+      const brushSize = Math.max(18, drawCanvas.width * 0.028);
+      activeStroke = { color: currentColor, size: brushSize, points: [pt] };
+      newspapers[currentIndex].strokes.push(activeStroke);
+      redrawStrokes();
+    }
+
+    function moveStroke(clientX, clientY) {
+      if (!activeStroke) return;
+      activeStroke.points.push(getCanvasCoords(clientX, clientY));
+      redrawStrokes();
+    }
+
+    function endStroke() {
+      activeStroke = null;
+    }
+
+    drawCanvas.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      drawCanvas.setPointerCapture(e.pointerId);
+      startStroke(e.clientX, e.clientY);
+    });
+
+    drawCanvas.addEventListener('pointermove', (e) => {
+      if (!activeStroke) return;
+      e.stopPropagation();
+      moveStroke(e.clientX, e.clientY);
+    });
+
+    drawCanvas.addEventListener('pointerup', endStroke);
+    drawCanvas.addEventListener('pointercancel', endStroke);
+
+    function redrawStrokes() {
+      ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+      if (currentIndex < 0) return;
+      const strokes = newspapers[currentIndex].strokes;
+      strokes.forEach(s => {
+        if (!s.points.length) return;
+        ctx.save();
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = s.size;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(s.points[0].x, s.points[0].y);
+        for (let i = 1; i < s.points.length; i++) {
+          ctx.lineTo(s.points[i].x, s.points[i].y);
         }
-
-        /**
-         * Parser HTML intelligente per pagine Blogger:
-         * Converte le miniature Blogger (/s320/, /w400/, ecc.) in alta risoluzione (/s1600/)
-         */
-        function parseBloggerHTML(htmlString) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlString, 'text/html');
-
-            // Limita la ricerca al corpo del post/pagina se presente
-            const postContainer =
-                doc.querySelector('.post-body') ||
-                doc.querySelector('.entry-content') ||
-                doc.querySelector('article') ||
-                doc.body;
-
-            const imgElements = Array.from(postContainer.querySelectorAll('img'));
-            const seenUrls = new Set();
-            const results = [];
-
-            imgElements.forEach((img, index) => {
-                let rawSrc = img.getAttribute('src') || img.getAttribute('data-src') || '';
-                if (!rawSrc || rawSrc.startsWith('data:')) return;
-
-                // Se l'immagine è avvolta da un link <a> verso l'immagine originale Blogger, preferisci l'href
-                const parentLink = img.closest('a');
-                if (parentLink) {
-                    const href = parentLink.getAttribute('href') || '';
-                    if (/\.(jpg|jpeg|png|webp)(\?.*)?$/i.test(href) || href.includes('bp.blogspot.com') || href.includes('blogger.googleusercontent.com')) {
-                        rawSrc = href;
-                    }
-                }
-
-                // Filtra icone, avatar, bottoni social o banner piccoli
-                const lowerSrc = rawSrc.toLowerCase();
-                if (
-                    lowerSrc.includes('icon') ||
-                    lowerSrc.includes('logo') ||
-                    lowerSrc.includes('avatar') ||
-                    lowerSrc.includes('emoji') ||
-                    lowerSrc.includes('pixel') ||
-                    lowerSrc.includes('facebook') ||
-                    lowerSrc.includes('whatsapp') ||
-                    lowerSrc.includes('telegram')
-                ) {
-                    return;
-                }
-
-                // Upgrade automatico risoluzione URL Blogger/Googleusercontent -> /s1600/
-                const hiResUrl = upgradeBloggerImageUrl(rawSrc);
-
-                if (seenUrls.has(hiResUrl)) return;
-                seenUrls.add(hiResUrl);
-
-                // Estrae il nome della testata dall'alt, title o testo vicino
-                let title = (img.getAttribute('alt') || img.getAttribute('title') || '').trim();
-                if (!title && parentLink) {
-                    title = (parentLink.getAttribute('title') || parentLink.textContent || '').trim();
-                }
-                if (!title) {
-                    title = `Quotidiano ${results.length + 1}`;
-                }
-
-                results.push({
-                    id: 'blog_paper_' + index,
-                    title: title,
-                    src: hiResUrl,
-                    strokes: [],
-                    isDemo: false
-                });
-            });
-
-            return results;
+        if (s.points.length === 1) {
+          ctx.lineTo(s.points[0].x + 0.1, s.points[0].y);
         }
-
-        function upgradeBloggerImageUrl(url) {
-            // Sostituisce parametri dimensionali standard di Blogger (/s320/, /w400-h600/, =s320, =w400) con /s1600/
-            let upgraded = url
-                .replace(/\/s\d+(-c)?\//g, '/s1600/')
-                .replace(/\/w\d+-h\d+(-p-k-no-nu)?\//g, '/s1600/')
-                .replace(/=s\d+(-c)?$/g, '=s1600')
-                .replace(/=w\d+-h\d+.*$/g, '=s1600');
-
-            // Assicura HTTPS
-            if (upgraded.startsWith('//')) {
-                upgraded = 'https:' + upgraded;
-            }
-            return upgraded;
-        }
-
-        /**
-         * Caricamento manuale di backup (se l'utente vuole aggiungere pagine locali)
-         */
-        function setupManualUpload() {
-            const input = document.getElementById('manual-file-input');
-            input.addEventListener('change', (e) => {
-                const files = Array.from(e.target.files || []).filter(f => f.type.startsWith('image/'));
-                if (files.length === 0) return;
-
-                const onlyDemos = appState.papers.every(p => p.isDemo);
-                if (onlyDemos) appState.papers = [];
-
-                let loaded = 0;
-                files.forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        appState.papers.push({
-                            id: 'local_' + Date.now() + '_' + loaded,
-                            title: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
-                            src: ev.target.result,
-                            strokes: [],
-                            isDemo: false
-                        });
-                        loaded++;
-                        if (loaded === files.length) {
-                            if (appState.isReaderOpen) closeReader();
-                            renderLedwallGrid();
-                            showToast(`${loaded} prime pagine aggiunte dal dispositivo`);
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                });
-                input.value = '';
-            });
-        }
-
-        /**
-         * Set dimostrativo di backup (8 quotidiani italiani generati localmente)
-         */
-        function loadFallbackDemoPages() {
-            const demos = [
-                { name: "IL CORRIERE DELLA SERA", color: "#0b3d75", head: "MANOVRA E PENSIONI, VERTICE A PALAZZO CHIGI SULLE MISURE PER LE FAMIGLIE", sub: "Confermato il taglio del cuneo fiscale, risorse extra per la sanità pubblica" },
-                { name: "LA REPUBBLICA", color: "#b91c1c", head: "EUROPA E ENERGIA, PIANO COMUNE PER RIDURRE I COSTI DELLE BOLLETTE", sub: "Accordo tra i ministri a Bruxelles sugli stoccaggi e le rinnovabili" },
-                { name: "LA STAMPA", color: "#0f766e", head: "INTELLIGENZA ARTIFICIALE A SCUOLA, AL VIA I LABORATORI DIGITALI", sub: "Formazione per docenti e studenti in tutta Italia dal prossimo mese" },
-                { name: "IL SOLE 24 ORE", color: "#c2410c", head: "EXPORT MADE IN ITALY IN CRESCITA: TRAINANO AGROALIMENTARE E MECCANICA", sub: "Saldo commerciale positivo nel trimestre, bene le pmi esportatrici" },
-                { name: "IL MESSAGGERO", color: "#1d4ed8", head: "GRANDI OPERE E TRASPORTI, ECCO IL CRONOPROGRAMMA DEI NUOVI CANTIERI", sub: "Alta velocità e reti metropolitane: gli interventi finanziati nel 2026" },
-                { name: "IL GIORNALE", color: "#334155", head: "RIFORMA DELLA GIUSTIZIA, INIZIA IL CONFRONTO IN COMMISSIONE", sub: "Tempi più rapidi per i processi civili e separazione delle carriere" },
-                { name: "AVVENIRE", color: "#0369a1", head: "GIOVANI E LAVORO, NUOVI INCENTIVI PER L'OCCUPAZIONE STABILE", sub: "Sgravi contributivi per le aziende che assumono under 30" },
-                { name: "LA GAZZETTA DELLO SPORT", color: "#be123c", head: "NOTTE MAGICA IN EUROPA: IMPRESA AZZURRA E QUALIFICAZIONE IN TASCA", sub: "Vittoria in rimonta nel finale, domani il sorteggio dei quarti" }
-            ];
-
-            appState.papers = demos.map((d, idx) => ({
-                id: 'demo_' + idx,
-                title: d.name,
-                src: generateDemoNewspaperDataURL(d),
-                strokes: [],
-                isDemo: true
-            }));
-
-            renderLedwallGrid();
-        }
-
-        function generateDemoNewspaperDataURL(d) {
-            const c = document.createElement('canvas');
-            c.width = 720;
-            c.height = 1000;
-            const g = c.getContext('2d');
-
-            g.fillStyle = '#fcfbf9';
-            g.fillRect(0, 0, c.width, c.height);
-
-            g.strokeStyle = '#cbd5e1';
-            g.lineWidth = 4;
-            g.strokeRect(16, 16, c.width - 32, c.height - 32);
-
-            g.fillStyle = '#64748b';
-            g.font = '600 13px Inter, sans-serif';
-            g.fillText('EDIZIONE NAZIONALE  |  RASSEGNA STAMPA', 36, 48);
-            g.textAlign = 'right';
-            g.fillText('€ 1,80', c.width - 36, 48);
-            g.textAlign = 'left';
-
-            g.fillStyle = '#0f172a';
-            g.fillRect(36, 58, c.width - 72, 3);
-
-            g.fillStyle = d.color;
-            g.font = '900 40px "Playfair Display", Georgia, serif';
-            g.textAlign = 'center';
-            g.fillText(d.name, c.width / 2, 110);
-            g.textAlign = 'left';
-
-            g.fillStyle = '#0f172a';
-            g.fillRect(36, 128, c.width - 72, 2);
-
-            g.font = '900 36px "Playfair Display", Georgia, serif';
-            const endTitleY = drawWrappedText(g, d.head, 36, 182, c.width - 72, 42);
-
-            g.fillStyle = '#475569';
-            g.font = '500 18px Inter, sans-serif';
-            const endSubY = drawWrappedText(g, d.sub, 36, endTitleY + 10, c.width - 72, 25);
-
-            const boxY = endSubY + 20;
-            const boxH = 270;
-            const grad = g.createLinearGradient(36, boxY, c.width - 36, boxY + boxH);
-            grad.addColorStop(0, '#1e293b');
-            grad.addColorStop(1, d.color);
-            g.fillStyle = grad;
-            g.fillRect(36, boxY, c.width - 72, boxH);
-
-            g.fillStyle = 'rgba(255,255,255,0.85)';
-            g.font = '600 14px Inter, sans-serif';
-            g.textAlign = 'center';
-            g.fillText('SERVIZIO DI APERTURA ALLE PAGINE 2 - 5', c.width / 2, boxY + boxH - 18);
-            g.textAlign = 'left';
-
-            const colsY = boxY + boxH + 34;
-            const colW = (c.width - 72 - 36) / 3;
-            for (let i = 0; i < 3; i++) {
-                const x = 36 + i * (colW + 18);
-                g.fillStyle = '#0f172a';
-                g.font = 'bold 15px "Playfair Display", serif';
-                g.fillText(i === 0 ? "L'EDITORIALE" : i === 1 ? "IL RETROSCENA" : "L'INTERVISTA", x, colsY);
-
-                g.fillStyle = '#94a3b8';
-                let y = colsY + 18;
-                while (y < c.height - 50) {
-                    g.fillRect(x, y, (y % 39 === 0) ? colW * 0.7 : colW, 6);
-                    y += 13;
-                }
-            }
-
-            return c.toDataURL('image/jpeg', 0.9);
-        }
-
-        function drawWrappedText(ctx, text, x, y, maxW, lineH) {
-            const words = text.split(' ');
-            let line = '';
-            let currY = y;
-            for (let i = 0; i < words.length; i++) {
-                const test = line + words[i] + ' ';
-                if (ctx.measureText(test).width > maxW && i > 0) {
-                    ctx.fillText(line, x, currY);
-                    line = words[i] + ' ';
-                    currY += lineH;
-                } else {
-                    line = test;
-                }
-            }
-            ctx.fillText(line, x, currY);
-            return currY + lineH;
-        }
-
-        /**
-         * 2. RENDERING GRIGLIA LEDWALL (RESPONSIVE TABLET / DESKTOP)
-         */
-        function renderLedwallGrid() {
-            loadingPanel.classList.add('hidden');
-            newspapersGrid.classList.remove('hidden');
-
-            const count = appState.papers.length;
-            // Adatta automaticamente le colonne per tablet portrait (2 col) e landscape (4/5 col)
-            let gridCols = 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5';
-            if (count <= 4) gridCols = 'grid-cols-2 sm:grid-cols-4 max-w-6xl';
-            else if (count <= 6) gridCols = 'grid-cols-2 sm:grid-cols-3 max-w-5xl';
-            else if (count <= 8) gridCols = 'grid-cols-2 sm:grid-cols-4 max-w-7xl';
-
-            newspapersGrid.className = `w-full mx-auto grid gap-4 sm:gap-5 md:gap-6 place-items-center my-auto ${gridCols}`;
-            newspapersGrid.innerHTML = '';
-
-            appState.papers.forEach((paper, idx) => {
-                const card = document.createElement('div');
-                card.className = 'newspaper-card group cursor-pointer w-full max-w-[270px] aspect-[1/1.38] flex flex-col';
-                card.onclick = () => openReader(idx);
-
-                const badge = paper.strokes.length > 0
-                    ? `<span class="absolute top-2 right-2 bg-amber-400 text-slate-950 text-[11px] font-extrabold px-2 py-0.5 rounded-full shadow">✎ ${paper.strokes.length}</span>`
-                    : '';
-
-                card.innerHTML = `
-                    <img src="${paper.src}" alt="${paper.title}" loading="lazy" class="w-full h-full object-cover object-top block bg-white">
-                    ${badge}
-                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#082d57]/95 via-[#0b3d75]/75 to-transparent px-3 py-2.5 pt-7 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-between">
-                        <span class="text-white text-xs font-semibold truncate pr-2">${paper.title}</span>
-                        <span class="bg-white text-[#0b3d75] text-[10px] font-extrabold px-2 py-0.5 rounded shrink-0">APRI</span>
-                    </div>
-                `;
-
-                newspapersGrid.appendChild(card);
-            });
-        }
-
-        /**
-         * 3. APERTURA E CHIUSURA DEL GIORNALE (ZOOM INTERNO SOLO SULLA FOTO)
-         */
-        function openReader(index) {
-            if (index < 0 || index >= appState.papers.length) return;
-
-            appState.activeIndex = index;
-            appState.isReaderOpen = true;
-            const paper = appState.papers[index];
-
-            // Sfoca il ledwall sottostante
-            ledwallScroll.classList.add('wall-blurred');
-
-            // Mostra il pulsante "Torna indietro" anche nella barra blu in alto
-            headerBackBtn.classList.remove('hidden');
-            headerBackBtn.classList.add('flex');
-
-            // Reset zoom interno della foto a 100%
-            resetPhotoZoom(false);
-
-            activePaperImg.onload = () => {
-                syncCanvasSize();
-                redrawAllStrokes();
-            };
-            activePaperImg.src = paper.src;
-
-            readerOverlay.classList.remove('hidden');
-            readerOverlay.classList.add('flex');
-
-            // Nascondi frecce laterali se c'è 1 solo giornale
-            const showArrows = appState.papers.length > 1;
-            document.getElementById('btn-prev-paper').style.display = showArrows ? 'flex' : 'none';
-            document.getElementById('btn-next-paper').style.display = showArrows ? 'flex' : 'none';
-        }
-
-        function closeReader() {
-            appState.isReaderOpen = false;
-            ledwallScroll.classList.remove('wall-blurred');
-
-            readerOverlay.classList.add('hidden');
-            readerOverlay.classList.remove('flex');
-
-            headerBackBtn.classList.add('hidden');
-            headerBackBtn.classList.remove('flex');
-
-            // Se l'HUD era nascosto in modalità diretta, ripristinalo alla chiusura
-            if (appState.isHudHidden) {
-                toggleCleanLiveHud();
-            }
-
-            renderLedwallGrid();
-        }
-
-        function switchPaper(step) {
-            if (!appState.isReaderOpen || appState.papers.length <= 1) return;
-            let next = appState.activeIndex + step;
-            if (next < 0) next = appState.papers.length - 1;
-            if (next >= appState.papers.length) next = 0;
-            openReader(next);
-        }
-
-        /**
-         * 4. GESTIONE ZOOM INTERNO ALLA FOTO, PAN E PINCH-TO-ZOOM (SENZA INGRANDIRE LO SCHERMO)
-         */
-        function changePhotoZoom(delta, smooth = true) {
-            const nextScale = Math.min(Math.max(appState.scale + delta, 1), 4.5);
-            appState.scale = nextScale;
-            if (appState.scale <= 1.02) {
-                appState.scale = 1;
-                appState.panX = 0;
-                appState.panY = 0;
-            }
-            applyPhotoTransform(smooth);
-        }
-
-        function resetPhotoZoom(smooth = true) {
-            appState.scale = 1;
-            appState.panX = 0;
-            appState.panY = 0;
-            applyPhotoTransform(smooth);
-        }
-
-        function applyPhotoTransform(smooth = false) {
-            if (smooth) {
-                transformLayer.classList.add('smooth-anim');
-            } else {
-                transformLayer.classList.remove('smooth-anim');
-            }
-            // Limita lo spostamento (pan) per non perdere mai la foto fuori dallo schermo
-            const maxOffsetX = (transformLayer.offsetWidth * (appState.scale - 1)) / 2 + 80;
-            const maxOffsetY = (transformLayer.offsetHeight * (appState.scale - 1)) / 2 + 80;
-            if (appState.scale === 1) {
-                appState.panX = 0;
-                appState.panY = 0;
-            } else {
-                appState.panX = Math.max(-maxOffsetX, Math.min(maxOffsetX, appState.panX));
-                appState.panY = Math.max(-maxOffsetY, Math.min(maxOffsetY, appState.panY));
-            }
-
-            transformLayer.style.transform = `translate3d(${appState.panX}px, ${appState.panY}px, 0) scale(${appState.scale})`;
-            zoomPctBtn.textContent = `${Math.round(appState.scale * 100)}%`;
-        }
-
-        /**
-         * 5. GESTI UNIFICATI POINTER EVENTS (Mouse, Touch Tablet, Apple Pencil, Pinch 2 Dita)
-         */
-        function setupViewportGestures() {
-            // Rotellina mouse -> zooma solo la foto
-            readerViewport.addEventListener('wheel', (e) => {
-                if (!appState.isReaderOpen) return;
-                e.preventDefault();
-                const delta = e.deltaY < 0 ? 0.25 : -0.25;
-                changePhotoZoom(delta, false);
-            }, { passive: false });
-
-            // Doppio tap/clic rapido sulla foto per zoom 2x / 100%
-            let lastTapTime = 0;
-            readerViewport.addEventListener('pointerup', (e) => {
-                if (appState.activeTool === 'draw') return;
-                const now = Date.now();
-                if (now - lastTapTime < 280 && appState.pointers.size === 0) {
-                    if (appState.scale > 1.1) {
-                        resetPhotoZoom(true);
-                    } else {
-                        appState.scale = 2.2;
-                        applyPhotoTransform(true);
-                    }
-                }
-                lastTapTime = now;
-            });
-
-            // Pointer Down
-            readerViewport.addEventListener('pointerdown', (e) => {
-                if (!appState.isReaderOpen) return;
-                readerViewport.setPointerCapture(e.pointerId);
-                appState.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-
-                // Se ci sono 2 dita sullo schermo -> Pinch-to-Zoom & Pan simultaneo anche in modalità evidenzia!
-                if (appState.pointers.size === 2) {
-                    appState.isDrawingStroke = false;
-                    appState.currentStroke = null;
-                    appState.isDraggingPan = false;
-
-                    const pts = Array.from(appState.pointers.values());
-                    appState.initialPinchDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
-                    appState.initialPinchScale = appState.scale;
-                    appState.pinchCenter = {
-                        x: (pts[0].x + pts[1].x) / 2 - appState.panX,
-                        y: (pts[0].y + pts[1].y) / 2 - appState.panY
-                    };
-                    return;
-                }
-
-                // Singolo puntatore (1 dito, mouse o Apple Pencil)
-                if (appState.pointers.size === 1) {
-                    if (appState.activeTool === 'draw') {
-                        // Inizia tratto evidenziatore a mano libera
-                        const normPt = clientToNormalizedImageCoords(e.clientX, e.clientY);
-                        if (normPt) {
-                            appState.isDrawingStroke = true;
-                            appState.currentStroke = {
-                                color: appState.brushColor,
-                                size: appState.brushSize,
-                                points: [normPt]
-                            };
-                            redrawAllStrokes();
-                            renderStroke(appState.currentStroke);
-                        }
-                    } else {
-                        // Modalità Mano: trascina (pan) la foto
-                        appState.isDraggingPan = true;
-                        appState.panStartX = e.clientX - appState.panX;
-                        appState.panStartY = e.clientY - appState.panY;
-                    }
-                }
-            });
-
-            // Pointer Move
-            readerViewport.addEventListener('pointermove', (e) => {
-                if (!appState.pointers.has(e.pointerId)) return;
-                appState.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-
-                // Gestione Pinch-to-Zoom con 2 dita su tablet
-                if (appState.pointers.size === 2) {
-                    const pts = Array.from(appState.pointers.values());
-                    const currentDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
-                    if (appState.initialPinchDist > 10) {
-                        const scaleFactor = currentDist / appState.initialPinchDist;
-                        appState.scale = Math.min(Math.max(appState.initialPinchScale * scaleFactor, 1), 4.5);
-                        const midX = (pts[0].x + pts[1].x) / 2;
-                        const midY = (pts[0].y + pts[1].y) / 2;
-                        appState.panX = midX - appState.pinchCenter.x;
-                        appState.panY = midY - appState.pinchCenter.y;
-                        applyPhotoTransform(false);
-                    }
-                    return;
-                }
-
-                // Disegno evidenziatore a mano libera
-                if (appState.isDrawingStroke && appState.currentStroke) {
-                    const normPt = clientToNormalizedImageCoords(e.clientX, e.clientY);
-                    if (normPt) {
-                        const pts = appState.currentStroke.points;
-                        const last = pts[pts.length - 1];
-                        // Registra punto se c'è un movimento minimo per curve fluide
-                        if (!last || Math.hypot(normPt.x - last.x, normPt.y - last.y) > 0.0015) {
-                            pts.push(normPt);
-                            redrawAllStrokes();
-                            renderStroke(appState.currentStroke);
-                        }
-                    }
-                    return;
-                }
-
-                // Pan della foto
-                if (appState.isDraggingPan) {
-                    appState.panX = e.clientX - appState.panStartX;
-                    appState.panY = e.clientY - appState.panStartY;
-                    applyPhotoTransform(false);
-                }
-            });
-
-            // Pointer Up / Cancel
-            const endPointer = (e) => {
-                appState.pointers.delete(e.pointerId);
-
-                if (appState.isDrawingStroke && appState.currentStroke) {
-                    if (appState.currentStroke.points.length > 0 && appState.papers[appState.activeIndex]) {
-                        appState.papers[appState.activeIndex].strokes.push(appState.currentStroke);
-                    }
-                    appState.isDrawingStroke = false;
-                    appState.currentStroke = null;
-                    redrawAllStrokes();
-                }
-
-                if (appState.pointers.size === 0) {
-                    appState.isDraggingPan = false;
-                }
-            };
-
-            readerViewport.addEventListener('pointerup', endPointer);
-            readerViewport.addEventListener('pointercancel', endPointer);
-
-            window.addEventListener('resize', () => {
-                if (appState.isReaderOpen) {
-                    syncCanvasSize();
-                    redrawAllStrokes();
-                }
-            });
-        }
-
-        /**
-         * 6. MOTORE EVIDENZIATORE A MANO LIBERA SOLIDALE ALLA FOTO
-         */
-        function syncCanvasSize() {
-            freehandCanvas.width = activePaperImg.naturalWidth || activePaperImg.clientWidth || 800;
-            freehandCanvas.height = activePaperImg.naturalHeight || activePaperImg.clientHeight || 1100;
-        }
-
-        function clientToNormalizedImageCoords(clientX, clientY) {
-            // getBoundingClientRect restituisce le coordinate esatte della foto già scalata e traslata
-            const rect = transformLayer.getBoundingClientRect();
-            if (rect.width === 0 || rect.height === 0) return null;
-
-            const x = (clientX - rect.left) / rect.width;
-            const y = (clientY - rect.top) / rect.height;
-
-            return {
-                x: Math.max(0, Math.min(1, x)),
-                y: Math.max(0, Math.min(1, y))
-            };
-        }
-
-        function redrawAllStrokes() {
-            canvasCtx.clearRect(0, 0, freehandCanvas.width, freehandCanvas.height);
-            const paper = appState.papers[appState.activeIndex];
-            if (!paper) return;
-
-            paper.strokes.forEach(stroke => renderStroke(stroke));
-        }
-
-        function renderStroke(stroke) {
-            const pts = stroke.points;
-            if (!pts || pts.length === 0) return;
-
-            const w = freehandCanvas.width;
-            const h = freehandCanvas.height;
-
-            canvasCtx.save();
-            canvasCtx.strokeStyle = stroke.color;
-            canvasCtx.fillStyle = stroke.color;
-            canvasCtx.lineWidth = stroke.size * w;
-            canvasCtx.lineCap = 'round';
-            canvasCtx.lineJoin = 'round';
-
-            if (pts.length === 1) {
-                // Singolo tocco / punto
-                canvasCtx.beginPath();
-                canvasCtx.arc(pts[0].x * w, pts[0].y * h, (stroke.size * w) / 2, 0, Math.PI * 2);
-                canvasCtx.fill();
-            } else {
-                // Curva quadratica smussata per un tratto naturale a mano libera
-                canvasCtx.beginPath();
-                canvasCtx.moveTo(pts[0].x * w, pts[0].y * h);
-
-                for (let i = 1; i < pts.length - 1; i++) {
-                    const xc = ((pts[i].x + pts[i + 1].x) / 2) * w;
-                    const yc = ((pts[i].y + pts[i + 1].y) / 2) * h;
-                    canvasCtx.quadraticCurveTo(pts[i].x * w, pts[i].y * h, xc, yc);
-                }
-
-                const last = pts[pts.length - 1];
-                canvasCtx.lineTo(last.x * w, last.y * h);
-                canvasCtx.stroke();
-            }
-
-            canvasCtx.restore();
-        }
-
-        /**
-         * CONTROLLI BARRA STRUMENTI
-         */
-        function setTool(toolName) {
-            appState.activeTool = toolName;
-            const btnPan = document.getElementById('tool-pan');
-            const btnDraw = document.getElementById('tool-draw');
-
-            if (toolName === 'draw') {
-                btnDraw.className = 'flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold bg-amber-400 text-slate-950 shadow transition cursor-pointer';
-                btnPan.className = 'flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer';
-                transformLayer.style.cursor = 'crosshair';
-            } else {
-                btnPan.className = 'flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold bg-[#0b3d75] text-white shadow transition cursor-pointer';
-                btnDraw.className = 'flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer';
-                transformLayer.style.cursor = 'grab';
-            }
-        }
-
-        function setBrushColor(hexColor, btnEl) {
-            appState.brushColor = hexColor;
-            document.querySelectorAll('.swatch-btn').forEach(b => {
-                b.classList.remove('ring-2', 'ring-white', 'scale-110');
-                b.classList.add('opacity-80');
-            });
-            btnEl.classList.add('ring-2', 'ring-white', 'scale-110');
-            btnEl.classList.remove('opacity-80');
-
-            // Attiva subito l'evidenziatore quando si tocca un colore
-            if (appState.activeTool !== 'draw') {
-                setTool('draw');
-            }
-        }
-
-        function setBrushSize(normSize, btnEl) {
-            appState.brushSize = normSize;
-            document.querySelectorAll('.size-btn').forEach(b => {
-                b.classList.remove('bg-slate-700', 'text-white');
-                b.classList.add('text-slate-300');
-            });
-            btnEl.classList.add('bg-slate-700', 'text-white');
-            btnEl.classList.remove('text-slate-300');
-
-            if (appState.activeTool !== 'draw') {
-                setTool('draw');
-            }
-        }
-
-        function undoStroke() {
-            const paper = appState.papers[appState.activeIndex];
-            if (paper && paper.strokes.length > 0) {
-                paper.strokes.pop();
-                redrawAllStrokes();
-            }
-        }
-
-        function clearStrokes() {
-            const paper = appState.papers[appState.activeIndex];
-            if (paper && paper.strokes.length > 0) {
-                paper.strokes = [];
-                redrawAllStrokes();
-                showToast('Evidenziature cancellate');
-            }
-        }
-
-        function toggleCleanLiveHud() {
-            appState.isHudHidden = !appState.isHudHidden;
-            const toolbar = document.getElementById('reader-toolbar');
-            const showBtn = document.getElementById('show-hud-btn');
-            const prevBtn = document.getElementById('btn-prev-paper');
-            const nextBtn = document.getElementById('btn-next-paper');
-
-            if (appState.isHudHidden) {
-                toolbar.classList.add('hud-hidden');
-                prevBtn.classList.add('opacity-0', 'pointer-events-none');
-                nextBtn.classList.add('opacity-0', 'pointer-events-none');
-                showBtn.classList.remove('hidden');
-                showBtn.classList.add('flex');
-            } else {
-                toolbar.classList.remove('hud-hidden');
-                prevBtn.classList.remove('opacity-0', 'pointer-events-none');
-                nextBtn.classList.remove('opacity-0', 'pointer-events-none');
-                showBtn.classList.add('hidden');
-                showBtn.classList.remove('flex');
-            }
-        }
-
-        /**
-         * SCORCIATOIE DA TASTIERA (per uso con tastiera Bluetooth su tablet o Mac)
-         */
-        function setupKeyboardControls() {
-            window.addEventListener('keydown', (e) => {
-                if (!appState.isReaderOpen) return;
-                if (e.key === 'Escape') closeReader();
-                if (e.key === 'ArrowRight') switchPaper(1);
-                if (e.key === 'ArrowLeft') switchPaper(-1);
-                if (e.key === '+' || e.key === '=') changePhotoZoom(0.3);
-                if (e.key === '-') changePhotoZoom(-0.3);
-                if (e.key === '0') resetPhotoZoom(true);
-                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-                    e.preventDefault();
-                    undoStroke();
-                }
-            });
-        }
-
-        /**
-         * TOAST NOTIFICHE DISCRETE
-         */
-        let toastTimer = null;
-        function showToast(text) {
-            const toast = document.getElementById('toast-banner');
-            toast.textContent = text;
-            toast.classList.remove('opacity-0');
-            toast.classList.add('opacity-100');
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0');
-            }, 3000);
-        }
-    </script>
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      if (viewerOverlay.classList.contains('active')) applyTransform();
+    });
+
+    // Avvio automatico
+    loadNewspapers();
+  </script>
 </body>
 </html>
