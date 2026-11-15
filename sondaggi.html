@@ -35,7 +35,6 @@
       color: #1a2433;
     }
 
-    /* TOP BAR UNICA RIGA */
     header.topbar {
       position: fixed;
       top: 0;
@@ -132,7 +131,6 @@
       color: #fff;
       font-size: 11px;
       font-weight: 700;
-      text-decoration: none;
       cursor: pointer;
       white-space: nowrap;
       display: inline-flex;
@@ -145,7 +143,18 @@
       border-radius: 5px;
     }
 
-    body.on-air-clean #btnEditData {
+    .sync-status {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.22);
+      color: #86efac;
+      white-space: nowrap;
+    }
+
+    body.on-air-clean #btnSyncNow,
+    body.on-air-clean #syncStatus {
       display: none;
     }
 
@@ -155,7 +164,6 @@
       background: transparent;
     }
 
-    /* CAROSELLO ORIZZONTALE A SCHERMO INTERO (5 SLIDE GRAFICHE) */
     .slides-track {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
@@ -197,7 +205,6 @@
       position: relative;
     }
 
-    /* CANVAS EVIDENZIATORE ANCÒRATO ALLA SINGOLA SLIDE */
     .slide-draw-canvas {
       position: absolute;
       inset: 0;
@@ -241,7 +248,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* SLIDE 1: BARRE VERTICALI PARTITI */
     .bars-stage {
       flex: 1;
       display: flex;
@@ -333,7 +339,6 @@
       max-width: 100%;
     }
 
-    /* SLIDE 2: EMICICLO PARLAMENTO (CAMERA 400 SEGGI) */
     .parliament-layout {
       flex: 1;
       display: grid;
@@ -385,7 +390,6 @@
       padding: 8px 12px;
     }
 
-    /* SLIDE 3: GRADIMENTO LEADER */
     .leaders-grid {
       flex: 1;
       display: grid;
@@ -419,49 +423,13 @@
       background: #e2e8f0;
     }
 
-    .leader-info {
-      flex: 1;
-      min-width: 0;
-    }
+    .leader-info { flex: 1; min-width: 0; }
+    .leader-top { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+    .leader-name { font-size: 15px; font-weight: 900; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .leader-role { font-size: 11.5px; color: #64748b; font-weight: 600; margin-bottom: 6px; }
+    .leader-bar-bg { width: 100%; height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+    .leader-bar-fill { height: 100%; background: linear-gradient(90deg, #0b3d75 0%, #2563eb 100%); border-radius: 999px; }
 
-    .leader-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 6px;
-    }
-
-    .leader-name {
-      font-size: 15px;
-      font-weight: 900;
-      color: #0f172a;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .leader-role {
-      font-size: 11.5px;
-      color: #64748b;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .leader-bar-bg {
-      width: 100%;
-      height: 10px;
-      background: #e2e8f0;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .leader-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #0b3d75 0%, #2563eb 100%);
-      border-radius: 999px;
-    }
-
-    /* SLIDE 4: COALIZIONI */
     .coalitions-list {
       flex: 1;
       display: flex;
@@ -481,109 +449,60 @@
       gap: 8px;
     }
 
-    .coal-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
+    .coal-top { display: flex; justify-content: space-between; align-items: center; }
     .coal-name { font-size: 17px; font-weight: 900; color: #0f172a; }
     .coal-pct { font-size: 22px; font-weight: 900; color: #0b3d75; }
-
-    .coal-track {
-      width: 100%;
-      height: 22px;
-      background: #e2e8f0;
-      border-radius: 999px;
-      overflow: hidden;
-      display: flex;
-    }
-
+    .coal-track { width: 100%; height: 22px; background: #e2e8f0; border-radius: 999px; overflow: hidden; display: flex; }
     .coal-seg { height: 100%; }
+    .coal-members { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; font-weight: 700; color: #475569; }
 
-    .coal-members {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #475569;
-    }
+    .versus-controls { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    .versus-select { padding: 7px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-weight: 800; font-size: 13px; color: #0b3d75; background: #f8fafc; }
+    .versus-stage { flex: 1; display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; min-height: 0; }
+    .versus-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; padding: 24px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+    .versus-avatar { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 4px solid #0b3d75; background: #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+    .versus-big-num { font-size: 44px; font-weight: 900; color: #0b3d75; letter-spacing: -1px; line-height: 1; }
+    .vs-badge { width: 48px; height: 48px; border-radius: 50%; background: #0b3d75; color: #fff; font-weight: 900; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(11, 61, 117, 0.3); }
 
-    /* SLIDE 5: TESTA A TESTA */
-    .versus-controls {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-    }
-
-    .versus-select {
-      padding: 7px 12px;
-      border-radius: 8px;
-      border: 1.5px solid #cbd5e1;
-      font-weight: 800;
-      font-size: 13px;
-      color: #0b3d75;
-      background: #f8fafc;
-    }
-
-    .versus-stage {
+    /* SLIDE 6: STORICO DAL 2020 */
+    .history-wrap {
       flex: 1;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 20px;
-      align-items: center;
-      min-height: 0;
-    }
-
-    .versus-card {
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 24px 18px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
+      min-height: 0;
       gap: 10px;
     }
 
-    .versus-avatar {
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid #0b3d75;
-      background: #fff;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-    }
-
-    .versus-big-num {
-      font-size: 44px;
-      font-weight: 900;
-      color: #0b3d75;
-      letter-spacing: -1px;
-      line-height: 1;
-    }
-
-    .vs-badge {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: #0b3d75;
-      color: #fff;
-      font-weight: 900;
-      font-size: 16px;
+    .history-legend {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
       justify-content: center;
-      box-shadow: 0 6px 16px rgba(11, 61, 117, 0.3);
     }
 
-    /* DOCK IN BASSO */
+    .hist-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1.5px solid #cbd5e1;
+      background: #fff;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .hist-pill.muted {
+      opacity: 0.32;
+    }
+
+    .history-svg-box {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+    }
+
     .viewer-dock {
       position: fixed;
       bottom: max(12px, env(safe-area-inset-bottom));
@@ -652,7 +571,6 @@
 </head>
 <body>
 
-  <!-- BARRA SUPERIORE -->
   <header class="topbar">
     <div class="topbar-left">
       <span class="live-badge"><span class="live-dot"></span>LIVE</span>
@@ -661,17 +579,15 @@
       <span class="view-subtitle" id="headerSubtitle">Sondaggi &amp; Scenari</span>
     </div>
     <div class="topbar-right">
-      <a href="dati-sondaggi.html" class="btn-top" id="btnEditData">⚙ Redazione Dati</a>
+      <span class="sync-status" id="syncStatus">Connessione...</span>
+      <button class="btn-top" id="btnSyncNow" title="Aggiorna ora da Google Fogli">↻ Aggiorna Fogli</button>
       <button class="btn-top btn-icon-only" id="btnToggleClean" title="Nascondi controlli in onda">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
       </button>
     </div>
   </header>
 
-  <!-- 5 GRAFICI SCORREVOLI (OGNUNO CON IL PROPRIO EVIDENZIATORE ANCÒRATO) -->
   <div class="slides-track" id="slidesTrack">
-
-    <!-- SLIDE 1: PARTITI -->
     <section class="chart-slide" data-slide-idx="0">
       <div class="slide-card">
         <canvas class="slide-draw-canvas"></canvas>
@@ -683,7 +599,6 @@
       </div>
     </section>
 
-    <!-- SLIDE 2: EMICICLO PARLAMENTO -->
     <section class="chart-slide" data-slide-idx="1">
       <div class="slide-card">
         <canvas class="slide-draw-canvas"></canvas>
@@ -698,7 +613,6 @@
       </div>
     </section>
 
-    <!-- SLIDE 3: GRADIMENTO LEADER -->
     <section class="chart-slide" data-slide-idx="2">
       <div class="slide-card">
         <canvas class="slide-draw-canvas"></canvas>
@@ -710,7 +624,6 @@
       </div>
     </section>
 
-    <!-- SLIDE 4: COALIZIONI -->
     <section class="chart-slide" data-slide-idx="3">
       <div class="slide-card">
         <canvas class="slide-draw-canvas"></canvas>
@@ -722,7 +635,6 @@
       </div>
     </section>
 
-    <!-- SLIDE 5: TESTA A TESTA -->
     <section class="chart-slide" data-slide-idx="4">
       <div class="slide-card">
         <canvas class="slide-draw-canvas"></canvas>
@@ -739,15 +651,25 @@
       </div>
     </section>
 
+    <section class="chart-slide" data-slide-idx="5">
+      <div class="slide-card">
+        <canvas class="slide-draw-canvas"></canvas>
+        <div class="slide-header">
+          <h1 class="slide-title">Serie Storica Sondaggi (2020 – Oggi)</h1>
+          <span class="slide-meta" id="historyMeta">Tocca un partito per attivare/disattivare la linea</span>
+        </div>
+        <div class="history-wrap" id="historyWrap"></div>
+      </div>
+    </section>
   </div>
 
-  <!-- DOCK NAVIGAZIONE GRAFICI + EVIDENZIATORE -->
   <div class="viewer-dock">
     <button class="dock-btn slide-tab active" data-slide="0">1. Partiti</button>
     <button class="dock-btn slide-tab" data-slide="1">2. Parlamento</button>
     <button class="dock-btn slide-tab" data-slide="2">3. Leader</button>
     <button class="dock-btn slide-tab" data-slide="3">4. Coalizioni</button>
     <button class="dock-btn slide-tab" data-slide="4">5. Sfida</button>
+    <button class="dock-btn slide-tab" data-slide="5">6. Storico</button>
     <div class="dock-sep"></div>
     <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
     <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.48)" style="background:#ffee00;"></span>
@@ -757,6 +679,15 @@
   </div>
 
   <script>
+    // =========================================================================
+    // LINK CSV PUBBLICATI DA GOOGLE FOGLI (GIÀ INTEGRATI E SINCRONIZZATI)
+    // =========================================================================
+    const PARTIES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTnmJyLZqlLzDug3xQp3FmreuWHv7oFMCLyZ3g2919k_sZCoaVPgR8ovz4x2Urmt9_gm9w8nu68Ni4C/pub?gid=680820413&single=true&output=csv";
+    const LEADERS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTnmJyLZqlLzDug3xQp3FmreuWHv7oFMCLyZ3g2919k_sZCoaVPgR8ovz4x2Urmt9_gm9w8nu68Ni4C/pub?gid=1802456122&single=true&output=csv";
+    // Opzionale: incolla qui il link CSV dello storico (orizzontale o verticale) se vuoi attivare anche la Slide 6
+    const HISTORY_CSV_URL = "";
+    // =========================================================================
+
     const PARTY_COLORS = {
       "FRATELLI D'ITALIA": "#0b3d75",
       "PARTITO DEMOCRATICO": "#e11d48",
@@ -789,20 +720,19 @@
 
     const DEFAULT_PARTIES_DATA = {
       supermediaLabel: "SUPERMEDIA 14/11/2026",
-      instituteNames: ["CASA SONDAGGI 1", "CASA SONDAGGI 2"],
       parties: [
-        { name: "FRATELLI D'ITALIA", img: "https://grafici.brunorachiele.it/img/fdi.png", coalition: "Centrodestra", polls: [28.9, 28.0], media: 28.45, prev: 28.33, trend: 0.12 },
-        { name: "PARTITO DEMOCRATICO", img: "https://grafici.brunorachiele.it/img/pd.png", coalition: "Centrosinistra", polls: [20.8, 20.4], media: 20.60, prev: 20.23, trend: 0.37 },
-        { name: "MOVIMENTO 5 STELLE", img: "https://grafici.brunorachiele.it/img/m5s.png", coalition: "Centrosinistra", polls: [12.6, 12.0], media: 12.30, prev: 12.83, trend: -0.53 },
-        { name: "FORZA ITALIA", img: "https://grafici.brunorachiele.it/img/fi.png", coalition: "Centrodestra", polls: [7.3, 7.5], media: 7.40, prev: 7.17, trend: 0.23 },
-        { name: "ALLEANZA VERDI-SINISTRA", img: "https://grafici.brunorachiele.it/img/avs.png", coalition: "Centrosinistra", polls: [6.2, 6.2], media: 6.20, prev: 6.13, trend: 0.07 },
-        { name: "LEGA", img: "https://grafici.brunorachiele.it/img/lega.png", coalition: "Centrodestra", polls: [6.2, 6.1], media: 6.15, prev: 5.37, trend: 0.78 },
-        { name: "FUTURO NAZIONALE", img: "https://grafici.brunorachiele.it/img/fn.png", coalition: "Destra Indipendente", polls: [5.5, 6.5], media: 6.00, prev: 6.43, trend: -0.43 },
-        { name: "AZIONE", img: "https://grafici.brunorachiele.it/img/azione.png", coalition: "Terzo Polo", polls: [3.2, 3.0], media: 3.10, prev: 3.07, trend: 0.03 },
-        { name: "ITALIA VIVA", img: "https://grafici.brunorachiele.it/img/iv.png", coalition: "Terzo Polo", polls: [2.2, 2.2], media: 2.20, prev: 2.40, trend: -0.20 },
-        { name: "+EUROPA", img: "https://grafici.brunorachiele.it/img/europa.png", coalition: "Centrosinistra", polls: [1.2, 1.2], media: 1.20, prev: 1.30, trend: -0.10 },
-        { name: "NOI MODERATI", img: "https://grafici.brunorachiele.it/img/nm.png", coalition: "Centrodestra", polls: [1.0, 1.0], media: 1.00, prev: 1.17, trend: -0.17 },
-        { name: "SUD CHIAMA NORD", img: "https://grafici.brunorachiele.it/img/scn.png", coalition: "Centrodestra", polls: [1.1, 0.8], media: 0.95, prev: 0.00, trend: 0.95 }
+        { name: "FRATELLI D'ITALIA", img: "https://grafici.brunorachiele.it/img/fdi.png", coalition: "Centrodestra", media: 28.45, trend: 0.12 },
+        { name: "PARTITO DEMOCRATICO", img: "https://grafici.brunorachiele.it/img/pd.png", coalition: "Centrosinistra", media: 20.60, trend: 0.37 },
+        { name: "MOVIMENTO 5 STELLE", img: "https://grafici.brunorachiele.it/img/m5s.png", coalition: "Centrosinistra", media: 12.30, trend: -0.53 },
+        { name: "FORZA ITALIA", img: "https://grafici.brunorachiele.it/img/fi.png", coalition: "Centrodestra", media: 7.40, trend: 0.23 },
+        { name: "ALLEANZA VERDI-SINISTRA", img: "https://grafici.brunorachiele.it/img/avs.png", coalition: "Centrosinistra", media: 6.20, trend: 0.07 },
+        { name: "LEGA", img: "https://grafici.brunorachiele.it/img/lega.png", coalition: "Centrodestra", media: 6.15, trend: 0.78 },
+        { name: "FUTURO NAZIONALE", img: "https://grafici.brunorachiele.it/img/fn.png", coalition: "Destra Indipendente", media: 6.00, trend: -0.43 },
+        { name: "AZIONE", img: "https://grafici.brunorachiele.it/img/azione.png", coalition: "Terzo Polo", media: 3.10, trend: 0.03 },
+        { name: "ITALIA VIVA", img: "https://grafici.brunorachiele.it/img/iv.png", coalition: "Terzo Polo", media: 2.20, trend: -0.20 },
+        { name: "+EUROPA", img: "https://grafici.brunorachiele.it/img/europa.png", coalition: "Centrosinistra", media: 1.20, trend: -0.10 },
+        { name: "NOI MODERATI", img: "https://grafici.brunorachiele.it/img/nm.png", coalition: "Centrodestra", media: 1.00, trend: -0.17 },
+        { name: "SUD CHIAMA NORD", img: "https://grafici.brunorachiele.it/img/scn.png", coalition: "Centrodestra", media: 0.95, trend: 0.95 }
       ]
     };
 
@@ -820,8 +750,161 @@
       ]
     };
 
-    const partiesData = JSON.parse(localStorage.getItem('br_ledwall_polls') || 'null') || DEFAULT_PARTIES_DATA;
-    const leadersData = JSON.parse(localStorage.getItem('br_ledwall_leaders') || 'null') || DEFAULT_LEADERS_DATA;
+    let partiesData = JSON.parse(localStorage.getItem('br_ledwall_polls') || 'null') || DEFAULT_PARTIES_DATA;
+    let leadersData = JSON.parse(localStorage.getItem('br_ledwall_leaders') || 'null') || DEFAULT_LEADERS_DATA;
+    let historyData = JSON.parse(localStorage.getItem('br_ledwall_history') || 'null');
+
+    function parseCSVLine(line) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          inQuotes = !inQuotes;
+        } else if (ch === ',' && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += ch;
+        }
+      }
+      result.push(current.trim());
+      return result;
+    }
+
+    function parseNum(str) {
+      if (!str) return null;
+      const cleaned = str.trim().replace('%', '').replace(',', '.');
+      if (!cleaned || cleaned === '-') return null;
+      const val = parseFloat(cleaned);
+      return isNaN(val) ? null : val;
+    }
+
+    function parsePartiesCSV(csvText) {
+      const lines = csvText.trim().split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) return null;
+      const headers = parseCSVLine(lines[0]);
+      const supermediaLabel = headers.find(h => h.toUpperCase().includes('SUPERMEDIA') || h.toUpperCase().includes('MEDIA')) || 'SUPERMEDIA';
+      const idxCoal = headers.findIndex(h => h.toUpperCase().includes('COALIZ'));
+      const idxMedia = headers.findIndex(h => h.toUpperCase().includes('SUPERMEDIA') || h.toUpperCase().includes('MEDIA'));
+      const idxPrev = headers.findIndex(h => h.toUpperCase().includes('STIMA') || h.toUpperCase().includes('PRECED'));
+      const idxTrend = headers.findIndex(h => h.toUpperCase().includes('TREND') || h.toUpperCase().includes('VAR'));
+
+      const parties = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        const name = (cols[0] || '').toUpperCase();
+        if (!name) continue;
+        const img = cols[1] || '';
+        const coalition = cols[idxCoal >= 0 ? idxCoal : 2] || 'Altro';
+        const media = parseNum(cols[idxMedia >= 0 ? idxMedia : cols.length - 3]) ?? 0;
+        const prev = parseNum(cols[idxPrev >= 0 ? idxPrev : cols.length - 2]) ?? media;
+        let trend = parseNum(cols[idxTrend >= 0 ? idxTrend : cols.length - 1]);
+        if (trend === null) trend = +(media - prev).toFixed(2);
+        parties.push({ name, img, coalition, media, trend });
+      }
+      return parties.length ? { supermediaLabel, parties } : null;
+    }
+
+    function parseLeadersCSV(csvText) {
+      const lines = csvText.trim().split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) return null;
+      const headers = parseCSVLine(lines[0]);
+      const dateLabel = headers[3] || 'Gradimento Leader';
+
+      const leaders = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        const name = cols[0] || '';
+        if (!name) continue;
+        const img = cols[1] || '';
+        const role = cols[2] || '';
+        const score = parseNum(cols[3]) ?? 0;
+        const trend = parseNum(cols[4]) ?? 0;
+        leaders.push({ name, img, role, score, trend });
+      }
+      return leaders.length ? { dateLabel, leaders } : null;
+    }
+
+    // Parser universale per storico (gestisce automaticamente sia formato ORIZZONTALE sia VERTICALE)
+    function parseHistoryCSV(csvText) {
+      const rows = csvText.trim().split(/\r?\n/).filter(Boolean).map(parseCSVLine);
+      if (rows.length < 2 || rows[0].length < 2) return null;
+
+      // Rileva orientamento: se nella prima riga le colonne dalla 2a in poi sembrano date (es. 2020, /202), è ORIZZONTALE
+      const headerDates = rows[0].slice(1);
+      const isHorizontal = headerDates.filter(h => /\d{2,4}/.test(h)).length > headerDates.length * 0.5;
+
+      let dates = [];
+      let series = [];
+
+      if (isHorizontal) {
+        dates = headerDates;
+        for (let r = 1; r < rows.length; r++) {
+          const name = (rows[r][0] || '').toUpperCase();
+          if (!name) continue;
+          const values = rows[r].slice(1).map(parseNum);
+          series.push({ name, values });
+        }
+      } else {
+        const partyNames = rows[0].slice(1).map(n => n.toUpperCase());
+        series = partyNames.map(name => ({ name, values: [] }));
+        for (let r = 1; r < rows.length; r++) {
+          dates.push(rows[r][0] || '');
+          partyNames.forEach((_, idx) => {
+            series[idx].values.push(parseNum(rows[r][idx + 1]));
+          });
+        }
+      }
+      return dates.length && series.length ? { dates, series } : null;
+    }
+
+    async function syncFromGoogleSheets() {
+      const statusEl = document.getElementById('syncStatus');
+      statusEl.textContent = 'Sincronizzazione...';
+      try {
+        const cacheBust = `&t=${Date.now()}`;
+        if (PARTIES_CSV_URL) {
+          const resP = await fetch(PARTIES_CSV_URL + cacheBust);
+          const txtP = await resP.text();
+          const parsedP = parsePartiesCSV(txtP);
+          if (parsedP) {
+            partiesData = parsedP;
+            localStorage.setItem('br_ledwall_polls', JSON.stringify(parsedP));
+          }
+        }
+        if (LEADERS_CSV_URL) {
+          const resL = await fetch(LEADERS_CSV_URL + cacheBust);
+          const txtL = await resL.text();
+          const parsedL = parseLeadersCSV(txtL);
+          if (parsedL) {
+            leadersData = parsedL;
+            localStorage.setItem('br_ledwall_leaders', JSON.stringify(parsedL));
+          }
+        }
+        if (HISTORY_CSV_URL) {
+          const resH = await fetch(HISTORY_CSV_URL + cacheBust);
+          const txtH = await resH.text();
+          const parsedH = parseHistoryCSV(txtH);
+          if (parsedH) {
+            historyData = parsedH;
+            localStorage.setItem('br_ledwall_history', JSON.stringify(parsedH));
+          }
+        }
+        renderAll();
+        const now = new Date();
+        statusEl.textContent = `Aggiornato ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        statusEl.style.background = 'rgba(34, 197, 94, 0.25)';
+        statusEl.style.color = '#86efac';
+      } catch (err) {
+        statusEl.textContent = 'Cache locale attiva';
+        statusEl.style.background = 'rgba(245, 158, 11, 0.25)';
+        statusEl.style.color = '#fde047';
+      }
+    }
+
+    document.getElementById('btnSyncNow').addEventListener('click', syncFromGoogleSheets);
 
     function fmtPct(num) {
       return num.toFixed(2).replace('.', ',') + '%';
@@ -840,7 +923,6 @@
       document.getElementById('slide1Title').textContent = `Intenzioni di Voto — ${partiesData.supermediaLabel}`;
       document.getElementById('leadersDateMeta').textContent = `Rilevazione ${leadersData.dateLabel}`;
 
-      // 1. SLIDE BARRE VERTICALI PARTITI
       const maxParty = Math.max(...sortedParties.map(p => p.media), 30);
       const barsStage = document.getElementById('barsStage');
       barsStage.innerHTML = sortedParties.map((p, idx) => {
@@ -876,10 +958,8 @@
         });
       });
 
-      // 2. SLIDE EMICICLO PARLAMENTO (400 SEGGI CAMERA - SBARRAMENTO 3%)
       renderParliamentHemicycle(sortedParties);
 
-      // 3. SLIDE GRADIMENTO LEADER
       const maxLeader = Math.max(...sortedLeaders.map(l => l.score), 45);
       document.getElementById('leadersGrid').innerHTML = sortedLeaders.map(l => {
         const trendCls = l.trend > 0.004 ? 'trend-up' : l.trend < -0.004 ? 'trend-down' : 'trend-flat';
@@ -905,7 +985,6 @@
         `;
       }).join('');
 
-      // 4. SLIDE COALIZIONI
       const coalMap = new Map();
       sortedParties.forEach(p => {
         const cName = p.coalition || 'Altro';
@@ -940,22 +1019,19 @@
         `;
       }).join('');
 
-      // 5. SLIDE TESTA A TESTA
       setupVersusCompare(sortedParties, sortedLeaders);
+      renderHistoryChart();
     }
 
     function renderParliamentHemicycle(sortedParties) {
-      // Calcolo proporzionale su 400 seggi per partiti >= 3%
       const eligible = sortedParties.filter(p => p.media >= 3.0);
       const sumPct = eligible.reduce((acc, p) => acc + p.media, 0) || 100;
       const totalSeats = 400;
 
-      // Ripartizione con metodo dei resti più alti
       const allocated = eligible.map(p => {
         const exact = (p.media / sumPct) * totalSeats;
         return {
           name: p.name,
-          shortName: SHORT_NAMES[p.name] || p.name,
           img: p.img,
           coalition: p.coalition,
           color: PARTY_COLORS[p.name] || '#0b3d75',
@@ -973,11 +1049,9 @@
         rIdx++;
       }
 
-      // Ordina da sinistra a destra dell'emiciclo (Sinistra -> Centro -> Destra)
       const orderMap = { "Centrosinistra": 1, "Terzo Polo": 2, "Centrodestra": 3, "Destra Indipendente": 4 };
       const hemicycleParties = [...allocated].sort((a, b) => (orderMap[a.coalition] || 2) - (orderMap[b.coalition] || 2));
 
-      // Genera coordinate ad arco su 10 file concentriche
       const rows = 10;
       const cx = 260, cy = 245;
       const innerR = 95, outerR = 225;
@@ -988,15 +1062,10 @@
         const countInRow = Math.round(28 + r * 2.7);
         for (let i = 0; i < countInRow; i++) {
           const angle = Math.PI - (i / (countInRow - 1)) * Math.PI;
-          allDots.push({
-            x: cx + radius * Math.cos(angle),
-            y: cy - radius * Math.sin(angle),
-            angle
-          });
+          allDots.push({ x: cx + radius * Math.cos(angle), y: cy - radius * Math.sin(angle), angle });
         }
       }
 
-      // Ordina i punti per angolo decrescente (da sinistra PI a destra 0) e prendi 400 punti
       allDots.sort((a, b) => b.angle - a.angle);
       const seatPoints = allDots.slice(0, totalSeats);
 
@@ -1059,7 +1128,7 @@
       const optionsHtml = items.map(it => `<option value="${it.id}">${it.label}</option>`).join('');
       selL.innerHTML = optionsHtml;
       selR.innerHTML = optionsHtml;
-      if (items.length > 3) selR.selectedIndex = 3; // Default: Meloni vs Schlein
+      if (items.length > 3) selR.selectedIndex = 3;
 
       const renderCards = () => {
         const left = items.find(i => i.id === selL.value) || items[0];
@@ -1086,12 +1155,93 @@
         `;
       };
 
-      selL.addEventListener('change', renderCards);
-      selR.addEventListener('change', renderCards);
+      selL.onchange = renderCards;
+      selR.onchange = renderCards;
       renderCards();
     }
 
-    // Navigazione slide orizzontali
+    let hiddenHistoryParties = new Set();
+
+    function renderHistoryChart() {
+      const wrap = document.getElementById('historyWrap');
+      if (!historyData || !historyData.dates || !historyData.series) {
+        wrap.innerHTML = `
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#64748b; gap:8px;">
+            <div style="font-size:16px; font-weight:800; color:#0b3d75;">Pronto per lo Storico 2020 – Oggi</div>
+            <div style="font-size:13px; max-width:440px;">Inserisci il link CSV del tuo foglio storico nella variabile <b>HISTORY_CSV_URL</b> per visualizzare qui il grafico lineare interattivo (supporta sia formato orizzontale che verticale).</div>
+          </div>
+        `;
+        return;
+      }
+
+      const { dates, series } = historyData;
+      const visibleSeries = series.filter(s => !hiddenHistoryParties.has(s.name));
+      const allNums = visibleSeries.flatMap(s => s.values.filter(v => v !== null));
+      const maxY = Math.max(...allNums, 35);
+      const w = 960, h = 360, padL = 44, padR = 20, padT = 20, padB = 36;
+      const plotW = w - padL - padR;
+      const plotH = h - padT - padB;
+
+      const gridLines = [0, 10, 20, 30, 40].filter(v => v <= maxY + 5).map(v => {
+        const y = padT + plotH - (v / maxY) * plotH;
+        return `
+          <line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="#e2e8f0" stroke-width="1" />
+          <text x="${padL - 8}" y="${y + 4}" text-anchor="end" font-size="11" font-weight="700" fill="#64748b">${v}%</text>
+        `;
+      }).join('');
+
+      const stepX = dates.length > 1 ? plotW / (dates.length - 1) : plotW;
+      const labelEvery = Math.max(1, Math.ceil(dates.length / 10));
+      const xLabels = dates.map((d, idx) => {
+        if (idx % labelEvery !== 0 && idx !== dates.length - 1) return '';
+        const x = padL + idx * stepX;
+        return `<text x="${x}" y="${h - 10}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#64748b">${d}</text>`;
+      }).join('');
+
+      const paths = visibleSeries.map(s => {
+        const color = PARTY_COLORS[s.name] || '#0b3d75';
+        let dStr = '';
+        s.values.forEach((v, idx) => {
+          if (v === null) return;
+          const x = padL + idx * stepX;
+          const y = padT + plotH - (v / maxY) * plotH;
+          dStr += (dStr === '' ? `M ${x.toFixed(1)} ${y.toFixed(1)}` : ` L ${x.toFixed(1)} ${y.toFixed(1)}`);
+        });
+        return `<path d="${dStr}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`;
+      }).join('');
+
+      const pillsHtml = series.map(s => {
+        const color = PARTY_COLORS[s.name] || '#0b3d75';
+        const muted = hiddenHistoryParties.has(s.name) ? 'muted' : '';
+        return `
+          <button class="hist-pill ${muted}" data-party="${s.name}" style="border-color:${color}; color:${color};">
+            <span style="width:9px; height:9px; border-radius:50%; background:${color}; display:inline-block;"></span>
+            ${SHORT_NAMES[s.name] || s.name}
+          </button>
+        `;
+      }).join('');
+
+      wrap.innerHTML = `
+        <div class="history-legend">${pillsHtml}</div>
+        <div class="history-svg-box">
+          <svg viewBox="0 0 ${w} ${h}" style="width:100%; height:100%;">
+            ${gridLines}
+            ${xLabels}
+            ${paths}
+          </svg>
+        </div>
+      `;
+
+      wrap.querySelectorAll('.hist-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = btn.dataset.party;
+          if (hiddenHistoryParties.has(p)) hiddenHistoryParties.delete(p);
+          else hiddenHistoryParties.add(p);
+          renderHistoryChart();
+        });
+      });
+    }
+
     const slidesTrack = document.getElementById('slidesTrack');
     const slideTabs = document.querySelectorAll('.slide-tab');
     let activeSlideIdx = 0;
@@ -1108,12 +1258,10 @@
       slideTabs.forEach((t, i) => t.classList.toggle('active', i === activeSlideIdx));
     });
 
-    // Pulizia topbar in onda
     const toggleClean = () => document.body.classList.toggle('on-air-clean');
     document.getElementById('btnToggleClean').addEventListener('click', toggleClean);
     document.getElementById('brandLogo').addEventListener('dblclick', toggleClean);
 
-    // EVIDENZIATORE ANCÒRATO A CIASCUN GRAFICO (RESTA SUL SINGOLO GRAFICO QUANDO SCORRI!)
     const slideCanvases = Array.from(document.querySelectorAll('.slide-draw-canvas'));
     const btnDrawToggle = document.getElementById('btnDrawToggle');
     let isDrawMode = false;
@@ -1182,7 +1330,6 @@
       });
     });
 
-    // Pulisce l'evidenziatore solo sulla slide corrente
     document.getElementById('btnClearMarks').addEventListener('click', () => {
       const currentCanvas = slideCanvases[activeSlideIdx];
       if (currentCanvas) {
@@ -1193,6 +1340,7 @@
     window.addEventListener('resize', syncAllCanvases);
     renderAll();
     requestAnimationFrame(syncAllCanvases);
+    syncFromGoogleSheets();
   </script>
 </body>
 </html>
