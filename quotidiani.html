@@ -216,7 +216,7 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
-      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s ease;
+      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s ease, opacity 0.2s;
       border-top: 4px solid var(--accent-color, #0b3d75);
     }
 
@@ -269,99 +269,100 @@
       color: #475569;
     }
 
-    /* BROWSER INTERNO A TUTTO SCHERMO */
-    .browser-overlay {
+    /* VIEWER SCREENSHOT LIVE HOMEPAGE (COME UN PDF A TUTTO SCHERMO) */
+    .viewer-overlay {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
       left: 0;
       right: 0;
       bottom: 0;
-      background: #fff;
+      background: rgba(231, 235, 240, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       z-index: 90;
       display: none;
-      flex-direction: column;
+      overflow: hidden;
+      touch-action: none;
       opacity: 0;
-      transform: scale(0.96);
-      transition: opacity 0.25s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: opacity 0.26s ease;
     }
 
-    .browser-overlay.active {
-      display: flex;
-    }
-
-    .browser-overlay.visible {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    /* MINI BARRA INDIRIZZO */
-    .browser-addressbar {
-      height: 34px;
-      background: #eef2f6;
-      border-bottom: 1px solid #cbd5e1;
-      padding: 0 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #334155;
-      flex-shrink: 0;
-      gap: 10px;
-    }
-
-    .url-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: #fff;
-      border: 1px solid #cbd5e1;
-      border-radius: 5px;
-      padding: 2px 10px;
-      max-width: 72%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 11px;
-    }
-
-    /* AREA CONTENUTO WEB */
-    .browser-viewport {
-      position: relative;
-      flex: 1;
-      width: 100%;
-      overflow: hidden;
-      background: #fff;
-    }
-
-    #webFrame {
-      width: 100%;
-      height: 100%;
-      border: none;
+    .viewer-overlay.active {
       display: block;
-      background: #fff;
-      transform-origin: top center;
-      transition: transform 0.2s ease;
     }
 
-    .browser-loader {
+    .viewer-overlay.visible {
+      opacity: 1;
+    }
+
+    .pdf-canvas-surface {
       position: absolute;
       inset: 0;
-      background: rgba(248, 250, 252, 0.95);
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .pdf-canvas-surface:active {
+      cursor: grabbing;
+    }
+
+    .pdf-canvas-surface.draw-mode {
+      cursor: crosshair;
+    }
+
+    .zoom-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 0;
+      will-change: transform;
+      display: inline-block;
+      box-shadow: 0 22px 60px rgba(10, 25, 47, 0.28);
+      background: #fff;
+    }
+
+    .zoom-layer img {
+      display: block;
+      max-width: none;
+      max-height: none;
+      pointer-events: none;
+    }
+
+    .draw-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    .pdf-canvas-surface.draw-mode .draw-canvas {
+      pointer-events: auto;
+    }
+
+    /* LOADER */
+    .snapshot-loader {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 10;
       gap: 10px;
+      z-index: 5;
       text-align: center;
       padding: 20px;
     }
 
     .spinner {
-      width: 34px;
-      height: 34px;
-      border: 3px solid #d0dbe8;
+      width: 36px;
+      height: 36px;
+      border: 3px solid #cbd5e1;
       border-top-color: var(--brand-blue);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
@@ -371,7 +372,7 @@
       to { transform: rotate(360deg); }
     }
 
-    /* DOCK STRUMENTI IN BASSO */
+    /* BARRA STRUMENTI IN BASSO */
     .viewer-dock {
       position: fixed;
       bottom: max(14px, env(safe-area-inset-bottom));
@@ -404,6 +405,7 @@
       gap: 5px;
       cursor: pointer;
       white-space: nowrap;
+      text-decoration: none;
     }
 
     .dock-btn.primary-back {
@@ -468,40 +470,35 @@
     <div class="wall-grid" id="wallGrid"></div>
   </main>
 
-  <!-- BROWSER INTERNO -->
-  <div class="browser-overlay" id="browserOverlay">
-    <div class="browser-addressbar">
-      <div class="url-pill">
-        <span>🔒</span>
-        <span id="currentUrlText">https://...</span>
-      </div>
-      <div style="display:flex; align-items:center; gap:10px;">
-        <button id="btnReloadPage" style="background:none; border:none; color:#0b3d75; font-weight:700; font-size:11px; cursor:pointer; padding:0;">↻ Ricarica</button>
-        <a id="externalFallbackLink" href="#" target="_blank" rel="noopener" style="color:#0b3d75; font-weight:700; text-decoration:none; font-size:11px; white-space:nowrap;">Apri esterno ↗</a>
-      </div>
+  <!-- VIEWER SCREENSHOT LIVE HOMEPAGE -->
+  <div class="viewer-overlay" id="viewerOverlay">
+    <div class="snapshot-loader" id="snapshotLoader">
+      <div class="spinner"></div>
+      <div style="font-weight:700; color:#0b3d75; font-size:15px;" id="loaderTitle">Cattura homepage in tempo reale...</div>
+      <div style="font-size:12px; color:#52637a;">Generazione anteprima grafica ad alta risoluzione</div>
     </div>
 
-    <div class="browser-viewport" id="browserViewport">
-      <div class="browser-loader" id="browserLoader">
-        <div class="spinner"></div>
-        <div style="font-weight:700; color:#0b3d75;" id="loaderTitle">Apertura homepage...</div>
-        <div style="font-size:12px; color:#64748b;" id="loaderSub">Caricamento impaginazione originale del quotidiano</div>
+    <div class="pdf-canvas-surface" id="pdfSurface">
+      <div class="zoom-layer" id="zoomLayer">
+        <img id="activeImage" alt="Homepage Quotidiano" />
+        <canvas class="draw-canvas" id="drawCanvas"></canvas>
       </div>
-
-      <iframe id="webFrame" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
     </div>
 
     <div class="viewer-dock">
       <button class="dock-btn primary-back" id="btnBack">&#8592; Torna indietro</button>
       <div class="dock-sep"></div>
-      <button class="dock-btn" id="btnZoomPageOut" title="Riduci">&#8722;</button>
-      <button class="dock-btn" id="btnZoomPageIn" title="Ingrandisci">&#43;</button>
+      <button class="dock-btn" id="btnZoomOut" title="Riduci">&#8722;</button>
+      <button class="dock-btn" id="btnZoomReset" title="Adatta">100%</button>
+      <button class="dock-btn" id="btnZoomIn" title="Ingrandisci">&#43;</button>
       <div class="dock-sep"></div>
       <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
       <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.55)" style="background:#ffee00;"></span>
       <span class="color-dot" data-color="rgba(0, 230, 118, 0.45)" style="background:#00e676;"></span>
       <span class="color-dot" data-color="rgba(255, 82, 82, 0.45)" style="background:#ff5252;"></span>
       <button class="dock-btn" id="btnClearMarks">Pulisci</button>
+      <div class="dock-sep"></div>
+      <a class="dock-btn" id="btnOpenExternal" href="#" target="_blank" rel="noopener">Apri sito ↗</a>
     </div>
   </div>
 
@@ -546,21 +543,29 @@
 
     let activeFilter = 'all';
     let currentSite = null;
-    let currentUrl = '';
-    let pageZoom = 1;
+    let strokes = [];
+
+    let baseWidth = 1280;
+    let baseHeight = 2400;
+    let fitScale = 1;
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
     let isDrawMode = false;
     let currentColor = 'rgba(255, 238, 0, 0.55)';
 
     const ledwallStage = document.getElementById('ledwallStage');
     const wallGrid = document.getElementById('wallGrid');
     const headerSubtitle = document.getElementById('headerSubtitle');
-    const browserOverlay = document.getElementById('browserOverlay');
-    const browserLoader = document.getElementById('browserLoader');
+    const viewerOverlay = document.getElementById('viewerOverlay');
+    const snapshotLoader = document.getElementById('snapshotLoader');
     const loaderTitle = document.getElementById('loaderTitle');
-    const loaderSub = document.getElementById('loaderSub');
-    const webFrame = document.getElementById('webFrame');
-    const currentUrlText = document.getElementById('currentUrlText');
-    const externalFallbackLink = document.getElementById('externalFallbackLink');
+    const pdfSurface = document.getElementById('pdfSurface');
+    const zoomLayer = document.getElementById('zoomLayer');
+    const activeImage = document.getElementById('activeImage');
+    const drawCanvas = document.getElementById('drawCanvas');
+    const btnOpenExternal = document.getElementById('btnOpenExternal');
+    const ctx = drawCanvas.getContext('2d');
 
     const toggleClean = () => document.body.classList.toggle('on-air-clean');
     document.getElementById('btnToggleClean').addEventListener('click', toggleClean);
@@ -610,320 +615,224 @@
           <span class="site-cat-tag">${catLabel}</span>
         `;
 
-        card.addEventListener('click', () => openSiteInBrowser(site));
+        card.addEventListener('click', () => openSiteSnapshot(site));
         wallGrid.appendChild(card);
       });
     }
 
-    // Inietta CSS anti-paywall/cookie + Canvas Evidenziatore ANCÒRATO AL DOCUMENTO (scorre con la pagina!)
-    function prepareHomepageHtml(rawHtml, pageUrl) {
-      const urlObj = new URL(pageUrl);
-      const baseOrigin = urlObj.origin;
-
-      const injectedHead = `
-        <base href="${baseOrigin}/" target="_self" />
-        <style id="ledwall-injected-style">
-          html, body {
-            overflow-x: hidden !important;
-            overflow-y: auto !important;
-            position: relative !important;
-            height: auto !important;
-            max-height: none !important;
-            filter: none !important;
-            -webkit-filter: none !important;
-          }
-          /* Rimozione paywall e modali che bloccano la lettura */
-          [class*="paywall"], [id*="paywall"],
-          [class*="piano-"], [id*="piano-"],
-          [class*="tp-modal"], [class*="tp-backdrop"],
-          [class*="subscriber-wall"], [class*="overlay-wall"],
-          [class*="cookie"], [id*="cookie"],
-          [class*="consent"], [id*="consent"],
-          [class*="didomi"], [id*="didomi"],
-          [class*="iubenda"], [id*="iubenda"],
-          [class*="onetrust"], [id*="onetrust"],
-          .fc-consent-root, .qc-cmp2-container {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-          }
-          * {
-            filter: none !important;
-            -webkit-filter: none !important;
-          }
-          #ledwall-doc-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            mix-blend-mode: multiply;
-            z-index: 2147483647;
-          }
-          body.ledwall-draw-active #ledwall-doc-canvas {
-            pointer-events: auto !important;
-            cursor: crosshair !important;
-            touch-action: none !important;
-          }
-        </style>
-      `;
-
-      const injectedBodyEnd = `
-        <canvas id="ledwall-doc-canvas"></canvas>
-        <script>
-          (function() {
-            const canvas = document.getElementById('ledwall-doc-canvas');
-            const ctx = canvas.getContext('2d');
-            let drawEnabled = ${isDrawMode ? 'true' : 'false'};
-            let strokeColor = '${currentColor}';
-            let isDrawing = false;
-            let strokes = [];
-            let currentStroke = null;
-
-            if (drawEnabled) document.body.classList.add('ledwall-draw-active');
-
-            function syncCanvasSize() {
-              const docW = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth, window.innerWidth);
-              const docH = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, window.innerHeight);
-              if (canvas.width !== docW || canvas.height !== docH) {
-                canvas.width = docW;
-                canvas.height = docH;
-                canvas.style.width = docW + 'px';
-                canvas.style.height = docH + 'px';
-                redrawAll();
-              }
-            }
-
-            function redrawAll() {
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              strokes.forEach(s => {
-                if (!s.points.length) return;
-                ctx.save();
-                ctx.strokeStyle = s.color;
-                ctx.lineWidth = 22;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.beginPath();
-                ctx.moveTo(s.points[0].x, s.points[0].y);
-                for (let i = 1; i < s.points.length; i++) {
-                  ctx.lineTo(s.points[i].x, s.points[i].y);
-                }
-                if (s.points.length === 1) {
-                  ctx.lineTo(s.points[0].x + 0.1, s.points[0].y);
-                }
-                ctx.stroke();
-                ctx.restore();
-              });
-            }
-
-            window.addEventListener('load', syncCanvasSize);
-            window.addEventListener('resize', syncCanvasSize);
-            setInterval(() => {
-              syncCanvasSize();
-              document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
-              document.body.style.setProperty('overflow-y', 'auto', 'important');
-            }, 1000);
-
-            canvas.addEventListener('pointerdown', (e) => {
-              if (!drawEnabled) return;
-              isDrawing = true;
-              canvas.setPointerCapture(e.pointerId);
-              currentStroke = { color: strokeColor, points: [{ x: e.pageX, y: e.pageY }] };
-              strokes.push(currentStroke);
-              redrawAll();
-            });
-
-            canvas.addEventListener('pointermove', (e) => {
-              if (!isDrawing || !drawEnabled || !currentStroke) return;
-              currentStroke.points.push({ x: e.pageX, y: e.pageY });
-              redrawAll();
-            });
-
-            canvas.addEventListener('pointerup', () => { isDrawing = false; currentStroke = null; });
-            canvas.addEventListener('pointercancel', () => { isDrawing = false; currentStroke = null; });
-
-            // Riceve comandi dalla barra strumenti esterna
-            window.addEventListener('message', (ev) => {
-              const msg = ev.data || {};
-              if (msg.type === 'SET_DRAW_MODE') {
-                drawEnabled = !!msg.enabled;
-                document.body.classList.toggle('ledwall-draw-active', drawEnabled);
-              } else if (msg.type === 'SET_COLOR') {
-                strokeColor = msg.color;
-              } else if (msg.type === 'CLEAR_MARKS') {
-                strokes = [];
-                redrawAll();
-              }
-            });
-
-            // Navigazione interna quando clicchi su un articolo
-            document.addEventListener('click', function(e) {
-              if (drawEnabled) return;
-              const link = e.target.closest('a');
-              if (link && link.href && link.href.startsWith('http')) {
-                e.preventDefault();
-                window.parent.postMessage({ type: 'LEDWALL_NAVIGATE', url: link.href }, '*');
-              }
-            }, true);
-          })();
-        <\/script>
-      `;
-
-      // Rimuove solo gli script che bloccano l'iframe o attivano il paywall, mantenendo tutta la grafica e pubblicità
-      let html = rawHtml
-        .replace(/<meta[^>]+http-equiv=["']Content-Security-Policy["'][^>]*>/gi, '')
-        .replace(/<script[^>]+(tinypass|piano\.io|zephr|poool|pelcro|didomi|iubenda|onetrust)[^>]*><\/script>/gi, '');
-
-      if (html.includes('<head>')) {
-        html = html.replace('<head>', '<head>' + injectedHead);
-      } else {
-        html = injectedHead + html;
-      }
-
-      if (html.includes('</body>')) {
-        html = html.replace('</body>', injectedBodyEnd + '</body>');
-      } else {
-        html = html + injectedBodyEnd;
-      }
-
-      return html;
+    // URL motori di screenshot live (full page desktop)
+    function getPrimaryScreenshotUrl(targetUrl) {
+      return `https://api.microlink.io/?url=${encodeURIComponent(targetUrl)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1280&viewport.height=2200&screenshot.fullPage=true`;
     }
 
-    async function fetchRawHtml(targetUrl) {
-      const proxies = [
-        {
-          url: `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
-          extract: async (r) => (await r.json()).contents
-        },
-        {
-          url: `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
-          extract: async (r) => await r.text()
-        },
-        {
-          url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
-          extract: async (r) => await r.text()
-        }
-      ];
-
-      for (const p of proxies) {
-        try {
-          const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 9000);
-          const res = await fetch(p.url, { signal: controller.signal });
-          clearTimeout(timer);
-          if (!res.ok) continue;
-          const content = await p.extract(res);
-          if (content && content.length > 400) return content;
-        } catch (err) {}
-      }
-      throw new Error('Timeout caricamento pagina');
+    function getFallbackScreenshotUrl(targetUrl) {
+      return `https://s0.wp.com/mshots/v1/${encodeURIComponent(targetUrl)}?w=1280&h=2200`;
     }
 
-    async function loadUrlInBrowser(targetUrl) {
-      currentUrl = targetUrl;
-      currentUrlText.textContent = targetUrl;
-      externalFallbackLink.href = targetUrl;
-      browserLoader.style.display = 'flex';
-      loaderTitle.textContent = `Caricamento ${currentSite ? currentSite.name : 'pagina'}...`;
-      loaderSub.textContent = 'Caricamento impaginazione originale del sito';
-
-      try {
-        const rawHtml = await fetchRawHtml(targetUrl);
-        const fullHtml = prepareHomepageHtml(rawHtml, targetUrl);
-        webFrame.srcdoc = fullHtml;
-        webFrame.onload = () => {
-          browserLoader.style.display = 'none';
-        };
-        setTimeout(() => { browserLoader.style.display = 'none'; }, 1800);
-      } catch (e) {
-        browserLoader.innerHTML = `
-          <div style="font-weight:700; color:#b91c1c; font-size:15px;">Impossibile caricare l'anteprima diretta</div>
-          <div style="font-size:12px; color:#475569; max-width:380px;">Il server del giornale sta limitando le richieste esterne in questo momento.</div>
-          <div style="display:flex; gap:10px; margin-top:8px;">
-            <button onclick="loadUrlInBrowser('${targetUrl}')" style="background:#0b3d75; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:700; cursor:pointer;">Riprova</button>
-            <a href="${targetUrl}" target="_blank" rel="noopener" style="background:#fff; color:#0b3d75; border:1px solid #0b3d75; padding:8px 16px; border-radius:6px; font-weight:700; text-decoration:none;">Apri nel browser ↗</a>
-          </div>
-        `;
-      }
+    function computeFitTransform() {
+      const surfW = pdfSurface.clientWidth;
+      const surfH = pdfSurface.clientHeight;
+      // Adatta la larghezza della homepage allo schermo (così i titoli sono subito leggibili)
+      fitScale = Math.min((surfW - 32) / baseWidth, 1);
+      const x = (surfW - baseWidth * fitScale) / 2;
+      const y = 14;
+      return { s: fitScale, x, y };
     }
 
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'LEDWALL_NAVIGATE' && event.data.url) {
-        loadUrlInBrowser(event.data.url);
-      }
-    });
+    function applyTransform() {
+      zoomLayer.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
+      const pct = Math.round((scale / fitScale) * 100);
+      document.getElementById('btnZoomReset').textContent = pct + '%';
+    }
 
-    function openSiteInBrowser(site) {
+    function openSiteSnapshot(site) {
       currentSite = site;
+      strokes = [];
       headerSubtitle.textContent = site.name;
-      pageZoom = 1;
-      webFrame.style.transform = 'scale(1)';
-      webFrame.style.width = '100%';
-      webFrame.style.height = '100%';
+      btnOpenExternal.href = site.url;
 
-      // Ripristina contenuto standard del loader
-      browserLoader.innerHTML = `
-        <div class="spinner"></div>
-        <div style="font-weight:700; color:#0b3d75;" id="loaderTitle">Apertura ${site.name}...</div>
-        <div style="font-size:12px; color:#64748b;" id="loaderSub">Caricamento impaginazione originale del sito</div>
-      `;
+      snapshotLoader.style.display = 'flex';
+      loaderTitle.textContent = `Cattura homepage ${site.name}...`;
+      zoomLayer.style.visibility = 'hidden';
 
-      browserOverlay.classList.add('active');
-      requestAnimationFrame(() => {
-        browserOverlay.classList.add('visible');
-      });
+      viewerOverlay.classList.add('active');
+      requestAnimationFrame(() => viewerOverlay.classList.add('visible'));
 
-      loadUrlInBrowser(site.url);
+      let triedFallback = false;
+
+      activeImage.onload = () => {
+        baseWidth = activeImage.naturalWidth || 1280;
+        baseHeight = activeImage.naturalHeight || 2200;
+        activeImage.style.width = baseWidth + 'px';
+        activeImage.style.height = baseHeight + 'px';
+        drawCanvas.width = baseWidth;
+        drawCanvas.height = baseHeight;
+        redrawStrokes();
+
+        const initT = computeFitTransform();
+        scale = initT.s;
+        panX = initT.x;
+        panY = initT.y;
+        applyTransform();
+
+        snapshotLoader.style.display = 'none';
+        zoomLayer.style.visibility = 'visible';
+      };
+
+      activeImage.onerror = () => {
+        if (!triedFallback) {
+          triedFallback = true;
+          activeImage.src = getFallbackScreenshotUrl(site.url);
+        } else {
+          snapshotLoader.innerHTML = `
+            <div style="font-weight:700; color:#b91c1c; font-size:15px;">Anteprima non disponibile al momento</div>
+            <a href="${site.url}" target="_blank" rel="noopener" style="margin-top:8px; background:#0b3d75; color:#fff; padding:9px 18px; border-radius:6px; text-decoration:none; font-weight:700;">Apri ${site.name} ↗</a>
+          `;
+        }
+      };
+
+      activeImage.src = getPrimaryScreenshotUrl(site.url);
     }
 
-    function closeBrowser() {
+    function closeViewer() {
       if (isDrawMode) {
         isDrawMode = false;
         btnDrawToggle.classList.remove('active-tool');
+        pdfSurface.classList.remove('draw-mode');
       }
-      browserOverlay.classList.remove('visible');
+      viewerOverlay.classList.remove('visible');
       setTimeout(() => {
-        browserOverlay.classList.remove('active');
-        webFrame.srcdoc = '';
+        viewerOverlay.classList.remove('active');
+        activeImage.src = '';
+        strokes = [];
         headerSubtitle.textContent = 'Quotidiani Online';
         currentSite = null;
+        // Ripristina loader standard
+        snapshotLoader.innerHTML = `
+          <div class="spinner"></div>
+          <div style="font-weight:700; color:#0b3d75; font-size:15px;" id="loaderTitle">Cattura homepage in tempo reale...</div>
+          <div style="font-size:12px; color:#52637a;">Generazione anteprima grafica ad alta risoluzione</div>
+        `;
       }, 260);
     }
 
-    document.getElementById('btnBack').addEventListener('click', closeBrowser);
-    document.getElementById('btnReloadPage').addEventListener('click', () => {
-      if (currentUrl) loadUrlInBrowser(currentUrl);
-    });
+    document.getElementById('btnBack').addEventListener('click', closeViewer);
 
-    // Zoom browser
-    function applyBrowserZoom() {
-      webFrame.style.transform = `scale(${pageZoom})`;
-      webFrame.style.width = (100 / pageZoom) + '%';
-      webFrame.style.height = (100 / pageZoom) + '%';
-    }
-
-    document.getElementById('btnZoomPageIn').addEventListener('click', () => {
-      pageZoom = Math.min(2.0, +(pageZoom + 0.15).toFixed(2));
-      applyBrowserZoom();
-    });
-
-    document.getElementById('btnZoomPageOut').addEventListener('click', () => {
-      pageZoom = Math.max(0.7, +(pageZoom - 0.15).toFixed(2));
-      applyBrowserZoom();
-    });
-
-    // Controlli Evidenziatore (invia comandi al canvas ancorato dentro la pagina del giornale)
-    function sendToFrame(payload) {
-      if (webFrame && webFrame.contentWindow) {
-        webFrame.contentWindow.postMessage(payload, '*');
+    // ZOOM & SPOSTAMENTO LIBERO COME UN PDF
+    function resetZoom(animate = true) {
+      const targetT = computeFitTransform();
+      zoomLayer.style.transition = animate ? 'transform 0.24s ease-out' : 'none';
+      scale = targetT.s;
+      panX = targetT.x;
+      panY = targetT.y;
+      applyTransform();
+      if (animate) {
+        setTimeout(() => { zoomLayer.style.transition = 'none'; }, 250);
       }
     }
 
+    function zoomBy(factor, centerX, centerY) {
+      const minScale = fitScale * 0.45;
+      const maxScale = fitScale * 5.0;
+      const oldScale = scale;
+      const newScale = Math.min(maxScale, Math.max(minScale, oldScale * factor));
+      if (newScale === oldScale) return;
+
+      const rect = pdfSurface.getBoundingClientRect();
+      const cx = (centerX !== undefined ? centerX - rect.left : rect.width / 2);
+      const cy = (centerY !== undefined ? centerY - rect.top : rect.height / 2);
+
+      panX = cx - (cx - panX) * (newScale / oldScale);
+      panY = cy - (cy - panY) * (newScale / oldScale);
+      scale = newScale;
+      applyTransform();
+    }
+
+    document.getElementById('btnZoomIn').addEventListener('click', () => zoomBy(1.35));
+    document.getElementById('btnZoomOut').addEventListener('click', () => zoomBy(1 / 1.35));
+    document.getElementById('btnZoomReset').addEventListener('click', () => resetZoom(true));
+
+    pdfSurface.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (e.ctrlKey || e.metaKey) {
+        const factor = e.deltaY < 0 ? 1.14 : 1 / 1.14;
+        zoomBy(factor, e.clientX, e.clientY);
+      } else {
+        // Scorrimento verticale/orizzontale fluido della homepage con rotellina/trackpad
+        panX -= e.deltaX;
+        panY -= e.deltaY;
+        applyTransform();
+      }
+    }, { passive: false });
+
+    // GESTURE TOUCH & MOUSE (TRASCINAMENTO LIBERO + PINCH-TO-ZOOM)
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let initialPinchDist = 0;
+    let initialPinchScale = 1;
+
+    pdfSurface.addEventListener('touchstart', (e) => {
+      if (isDrawMode) return;
+      if (e.touches.length === 2) {
+        isDragging = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        initialPinchDist = Math.hypot(dx, dy);
+        initialPinchScale = scale;
+      } else if (e.touches.length === 1) {
+        isDragging = true;
+        dragStartX = e.touches[0].clientX - panX;
+        dragStartY = e.touches[0].clientY - panY;
+      }
+    }, { passive: true });
+
+    pdfSurface.addEventListener('touchmove', (e) => {
+      if (isDrawMode) return;
+      if (e.touches.length === 2 && initialPinchDist > 0) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy);
+        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        const targetScale = initialPinchScale * (dist / initialPinchDist);
+        zoomBy(targetScale / scale, midX, midY);
+      } else if (e.touches.length === 1 && isDragging) {
+        e.preventDefault();
+        panX = e.touches[0].clientX - dragStartX;
+        panY = e.touches[0].clientY - dragStartY;
+        applyTransform();
+      }
+    }, { passive: false });
+
+    pdfSurface.addEventListener('touchend', () => {
+      isDragging = false;
+      initialPinchDist = 0;
+    });
+
+    pdfSurface.addEventListener('mousedown', (e) => {
+      if (isDrawMode) return;
+      isDragging = true;
+      dragStartX = e.clientX - panX;
+      dragStartY = e.clientY - panY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging || isDrawMode) return;
+      panX = e.clientX - dragStartX;
+      panY = e.clientY - dragStartY;
+      applyTransform();
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    // EVIDENZIATORE ANCORATO ALLA PAGINA (SI MUOVE CON ESSA)
     const btnDrawToggle = document.getElementById('btnDrawToggle');
     btnDrawToggle.addEventListener('click', () => {
       isDrawMode = !isDrawMode;
       btnDrawToggle.classList.toggle('active-tool', isDrawMode);
-      sendToFrame({ type: 'SET_DRAW_MODE', enabled: isDrawMode });
+      pdfSurface.classList.toggle('draw-mode', isDrawMode);
     });
 
     document.querySelectorAll('.color-dot').forEach(dot => {
@@ -931,13 +840,82 @@
         document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
         dot.classList.add('selected');
         currentColor = dot.dataset.color;
-        sendToFrame({ type: 'SET_COLOR', color: currentColor });
         if (!isDrawMode) btnDrawToggle.click();
       });
     });
 
     document.getElementById('btnClearMarks').addEventListener('click', () => {
-      sendToFrame({ type: 'CLEAR_MARKS' });
+      strokes = [];
+      redrawStrokes();
+    });
+
+    let activeStroke = null;
+
+    function getCanvasCoords(clientX, clientY) {
+      const rect = drawCanvas.getBoundingClientRect();
+      const x = ((clientX - rect.left) / rect.width) * drawCanvas.width;
+      const y = ((clientY - rect.top) / rect.height) * drawCanvas.height;
+      return { x, y };
+    }
+
+    function startStroke(clientX, clientY) {
+      if (!isDrawMode) return;
+      const pt = getCanvasCoords(clientX, clientY);
+      const brushSize = Math.max(22, drawCanvas.width * 0.022);
+      activeStroke = { color: currentColor, size: brushSize, points: [pt] };
+      strokes.push(activeStroke);
+      redrawStrokes();
+    }
+
+    function moveStroke(clientX, clientY) {
+      if (!activeStroke) return;
+      activeStroke.points.push(getCanvasCoords(clientX, clientY));
+      redrawStrokes();
+    }
+
+    function endStroke() {
+      activeStroke = null;
+    }
+
+    drawCanvas.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      drawCanvas.setPointerCapture(e.pointerId);
+      startStroke(e.clientX, e.clientY);
+    });
+
+    drawCanvas.addEventListener('pointermove', (e) => {
+      if (!activeStroke) return;
+      e.stopPropagation();
+      moveStroke(e.clientX, e.clientY);
+    });
+
+    drawCanvas.addEventListener('pointerup', endStroke);
+    drawCanvas.addEventListener('pointercancel', endStroke);
+
+    function redrawStrokes() {
+      ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+      strokes.forEach(s => {
+        if (!s.points.length) return;
+        ctx.save();
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = s.size;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(s.points[0].x, s.points[0].y);
+        for (let i = 1; i < s.points.length; i++) {
+          ctx.lineTo(s.points[i].x, s.points[i].y);
+        }
+        if (s.points.length === 1) {
+          ctx.lineTo(s.points[0].x + 0.1, s.points[0].y);
+        }
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      if (viewerOverlay.classList.contains('active')) resetZoom(false);
     });
 
     renderGrid();
