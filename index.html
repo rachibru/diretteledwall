@@ -166,7 +166,7 @@
       background: transparent;
     }
 
-    /* AREA PRINCIPALE REGIA (A TUTTO SCHERMO SENZA TICKER IN BASSO) */
+    /* AREA PRINCIPALE REGIA */
     .home-stage {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
@@ -319,24 +319,31 @@
       gap: 4px;
     }
 
-    .mini-sites-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 9px;
+    /* ANTEPRIMA SCHEDE LIVE PER SPECIALI */
+    .mini-speciali {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 164px;
     }
 
-    .mini-site-dot {
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
+    .mini-spec-card {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-left: 4px solid #e52521;
+      border-radius: 7px;
+      padding: 7px 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .mini-spec-row {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 11.5px;
-      color: #0b3d75;
+      justify-content: space-between;
+      gap: 6px;
     }
 
     .tile-bottom h2 {
@@ -385,6 +392,7 @@
     </div>
 
     <div class="tiles-grid">
+      <!-- 1. PRIME PAGINE -->
       <a href="prime-pagine.html" class="wall-tile" style="--tile-accent:#0b3d75;">
         <div class="tile-top">
           <span class="tile-kicker">Edicola del Mattino</span>
@@ -417,29 +425,7 @@
         </div>
       </a>
 
-      <a href="speciali.html" class="wall-tile" style="--tile-accent:#0284c7;">
-        <div class="tile-top">
-          <span class="tile-kicker" style="background:#e0f2fe; color:#0369a1;">Web &amp; Ritagli</span>
-          <div class="tile-icon" style="background:#0284c7;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-          </div>
-        </div>
-        <div class="tile-visual">
-          <div class="mini-sites-grid">
-            <div class="mini-site-dot">CDS</div>
-            <div class="mini-site-dot" style="color:#0284c7;">REP</div>
-            <div class="mini-site-dot" style="color:#c2410c;">24H</div>
-            <div class="mini-site-dot" style="color:#b91c1c;">FQ</div>
-            <div class="mini-site-dot" style="color:#15803d;">ANSA</div>
-            <div class="mini-site-dot" style="color:#0f172a;">NYT</div>
-          </div>
-        </div>
-        <div class="tile-bottom">
-          <h2>Dirette speciali</h2>
-          <p>Accesso diretto alle testate italiane ed estere e lavagna per ritagli articolo</p>
-        </div>
-      </a>
-
+      <!-- 2. SONDAGGI & PARLAMENTO -->
       <a href="sondaggi.html" class="wall-tile" style="--tile-accent:#15803d;">
         <div class="tile-top">
           <span class="tile-kicker" style="background:#dcfce7; color:#15803d;">Datawall Live</span>
@@ -459,6 +445,38 @@
         <div class="tile-bottom">
           <h2>Sondaggi &amp; Parlamento</h2>
           <p>Partiti, Emiciclo 400 seggi, Gradimento Leader e Sfida Testa a Testa</p>
+        </div>
+      </a>
+
+      <!-- 3. DIRETTE SPECIALI -->
+      <a href="speciali.html" class="wall-tile" style="--tile-accent:#e52521;">
+        <div class="tile-top">
+          <span class="tile-kicker" style="background:#fee2e2; color:#b91c1c;">Maratone &amp; Fogli Live</span>
+          <div class="tile-icon" style="background:#e52521;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          </div>
+        </div>
+        <div class="tile-visual">
+          <div class="mini-speciali">
+            <div class="mini-spec-card">
+              <div class="mini-spec-row">
+                <span style="height:6px; width:44px; background:#e52521; border-radius:3px;"></span>
+                <span style="font-size:10px; font-weight:900; color:#0b3d75;">LIVE</span>
+              </div>
+              <div style="height:8px; width:100%; background:#cbd5e1; border-radius:3px;"></div>
+            </div>
+            <div class="mini-spec-card" style="border-left-color:#0b3d75;">
+              <div class="mini-spec-row">
+                <span style="height:6px; width:56px; background:#0b3d75; border-radius:3px;"></span>
+                <span style="font-size:10px; font-weight:900; color:#15803d;">52,4%</span>
+              </div>
+              <div style="height:8px; width:76%; background:#93c5fd; border-radius:3px;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tile-bottom">
+          <h2>Dirette Speciali</h2>
+          <p>Schede dinamiche da Google Fogli per spogli, affluenza, dati e lanci in diretta</p>
         </div>
       </a>
     </div>
