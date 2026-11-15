@@ -8,6 +8,11 @@
   <meta name="apple-mobile-web-app-title" content="br.it/ledwall" />
   <meta name="mobile-web-app-capable" content="yes" />
   <title>br.it/ledwall - Rassegna Stampa</title>
+  <script>
+    if (location.search.includes('embed=1') || window.self !== window.top) {
+      document.documentElement.classList.add('is-embedded');
+    }
+  </script>
   <style>
     :root {
       --brand-blue: #0b3d75;
@@ -16,6 +21,19 @@
       --studio-bg-light: #f5f7fa;
       --live-red: #e52521;
       --header-h: 44px;
+    }
+
+    html.is-embedded {
+      --header-h: 0px !important;
+    }
+
+    html.is-embedded header.topbar {
+      display: none !important;
+    }
+
+    html.is-embedded main.ledwall-stage,
+    html.is-embedded .viewer-overlay {
+      top: 0 !important;
     }
 
     * {
@@ -1019,16 +1037,6 @@
       if (currentIndex >= 0 && !isAnimating) resetZoom(false);
     });
 
-    loadNewspapers();
-  </script>
-  <script>
-    // Mantiene la navigazione sempre dentro la Web App su iPad senza aprire Safari
-    if (window.self !== window.top) {
-      document.documentElement.classList.add('in-shell');
-      const s = document.createElement('style');
-      s.textContent = `header.topbar { display: none !important; } :root { --header-h: 0px !important; }`;
-      document.head.appendChild(s);
-    }
     document.querySelectorAll('a.nav-pill, a.brand-title').forEach(a => {
       a.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1040,6 +1048,8 @@
         }
       });
     });
+
+    loadNewspapers();
   </script>
 </body>
 </html>
