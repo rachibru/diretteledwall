@@ -346,7 +346,7 @@
       flex-direction: column;
     }
 
-    /* GRAFICA 1: BARRE VERTICALI TV (COME SONDAGGI.HTML) */
+    /* GRAFICA 1: BARRE VERTICALI TV */
     .vbars-stage {
       flex: 1;
       display: flex;
@@ -715,8 +715,9 @@
   </section>
 
   <script>
-    const BASE_PUB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQhKtuszAe47ZCU8gtl39Ttyf1saf_0ls3ZMM4pnbvdHjCrLNULSgauI43UbunQp2eC_l3Qrpt2oNX/pub";
-    const PUBHTML_URL = BASE_PUB_URL + "html";
+    const PUB_KEY = "2PACX-1vSQhKtuszAe47ZCU8gtl39Ttyf1saf_0ls3ZMM4pnbvdHjCrLNULSgauI43UbunQp2eC_l3Qrpt2oNX";
+    const PUBHTML_URL = `https://docs.google.com/spreadsheets/d/e/${PUB_KEY}/pubhtml`;
+    const PUB_CSV_BASE = `https://docs.google.com/spreadsheets/d/e/${PUB_KEY}/pub?output=csv`;
 
     const PALETTE = ["#0b3d75", "#e11d48", "#16a34a", "#f59e0b", "#0284c7", "#7c3aed", "#ea580c", "#0f766e"];
 
@@ -724,7 +725,6 @@
     let currentSheet = null;
     let currentMode = 'vbars';
 
-    const sheetsHub = document.getElementById('sheetsHub');
     const hubStatus = document.getElementById('hubStatus');
     const sheetsGrid = document.getElementById('sheetsGrid');
     const hubMeta = document.getElementById('hubMeta');
@@ -742,89 +742,140 @@
       return isNaN(n) ? null : n;
     }
 
-    function extractTableRows(tableEl) {
-      const rows = [];
-      tableEl.querySelectorAll('tbody tr').forEach(tr => {
-        // Esclude intestazioni riga di sistema (A, B, C / 1, 2, 3) se presenti
-        const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
-        // Rimuove eventuali colonne vuote in coda
-        while (cells.length > 0 && cells[cells.length - 1] === '') cells.pop();
-        if (cells.some(c => c !== '')) rows.push(cells);
-      });
-      return rows;
+    function parseCSV(csvText) {
+      const lines = csvText.trim().split(/\r?\n/).filter(Boolean);
+      return lines.map(line => {
+        const res = [];
+        let cur = '', inQ = false;
+        for (let i = 0; i < line.length; i++) {
+          const c = line[i];
+          if (c === '"') inQ = !inQ;
+          else if (c === ',' && !inQ) { res.push(cur.trim()); cur = ''; }
+          else cur += c;
+        }
+        res.push(cur.trim());
+        while (res.length > 0 && res[res.length - 1] === '') res.pop();
+        return res;
+      }).filter(r => r.some(c => c !== ''));
     }
 
-    // Estrae TUTTI i fogli presenti nel documento Google (senza saltarne nessuno)
-    function parsePubHtmlAllSheets(html) {
+    function parsePubHtmlFull(html) {
       const doc = new DOMParser().parseFromString(html, 'text/html');
       const sheets = [];
-      const usedIds = new Set();
+      const seenGids = new Set();
 
-      // 1. Legge tutti i pulsanti del menu fogli di Google (#sheet-menu li)
-      const menuItems = Array.from(doc.querySelectorAll('#sheet-menu li'));
-      menuItems.forEach((li, idx) => {
+      const tabs = Array.from(doc.querySelectorAll('#sheet-menu li'));
+      tabs.forEach((li, idx) => {
         const gid = (li.id || '').replace('sheet-button-', '').trim();
         const title = li.textContent.trim() || `Foglio ${idx + 1}`;
-        let container = gid ? doc.querySelector(`[id="${gid}"]`) : null;
-        if (!container) {
-          const allDivs = Array.from(doc.querySelectorAll('#sheets-viewport > div'));
-          container = allDivs[idx] || null;
+        let box = gid ? doc.querySelector(`[id="${gid}"]`) : null;
+        if (!box) {
+          const viewDivs = Array.from(doc.querySelectorAll('#sheets-viewport > div'));
+          box = viewDivs[idx] || null;
         }
-        const table = container ? container.querySelector('table.waffle') : null;
-        if (table) {
-          const rows = extractTableRows(table);
-          sheets.push({ id: gid || String(idx), title, rows });
-          if (gid) usedIds.add(gid);
+        const rows = [];
+        if (box) {
+          const table = box.querySelector('table.waffle');
+          if (table) {
+            table.querySelectorAll('tbody tr').forEach(tr => {
+              const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
+              while (cells.length > 0 && cells[cells.length - 1] === '') cells.pop();
+              if (cells.some(c => c !== '')) rows.push(cells);
+            });
+          }
         }
+        sheets.push({ id: gid || String(idx), title, rows });
+        if (gid) seenGids.add(gid);
       });
 
-      // 2. Recupera eventuali altri fogli/tabelle presenti nel viewport non catturati sopra
-      const allTables = Array.from(doc.querySelectorAll('table.waffle'));
-      allTables.forEach((table, idx) => {
-        const parentDiv = table.closest('[id]');
-        const pid = parentDiv ? parentDiv.id : `extra-${idx}`;
-        if (usedIds.has(pid)) return;
-        const rows = extractTableRows(table);
-        if (rows.length > 0) {
-          sheets.push({ id: pid, title: `Foglio ${sheets.length + 1}`, rows });
-          usedIds.add(pid);
+      const scriptMatches = html.matchAll(/items\.push\(\{name:\s*"([^"]+)",\s*pageUrl:[^}]*gid=(\d+)/g);
+      for (const m of scriptMatches) {
+        const title = m[1];
+        const gid = m[2];
+        if (!seenGids.has(gid)) {
+          sheets.push({ id: gid, title, rows: [] });
+          seenGids.add(gid);
         }
-      });
+      }
+
+      if (!sheets.length) {
+        const tables = Array.from(doc.querySelectorAll('table.waffle'));
+        tables.forEach((table, i) => {
+          const rows = [];
+          table.querySelectorAll('tbody tr').forEach(tr => {
+            const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
+            while (cells.length > 0 && cells[cells.length - 1] === '') cells.pop();
+            if (cells.some(c => c !== '')) rows.push(cells);
+          });
+          if (rows.length) sheets.push({ id: String(i), title: `Foglio ${i + 1}`, rows });
+        });
+      }
 
       return sheets;
     }
 
-    async function fetchHtmlWithFallback(url) {
-      const bustUrl = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
-      const attempts = [
-        bustUrl,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(bustUrl)}`,
-        `https://corsproxy.io/?${encodeURIComponent(bustUrl)}`
+    async function fetchViaMultiProxy(targetUrl) {
+      const urlWithTs = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+      const endpoints = [
+        { url: `https://api.allorigins.win/get?url=${encodeURIComponent(urlWithTs)}`, json: true },
+        { url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(urlWithTs)}`, json: false },
+        { url: `https://corsproxy.io/?${encodeURIComponent(urlWithTs)}`, json: false },
+        { url: urlWithTs, json: false }
       ];
-      for (const u of attempts) {
+
+      for (const ep of endpoints) {
         try {
-          const res = await fetch(u);
-          if (res.ok) {
-            const text = await res.text();
-            if (text && text.includes('waffle')) return text;
+          const res = await fetch(ep.url);
+          if (!res.ok) continue;
+          let content = '';
+          if (ep.json) {
+            const data = await res.json();
+            content = data.contents || '';
+          } else {
+            content = await res.text();
           }
+          if (content && content.length > 80) return content;
         } catch (e) {}
       }
-      throw new Error('Impossibile leggere i fogli');
+      throw new Error('Proxy non raggiungibili');
     }
 
     async function loadAllSheets() {
       const btn = document.getElementById('btnSyncNow');
       btn.textContent = '…';
+      hubMeta.textContent = 'Sincronizzazione in corso...';
+
+      let discovered = [];
+
       try {
-        const html = await fetchHtmlWithFallback(PUBHTML_URL);
-        const parsed = parsePubHtmlAllSheets(html);
-        if (parsed.length) {
-          allSheets = parsed;
-          localStorage.setItem('br_ledwall_speciali_v2', JSON.stringify(parsed));
-        }
-      } catch (e) {
-        const cached = JSON.parse(localStorage.getItem('br_ledwall_speciali_v2') || 'null');
+        const html = await fetchViaMultiProxy(PUBHTML_URL);
+        discovered = parsePubHtmlFull(html);
+      } catch (e) {}
+
+      if (discovered.length > 0) {
+        await Promise.all(discovered.map(async (sh) => {
+          if (!sh.rows || sh.rows.length === 0) {
+            try {
+              const csvUrl = `${PUB_CSV_BASE}&gid=${encodeURIComponent(sh.id)}`;
+              const csvTxt = await fetchViaMultiProxy(csvUrl);
+              const parsedRows = parseCSV(csvTxt);
+              if (parsedRows.length > 0) sh.rows = parsedRows;
+            } catch (e) {}
+          }
+        }));
+      } else {
+        try {
+          const csvTxt = await fetchViaMultiProxy(PUB_CSV_BASE);
+          const rows = parseCSV(csvTxt);
+          if (rows.length > 0) discovered = [{ id: '0', title: 'Foglio 1', rows }];
+        } catch (e) {}
+      }
+
+      if (discovered.length > 0) {
+        allSheets = discovered;
+        localStorage.setItem('br_ledwall_speciali_v4', JSON.stringify(discovered));
+      } else {
+        const cached = JSON.parse(localStorage.getItem('br_ledwall_speciali_v4') || 'null');
         if (cached) allSheets = cached;
       }
 
@@ -862,10 +913,12 @@
       if (!allSheets.length) {
         hubStatus.style.display = 'block';
         hubStatus.innerHTML = `
-          <div style="font-weight:800; color:#b91c1c; margin-bottom:6px;">Nessun foglio rilevato</div>
-          <div style="font-size:13px; color:#475569;">Assicurati che su Google Fogli in <b>File &rarr; Condividi &rarr; Pubblica sul web</b> sia selezionato <b>Intero documento</b>.</div>
+          <div style="font-weight:800; color:#b91c1c; margin-bottom:8px;">Connessione ai fogli non riuscita</div>
+          <div style="font-size:13px; color:#475569; margin-bottom:14px;">Premi il pulsante qui sotto per riprovare il caricamento.</div>
+          <button onclick="loadAllSheets()" style="background:#0b3d75; color:#fff; border:none; padding:9px 18px; border-radius:8px; font-weight:800; cursor:pointer;">Riprova adesso</button>
         `;
         sheetsGrid.style.display = 'none';
+        hubMeta.textContent = '0 fogli';
         return;
       }
 
@@ -1102,7 +1155,6 @@
       }
     }
 
-    // EVIDENZIATORE TOUCH
     const drawCanvas = document.getElementById('drawCanvas');
     const ctx = drawCanvas.getContext('2d');
     const btnDrawToggle = document.getElementById('btnDrawToggle');
