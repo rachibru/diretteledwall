@@ -171,7 +171,7 @@
       background: transparent;
     }
 
-    /* LIBRERIA ORIZZONTALE A 2 RIGHE (LOGHI TESTATE) */
+    /* LIBRERIA ORIZZONTALE A 2 RIGHE */
     main.ledwall-stage {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
@@ -276,7 +276,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: #fff;
+      background: #f8fafc;
       z-index: 90;
       display: none;
       flex-direction: column;
@@ -294,10 +294,10 @@
       transform: scale(1);
     }
 
-    /* MINI BARRA INDIRIZZO / STATO DEL BROWSER INTERNO */
+    /* MINI BARRA INDIRIZZO PULITA */
     .browser-addressbar {
       height: 34px;
-      background: #f1f5f9;
+      background: #eef2f6;
       border-bottom: 1px solid #cbd5e1;
       padding: 0 14px;
       display: flex;
@@ -317,26 +317,12 @@
       border: 1px solid #cbd5e1;
       border-radius: 5px;
       padding: 2px 10px;
-      max-width: 65%;
+      max-width: 72%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 11px;
-    }
-
-    .shield-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: #dcfce7;
-      color: #166534;
-      border: 1px solid #86efac;
-      font-weight: 700;
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      white-space: nowrap;
     }
 
     /* AREA CONTENUTO WEB + LAYER EVIDENZIATORE */
@@ -345,7 +331,7 @@
       flex: 1;
       width: 100%;
       overflow: hidden;
-      background: #fff;
+      background: #f8fafc;
     }
 
     #webFrame {
@@ -358,10 +344,165 @@
       transition: transform 0.2s ease;
     }
 
+    /* EDIZIONE DIGITALE IMPAGINATA (FALLBACK PER SITI CHE BLOCCANO IFRAME) */
+    #digitalEditionView {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 24px 24px 90px;
+      background: #f4f6f9;
+      display: none;
+      transform-origin: top center;
+    }
+
+    .edition-container {
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    .edition-masthead {
+      background: #fff;
+      border-top: 5px solid var(--masthead-color, #0b3d75);
+      border-radius: 8px;
+      padding: 18px 24px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+      gap: 16px;
+    }
+
+    .edition-masthead-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .edition-masthead-left img {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: #f8fafc;
+      padding: 4px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .edition-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    .edition-date {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+      text-transform: capitalize;
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .news-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .news-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .news-card {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .news-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(11, 61, 117, 0.14);
+    }
+
+    .news-card.featured {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 600px) {
+      .news-card.featured {
+        grid-column: span 1;
+      }
+    }
+
+    .news-thumb {
+      width: 100%;
+      height: 175px;
+      object-fit: cover;
+      background: #e2e8f0;
+      display: block;
+    }
+
+    .news-card.featured .news-thumb {
+      height: 240px;
+    }
+
+    .news-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .news-time {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--brand-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .news-headline {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.28;
+      color: #0f172a;
+      margin: 0;
+      user-select: text;
+    }
+
+    .news-card.featured .news-headline {
+      font-size: 23px;
+    }
+
+    .news-excerpt {
+      font-size: 13.5px;
+      line-height: 1.48;
+      color: #475569;
+      margin: 0;
+      user-select: text;
+    }
+
     .browser-loader {
       position: absolute;
       inset: 0;
-      background: rgba(248, 250, 252, 0.94);
+      background: rgba(248, 250, 252, 0.95);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -383,7 +524,7 @@
       to { transform: rotate(360deg); }
     }
 
-    /* CANVAS EVIDENZIATORE SOPRA LA PAGINA WEB */
+    /* CANVAS EVIDENZIATORE SOPRA LA PAGINA */
     #highlightCanvas {
       position: absolute;
       inset: 0;
@@ -504,28 +645,29 @@
         <span>🔒</span>
         <span id="currentUrlText">https://...</span>
       </div>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span class="shield-badge" id="modeBadge">Anti-Paywall &amp; Cookie Blocker Attivo</span>
-        <a id="externalFallbackLink" href="#" target="_blank" rel="noopener" style="color:#0b3d75; font-weight:700; text-decoration:none; font-size:11px;">Apri esterno ↗</a>
-      </div>
+      <a id="externalFallbackLink" href="#" target="_blank" rel="noopener" style="color:#0b3d75; font-weight:700; text-decoration:none; font-size:11px; white-space:nowrap;">Apri nel browser ↗</a>
     </div>
 
     <div class="browser-viewport" id="browserViewport">
       <div class="browser-loader" id="browserLoader">
         <div class="spinner"></div>
-        <div style="font-weight:700; color:#0b3d75;">Caricamento testata e rimozione blocchi...</div>
-        <div style="font-size:12px; color:#64748b;" id="loaderSubtext">Inizializzazione browser interno</div>
+        <div style="font-weight:700; color:#0b3d75;" id="loaderTitle">Apertura testata...</div>
       </div>
-      <iframe id="webFrame" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+
+      <!-- Iframe per siti che supportano l'incorporamento diretto -->
+      <iframe id="webFrame"></iframe>
+
+      <!-- Edizione digitale impaginata per siti con X-Frame-Options -->
+      <div id="digitalEditionView"></div>
+
       <canvas id="highlightCanvas"></canvas>
     </div>
 
     <div class="viewer-dock">
       <button class="dock-btn primary-back" id="btnBack">&#8592; Torna indietro</button>
       <div class="dock-sep"></div>
-      <button class="dock-btn" id="btnReaderSwitch" title="Alterna tra sito completo e vista lettura pulita">Vista Pulita</button>
-      <button class="dock-btn" id="btnZoomPageOut" title="Riduci testo">&#8722;</button>
-      <button class="dock-btn" id="btnZoomPageIn" title="Ingrandisci testo">&#43;</button>
+      <button class="dock-btn" id="btnZoomPageOut" title="Riduci">&#8722;</button>
+      <button class="dock-btn" id="btnZoomPageIn" title="Ingrandisci">&#43;</button>
       <div class="dock-sep"></div>
       <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
       <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.55)" style="background:#ffee00;"></span>
@@ -538,44 +680,43 @@
   <script>
     const NEWSPAPER_SITES = [
       // ITALIANI
-      { name: 'Corriere della Sera', domain: 'corriere.it', url: 'https://www.corriere.it', cat: 'italiani', color: '#004b87' },
-      { name: 'la Repubblica', domain: 'repubblica.it', url: 'https://www.repubblica.it', cat: 'italiani', color: '#0066b3' },
-      { name: 'La Stampa', domain: 'lastampa.it', url: 'https://www.lastampa.it', cat: 'italiani', color: '#1e3a8a' },
-      { name: 'Il Fatto Quotidiano', domain: 'ilfattoquotidiano.it', url: 'https://www.ilfattoquotidiano.it', cat: 'italiani', color: '#b91c1c' },
-      { name: 'il Giornale', domain: 'ilgiornale.it', url: 'https://www.ilgiornale.it', cat: 'italiani', color: '#0369a1' },
-      { name: 'Libero Quotidiano', domain: 'liberoquotidiano.it', url: 'https://www.liberoquotidiano.it', cat: 'italiani', color: '#dc2626' },
-      { name: 'La Verità', domain: 'laverita.info', url: 'https://www.laverita.info', cat: 'italiani', color: '#991b1b' },
-      { name: 'Il Messaggero', domain: 'ilmessaggero.it', url: 'https://www.ilmessaggero.it', cat: 'italiani', color: '#1d4ed8' },
-      { name: 'Avvenire', domain: 'avvenire.it', url: 'https://www.avvenire.it', cat: 'italiani', color: '#0284c7' },
-      { name: 'Domani', domain: 'editorialedomani.it', url: 'https://www.editorialedomani.it', cat: 'italiani', color: '#ea580c' },
-      { name: 'Il Foglio', domain: 'ilfoglio.it', url: 'https://www.ilfoglio.it', cat: 'italiani', color: '#b45309' },
-      { name: 'il manifesto', domain: 'ilmanifesto.it', url: 'https://ilmanifesto.it', cat: 'italiani', color: '#be123c' },
-      { name: 'ANSA', domain: 'ansa.it', url: 'https://www.ansa.it', cat: 'italiani', color: '#15803d' },
-      { name: 'La Gazzetta dello Sport', domain: 'gazzetta.it', url: 'https://www.gazzetta.it', cat: 'italiani', color: '#e11d48' },
+      { name: 'Corriere della Sera', domain: 'corriere.it', url: 'https://www.corriere.it', rss: 'https://www.corriere.it/rss/homepage.xml', cat: 'italiani', color: '#004b87' },
+      { name: 'la Repubblica', domain: 'repubblica.it', url: 'https://www.repubblica.it', rss: 'https://www.repubblica.it/rss/homepage/rss2.0.xml', cat: 'italiani', color: '#0066b3' },
+      { name: 'La Stampa', domain: 'lastampa.it', url: 'https://www.lastampa.it', rss: 'https://www.lastampa.it/rss.xml', cat: 'italiani', color: '#1e3a8a' },
+      { name: 'Il Fatto Quotidiano', domain: 'ilfattoquotidiano.it', url: 'https://www.ilfattoquotidiano.it', rss: 'https://www.ilfattoquotidiano.it/feed/', cat: 'italiani', color: '#b91c1c', embeddable: true },
+      { name: 'il Giornale', domain: 'ilgiornale.it', url: 'https://www.ilgiornale.it', rss: 'https://www.ilgiornale.it/feed.xml', cat: 'italiani', color: '#0369a1' },
+      { name: 'Libero Quotidiano', domain: 'liberoquotidiano.it', url: 'https://www.liberoquotidiano.it', rss: 'https://www.liberoquotidiano.it/rss.xml', cat: 'italiani', color: '#dc2626' },
+      { name: 'La Verità', domain: 'laverita.info', url: 'https://www.laverita.info', rss: 'https://www.laverita.info/feed/', cat: 'italiani', color: '#991b1b' },
+      { name: 'Il Messaggero', domain: 'ilmessaggero.it', url: 'https://www.ilmessaggero.it', rss: 'https://www.ilmessaggero.it/rss/home.xml', cat: 'italiani', color: '#1d4ed8' },
+      { name: 'Avvenire', domain: 'avvenire.it', url: 'https://www.avvenire.it', rss: 'https://www.avvenire.it/rss', cat: 'italiani', color: '#0284c7' },
+      { name: 'Domani', domain: 'editorialedomani.it', url: 'https://www.editorialedomani.it', rss: 'https://www.editorialedomani.it/rss', cat: 'italiani', color: '#ea580c' },
+      { name: 'Il Foglio', domain: 'ilfoglio.it', url: 'https://www.ilfoglio.it', rss: 'https://www.ilfoglio.it/rss.xml', cat: 'italiani', color: '#b45309' },
+      { name: 'il manifesto', domain: 'ilmanifesto.it', url: 'https://ilmanifesto.it', rss: 'https://ilmanifesto.it/feed', cat: 'italiani', color: '#be123c' },
+      { name: 'ANSA', domain: 'ansa.it', url: 'https://www.ansa.it', rss: 'https://www.ansa.it/sito/ansait_rss.xml', cat: 'italiani', color: '#15803d' },
+      { name: 'Il Post', domain: 'ilpost.it', url: 'https://www.ilpost.it', rss: 'https://www.ilpost.it/feed/', cat: 'italiani', color: '#0284c7', embeddable: true },
+      { name: 'La Gazzetta dello Sport', domain: 'gazzetta.it', url: 'https://www.gazzetta.it', rss: 'https://www.gazzetta.it/rss/home.xml', cat: 'italiani', color: '#e11d48' },
 
       // ECONOMICI
-      { name: 'Il Sole 24 Ore', domain: 'ilsole24ore.com', url: 'https://www.ilsole24ore.com', cat: 'economici', color: '#c2410c' },
-      { name: 'Milano Finanza', domain: 'milanofinanza.it', url: 'https://www.milanofinanza.it', cat: 'economici', color: '#0f766e' },
-      { name: 'ItaliaOggi', domain: 'italiaoggi.it', url: 'https://www.italiaoggi.it', cat: 'economici', color: '#0369a1' },
-      { name: 'Financial Times', domain: 'ft.com', url: 'https://www.ft.com', cat: 'economici', color: '#be185d' },
-      { name: 'Wall Street Journal', domain: 'wsj.com', url: 'https://www.wsj.com', cat: 'economici', color: '#1e293b' },
-      { name: 'Bloomberg', domain: 'bloomberg.com', url: 'https://www.bloomberg.com', cat: 'economici', color: '#111827' },
-      { name: 'The Economist', domain: 'economist.com', url: 'https://www.economist.com', cat: 'economici', color: '#dc2626' },
+      { name: 'Il Sole 24 Ore', domain: 'ilsole24ore.com', url: 'https://www.ilsole24ore.com', rss: 'https://www.ilsole24ore.com/rss/italia--attualita.xml', cat: 'economici', color: '#c2410c' },
+      { name: 'Milano Finanza', domain: 'milanofinanza.it', url: 'https://www.milanofinanza.it', rss: 'https://www.milanofinanza.it/rss', cat: 'economici', color: '#0f766e' },
+      { name: 'ItaliaOggi', domain: 'italiaoggi.it', url: 'https://www.italiaoggi.it', rss: 'https://www.italiaoggi.it/rss', cat: 'economici', color: '#0369a1' },
+      { name: 'Financial Times', domain: 'ft.com', url: 'https://www.ft.com', rss: 'https://www.ft.com/rss/home', cat: 'economici', color: '#be185d' },
+      { name: 'Wall Street Journal', domain: 'wsj.com', url: 'https://www.wsj.com', rss: 'https://feeds.a.dj.com/rss/RSSWorldNews.xml', cat: 'economici', color: '#1e293b' },
+      { name: 'The Economist', domain: 'economist.com', url: 'https://www.economist.com', rss: 'https://www.economist.com/leaders/rss.xml', cat: 'economici', color: '#dc2626' },
 
       // ESTERI
-      { name: 'The New York Times', domain: 'nytimes.com', url: 'https://www.nytimes.com', cat: 'esteri', color: '#0f172a' },
-      { name: 'The Washington Post', domain: 'washingtonpost.com', url: 'https://www.washingtonpost.com', cat: 'esteri', color: '#1e293b' },
-      { name: 'Le Monde', domain: 'lemonde.fr', url: 'https://www.lemonde.fr', cat: 'esteri', color: '#0284c7' },
-      { name: 'Le Figaro', domain: 'lefigaro.fr', url: 'https://www.lefigaro.fr', cat: 'esteri', color: '#1d4ed8' },
-      { name: 'El País', domain: 'elpais.com', url: 'https://elpais.com', cat: 'esteri', color: '#0369a1' },
-      { name: 'The Guardian', domain: 'theguardian.com', url: 'https://www.theguardian.com', cat: 'esteri', color: '#052962' },
-      { name: 'BBC News', domain: 'bbc.com', url: 'https://www.bbc.com/news', cat: 'esteri', color: '#b91c1c' },
-      { name: 'Politico Europe', domain: 'politico.eu', url: 'https://www.politico.eu', cat: 'esteri', color: '#dc2626' }
+      { name: 'The New York Times', domain: 'nytimes.com', url: 'https://www.nytimes.com', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml', cat: 'esteri', color: '#0f172a' },
+      { name: 'The Washington Post', domain: 'washingtonpost.com', url: 'https://www.washingtonpost.com', rss: 'https://feeds.washingtonpost.com/rss/world', cat: 'esteri', color: '#1e293b' },
+      { name: 'Le Monde', domain: 'lemonde.fr', url: 'https://www.lemonde.fr', rss: 'https://www.lemonde.fr/rss/une.xml', cat: 'esteri', color: '#0284c7' },
+      { name: 'Le Figaro', domain: 'lefigaro.fr', url: 'https://www.lefigaro.fr', rss: 'https://www.lefigaro.fr/rss/figaro_actualites.xml', cat: 'esteri', color: '#1d4ed8' },
+      { name: 'El País', domain: 'elpais.com', url: 'https://elpais.com', rss: 'https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada', cat: 'esteri', color: '#0369a1' },
+      { name: 'The Guardian', domain: 'theguardian.com', url: 'https://www.theguardian.com', rss: 'https://www.theguardian.com/world/rss', cat: 'esteri', color: '#052962' },
+      { name: 'BBC News', domain: 'bbc.com', url: 'https://www.bbc.com/news', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml', cat: 'esteri', color: '#b91c1c' },
+      { name: 'Politico Europe', domain: 'politico.eu', url: 'https://www.politico.eu', rss: 'https://www.politico.eu/feed/', cat: 'esteri', color: '#dc2626' }
     ];
 
     let activeFilter = 'all';
     let currentSite = null;
-    let isCleanReaderMode = false;
     let pageZoom = 1;
     let isDrawMode = false;
     let currentColor = 'rgba(255, 238, 0, 0.55)';
@@ -586,19 +727,18 @@
     const browserOverlay = document.getElementById('browserOverlay');
     const browserViewport = document.getElementById('browserViewport');
     const browserLoader = document.getElementById('browserLoader');
-    const loaderSubtext = document.getElementById('loaderSubtext');
+    const loaderTitle = document.getElementById('loaderTitle');
     const webFrame = document.getElementById('webFrame');
+    const digitalEditionView = document.getElementById('digitalEditionView');
     const currentUrlText = document.getElementById('currentUrlText');
     const externalFallbackLink = document.getElementById('externalFallbackLink');
     const highlightCanvas = document.getElementById('highlightCanvas');
     const ctx = highlightCanvas.getContext('2d');
 
-    // Pulizia topbar in onda
     const toggleClean = () => document.body.classList.toggle('on-air-clean');
     document.getElementById('btnToggleClean').addEventListener('click', toggleClean);
     document.getElementById('brandLogo').addEventListener('dblclick', toggleClean);
 
-    // Scorrimento orizzontale con rotellina mouse
     ledwallStage.addEventListener('wheel', (e) => {
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         e.preventDefault();
@@ -606,7 +746,6 @@
       }
     }, { passive: false });
 
-    // Filtri categoria
     document.querySelectorAll('.filter-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
@@ -649,150 +788,98 @@
       });
     }
 
-    // Inietta CSS & JS anti-paywall e anti-cookie banner dentro l'HTML estratto
-    function sanitizeAndBypassHtml(rawHtml, baseUrl) {
-      const antiPaywallInjection = `
-        <base href="${baseUrl}/" target="_self" />
-        <style id="ledwall-anti-paywall">
-          html, body {
-            overflow: auto !important;
-            position: static !important;
-            height: auto !important;
-            max-height: none !important;
-            filter: none !important;
-            -webkit-filter: none !important;
-            user-select: text !important;
-          }
-          /* Rimozione paywall, backdrop blur e cookie modal */
-          [class*="paywall"], [id*="paywall"],
-          [class*="piano-"], [id*="piano-"],
-          [class*="tp-modal"], [class*="tp-backdrop"],
-          [class*="cookie"], [id*="cookie"],
-          [class*="consent"], [id*="consent"],
-          [class*="gdpr"], [id*="gdpr"],
-          [class*="didomi"], [id*="didomi"],
-          [class*="iubenda"], [id*="iubenda"],
-          [class*="onetrust"], [id*="onetrust"],
-          .fc-consent-root, .qc-cmp2-container,
-          [class*="modal-backdrop"], [class*="overlay-wall"],
-          [class*="subscriber-wall"], [class*="gated"] {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-            z-index: -9999 !important;
-          }
-          * {
-            filter: none !important;
-            -webkit-filter: none !important;
-            backdrop-filter: none !important;
-          }
-        </style>
-        <script>
-          // Sblocca continuamente eventuali script che ribloccano lo scroll
-          setInterval(() => {
-            document.documentElement.style.setProperty('overflow', 'auto', 'important');
-            document.body.style.setProperty('overflow', 'auto', 'important');
-            document.body.style.setProperty('position', 'static', 'important');
-          }, 800);
-
-          // Intercetta i click sui link interni per continuare a navigare senza paywall
-          document.addEventListener('click', function(e) {
-            const link = e.target.closest('a');
-            if (link && link.href && link.href.startsWith('http')) {
-              e.preventDefault();
-              window.parent.postMessage({ type: 'LEDWALL_NAVIGATE', url: link.href }, '*');
-            }
-          }, true);
-        <\/script>
-      `;
-
-      let cleaned = rawHtml
-        // Rimuove script noti di paywall (Piano, Tinypass, Zephr, Pelcro, Poool)
-        .replace(/<script[^>]+(tinypass|piano\.io|zephr|poool|pelcro|didomi|iubenda|onetrust)[^>]*><\/script>/gi, '');
-
-      if (cleaned.includes('<head>')) {
-        cleaned = cleaned.replace('<head>', '<head>' + antiPaywallInjection);
-      } else {
-        cleaned = antiPaywallInjection + cleaned;
-      }
-      return cleaned;
+    function stripHtml(html) {
+      const div = document.createElement('div');
+      div.innerHTML = html || '';
+      return (div.textContent || div.innerText || '').trim();
     }
 
-    async function fetchHtmlThroughProxies(targetUrl) {
-      const proxies = [
-        {
-          url: `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
-          parse: async (res) => (await res.json()).contents
-        },
-        {
-          url: `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
-          parse: async (res) => await res.text()
-        },
-        {
-          url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
-          parse: async (res) => await res.text()
-        }
-      ];
+    async function loadDigitalEdition(site) {
+      webFrame.style.display = 'none';
+      digitalEditionView.style.display = 'block';
+      digitalEditionView.scrollTop = 0;
 
-      for (const p of proxies) {
-        try {
-          const controller = new AbortController();
-          const id = setTimeout(() => controller.abort(), 7500);
-          const res = await fetch(p.url, { signal: controller.signal });
-          clearTimeout(id);
-          if (!res.ok) continue;
-          const html = await p.parse(res);
-          if (html && html.length > 500) return html;
-        } catch (err) {}
-      }
-      throw new Error('Proxy non disponibile');
-    }
+      const todayLabel = new Date().toLocaleDateString('it-IT', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+      });
 
-    async function loadUrlInInternalBrowser(targetUrl) {
-      browserLoader.style.display = 'flex';
-      currentUrlText.textContent = targetUrl;
-      externalFallbackLink.href = targetUrl;
-
-      if (isCleanReaderMode) {
-        loaderSubtext.textContent = 'Estrazione testo pulito senza paywall (Jina Reader)...';
-        webFrame.removeAttribute('srcdoc');
-        webFrame.src = `https://r.jina.ai/${targetUrl}`;
-        webFrame.onload = () => { browserLoader.style.display = 'none'; };
-        return;
-      }
-
-      loaderSubtext.textContent = 'Bypass X-Frame-Options, cookie e paywall...';
       try {
-        const rawHtml = await fetchHtmlThroughProxies(targetUrl);
-        const origin = new URL(targetUrl).origin;
-        const bypassedHtml = sanitizeAndBypassHtml(rawHtml, origin);
-        webFrame.removeAttribute('src');
-        webFrame.srcdoc = bypassedHtml;
-        setTimeout(() => { browserLoader.style.display = 'none'; }, 600);
-      } catch (e) {
-        // Fallback automatico su Reader No-Paywall se il sito blocca i proxy
-        loaderSubtext.textContent = 'Passaggio automatico a Vista Lettura Pulita...';
-        webFrame.removeAttribute('srcdoc');
-        webFrame.src = `https://r.jina.ai/${targetUrl}`;
-        setTimeout(() => { browserLoader.style.display = 'none'; }, 900);
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(site.rss)}`;
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+
+        if (data.status !== 'ok' || !data.items || !data.items.length) {
+          throw new Error('Feed non disponibile');
+        }
+
+        const cardsHtml = data.items.slice(0, 14).map((item, idx) => {
+          const thumb = item.thumbnail || (item.enclosure && item.enclosure.link) || '';
+          const pubTime = item.pubDate
+            ? new Date(item.pubDate.replace(' ', 'T')).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+            : 'In evidenza';
+          const cleanDesc = stripHtml(item.description).slice(0, 190);
+          const isFeatured = idx === 0;
+
+          return `
+            <article class="news-card ${isFeatured ? 'featured' : ''}" onclick="window.open('${item.link}', '_blank')">
+              ${thumb ? `<img class="news-thumb" src="${thumb}" alt="" loading="lazy" onerror="this.style.display='none'" />` : ''}
+              <div class="news-body">
+                <span class="news-time">${pubTime}</span>
+                <h2 class="news-headline">${item.title}</h2>
+                ${cleanDesc ? `<p class="news-excerpt">${cleanDesc}...</p>` : ''}
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        digitalEditionView.innerHTML = `
+          <div class="edition-container">
+            <div class="edition-masthead" style="--masthead-color:${site.color};">
+              <div class="edition-masthead-left">
+                <img src="${getLogoUrl(site.domain)}" alt="${site.name}" />
+                <div>
+                  <h1 class="edition-title">${site.name}</h1>
+                  <div class="edition-date">${todayLabel} &bull; Edizione Digitale</div>
+                </div>
+              </div>
+            </div>
+            <div class="news-grid">${cardsHtml}</div>
+          </div>
+        `;
+      } catch (err) {
+        digitalEditionView.innerHTML = `
+          <div class="edition-container">
+            <div class="edition-masthead" style="--masthead-color:${site.color};">
+              <div class="edition-masthead-left">
+                <img src="${getLogoUrl(site.domain)}" alt="${site.name}" />
+                <div>
+                  <h1 class="edition-title">${site.name}</h1>
+                  <div class="edition-date">${todayLabel}</div>
+                </div>
+              </div>
+              <a href="${site.url}" target="_blank" rel="noopener" style="background:#0b3d75; color:#fff; padding:10px 18px; border-radius:6px; text-decoration:none; font-weight:700; font-size:13px;">Apri sito ufficiale ↗</a>
+            </div>
+          </div>
+        `;
+      } finally {
+        browserLoader.style.display = 'none';
       }
     }
-
-    // Ascolta click sui link interni dentro l'iframe
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'LEDWALL_NAVIGATE' && event.data.url) {
-        loadUrlInInternalBrowser(event.data.url);
-      }
-    });
 
     function openSiteInBrowser(site) {
       currentSite = site;
       headerSubtitle.textContent = site.name;
+      currentUrlText.textContent = site.url;
+      externalFallbackLink.href = site.url;
       pageZoom = 1;
+
       webFrame.style.transform = 'scale(1)';
       webFrame.style.width = '100%';
       webFrame.style.height = '100%';
+      digitalEditionView.style.zoom = 1;
+
+      browserLoader.style.display = 'flex';
+      loaderTitle.textContent = `Caricamento ${site.name}...`;
 
       browserOverlay.classList.add('active');
       requestAnimationFrame(() => {
@@ -800,7 +887,15 @@
         resizeCanvas();
       });
 
-      loadUrlInInternalBrowser(site.url);
+      if (site.embeddable) {
+        digitalEditionView.style.display = 'none';
+        webFrame.style.display = 'block';
+        webFrame.src = site.url;
+        webFrame.onload = () => { browserLoader.style.display = 'none'; };
+        setTimeout(() => { browserLoader.style.display = 'none'; }, 2500);
+      } else {
+        loadDigitalEdition(site);
+      }
     }
 
     function closeBrowser() {
@@ -812,8 +907,8 @@
       browserOverlay.classList.remove('visible');
       setTimeout(() => {
         browserOverlay.classList.remove('active');
-        webFrame.srcdoc = '';
         webFrame.src = 'about:blank';
+        digitalEditionView.innerHTML = '';
         clearCanvas();
         headerSubtitle.textContent = 'Quotidiani Online';
         currentSite = null;
@@ -822,21 +917,15 @@
 
     document.getElementById('btnBack').addEventListener('click', closeBrowser);
 
-    // Switch tra Sito Completo Bypassato e Vista Lettura Pulita (Jina Reader)
-    const btnReaderSwitch = document.getElementById('btnReaderSwitch');
-    btnReaderSwitch.addEventListener('click', () => {
-      isCleanReaderMode = !isCleanReaderMode;
-      btnReaderSwitch.classList.toggle('active-tool', isCleanReaderMode);
-      btnReaderSwitch.textContent = isCleanReaderMode ? 'Sito Completo' : 'Vista Pulita';
-      const urlToReload = currentUrlText.textContent || (currentSite && currentSite.url);
-      if (urlToReload) loadUrlInInternalBrowser(urlToReload);
-    });
-
-    // Zoom contenuti browser
+    // Zoom contenuti
     function applyBrowserZoom() {
-      webFrame.style.transform = `scale(${pageZoom})`;
-      webFrame.style.width = (100 / pageZoom) + '%';
-      webFrame.style.height = (100 / pageZoom) + '%';
+      if (webFrame.style.display !== 'none') {
+        webFrame.style.transform = `scale(${pageZoom})`;
+        webFrame.style.width = (100 / pageZoom) + '%';
+        webFrame.style.height = (100 / pageZoom) + '%';
+      } else {
+        digitalEditionView.style.zoom = pageZoom;
+      }
     }
 
     document.getElementById('btnZoomPageIn').addEventListener('click', () => {
@@ -845,11 +934,11 @@
     });
 
     document.getElementById('btnZoomPageOut').addEventListener('click', () => {
-      pageZoom = Math.max(0.7, +(pageZoom - 0.15).toFixed(2));
+      pageZoom = Math.max(0.75, +(pageZoom - 0.15).toFixed(2));
       applyBrowserZoom();
     });
 
-    // EVIDENZIATORE A MANO LIBERA SOPRA IL BROWSER
+    // EVIDENZIATORE A MANO LIBERA
     const btnDrawToggle = document.getElementById('btnDrawToggle');
     btnDrawToggle.addEventListener('click', () => {
       isDrawMode = !isDrawMode;
@@ -905,7 +994,6 @@
       if (browserOverlay.classList.contains('active')) resizeCanvas();
     });
 
-    // Avvio iniziale
     renderGrid();
   </script>
 </body>
