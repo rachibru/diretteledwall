@@ -216,7 +216,7 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
-      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s ease, opacity 0.2s;
+      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s ease;
       border-top: 4px solid var(--accent-color, #0b3d75);
     }
 
@@ -227,6 +227,23 @@
 
     .site-card:active {
       transform: scale(0.97);
+    }
+
+    /* Pallino verde discreto quando la pagina è già pronta in cache */
+    .ready-dot {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .site-card.is-cached .ready-dot {
+      opacity: 1;
     }
 
     .site-logo-wrap {
@@ -269,7 +286,7 @@
       color: #475569;
     }
 
-    /* VIEWER SCREENSHOT LIVE HOMEPAGE (COME UN PDF A TUTTO SCHERMO) */
+    /* VIEWER SCREENSHOT LIVE HOMEPAGE */
     .viewer-overlay {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
@@ -284,7 +301,7 @@
       overflow: hidden;
       touch-action: none;
       opacity: 0;
-      transition: opacity 0.26s ease;
+      transition: opacity 0.22s ease;
     }
 
     .viewer-overlay.active {
@@ -474,8 +491,7 @@
   <div class="viewer-overlay" id="viewerOverlay">
     <div class="snapshot-loader" id="snapshotLoader">
       <div class="spinner"></div>
-      <div style="font-weight:700; color:#0b3d75; font-size:15px;" id="loaderTitle">Cattura homepage in tempo reale...</div>
-      <div style="font-size:12px; color:#52637a;">Generazione anteprima grafica ad alta risoluzione</div>
+      <div style="font-weight:700; color:#0b3d75; font-size:15px;" id="loaderTitle">Apertura homepage...</div>
     </div>
 
     <div class="pdf-canvas-surface" id="pdfSurface">
@@ -541,12 +557,16 @@
       { name: 'Politico Europe', domain: 'politico.eu', url: 'https://www.politico.eu', cat: 'esteri', color: '#dc2626' }
     ];
 
+    // Cache in memoria degli screenshot già caricati (apertura istantanea a 0s)
+    const snapshotCache = new Map(); // domain -> resolvedImgUrl
+    const strokesByDomain = new Map();
+
     let activeFilter = 'all';
     let currentSite = null;
     let strokes = [];
 
-    let baseWidth = 1280;
-    let baseHeight = 2400;
+    let baseWidth = 1100;
+    let baseHeight = 1500;
     let fitScale = 1;
     let scale = 1;
     let panX = 0;
@@ -592,6 +612,50 @@
       return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
     }
 
+    // URL veloci (senza fullPage lento): mShots CDN di WordPress + Microlink viewport
+    function getFastScreenshotUrls(targetUrl) {
+      return [
+        `https://s0.wp.com/mshots/v1/${encodeURIComponent(targetUrl)}?w=1100&h=1500`,
+        `https://api.microlink.io/?url=${encodeURIComponent(targetUrl)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1100&viewport.height=1500`
+      ];
+    }
+
+    // Pre-caricamento silenzioso in background delle prime testate
+    function preloadBatch(sitesList) {
+      let idx = 0;
+      const loadNext = () => {
+        if (idx >= sitesList.length) return;
+        const site = sitesList[idx++];
+        if (snapshotCache.has(site.domain)) {
+          loadNext();
+          return;
+        }
+        const candidates = getFastScreenshotUrls(site.url);
+        const preImg = new Image();
+        preImg.onload = () => {
+          snapshotCache.set(site.domain, preImg.src);
+          const card = wallGrid.querySelector(`[data-domain="${site.domain}"]`);
+          if (card) card.classList.add('is-cached');
+          setTimeout(loadNext, 250);
+        };
+        preImg.onerror = () => {
+          const fallbackImg = new Image();
+          fallbackImg.onload = () => {
+            snapshotCache.set(site.domain, fallbackImg.src);
+            const card = wallGrid.querySelector(`[data-domain="${site.domain}"]`);
+            if (card) card.classList.add('is-cached');
+            setTimeout(loadNext, 250);
+          };
+          fallbackImg.onerror = () => setTimeout(loadNext, 250);
+          fallbackImg.src = candidates[1];
+        };
+        preImg.src = candidates[0];
+      };
+      // Avvia 2 worker paralleli in background
+      loadNext();
+      setTimeout(loadNext, 150);
+    }
+
     function renderGrid() {
       wallGrid.innerHTML = '';
       const list = activeFilter === 'all'
@@ -600,7 +664,8 @@
 
       list.forEach(site => {
         const card = document.createElement('div');
-        card.className = 'site-card';
+        card.className = 'site-card' + (snapshotCache.has(site.domain) ? ' is-cached' : '');
+        card.dataset.domain = site.domain;
         card.style.setProperty('--accent-color', site.color);
 
         const catLabel = site.cat === 'italiani' ? 'Quotidiano Italiano'
@@ -608,6 +673,7 @@
           : 'Stampa Estera';
 
         card.innerHTML = `
+          <span class="ready-dot" title="Pronto in cache"></span>
           <div class="site-logo-wrap">
             <img src="${getLogoUrl(site.domain)}" alt="${site.name}" loading="lazy" />
           </div>
@@ -618,24 +684,17 @@
         card.addEventListener('click', () => openSiteSnapshot(site));
         wallGrid.appendChild(card);
       });
-    }
 
-    // URL motori di screenshot live (full page desktop)
-    function getPrimaryScreenshotUrl(targetUrl) {
-      return `https://api.microlink.io/?url=${encodeURIComponent(targetUrl)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1280&viewport.height=2200&screenshot.fullPage=true`;
-    }
-
-    function getFallbackScreenshotUrl(targetUrl) {
-      return `https://s0.wp.com/mshots/v1/${encodeURIComponent(targetUrl)}?w=1280&h=2200`;
+      // Precarica i primi 10 visibili in background
+      preloadBatch(list.slice(0, 10));
     }
 
     function computeFitTransform() {
       const surfW = pdfSurface.clientWidth;
       const surfH = pdfSurface.clientHeight;
-      // Adatta la larghezza della homepage allo schermo (così i titoli sono subito leggibili)
-      fitScale = Math.min((surfW - 32) / baseWidth, 1);
+      fitScale = Math.min((surfW - 32) / baseWidth, (surfH - 28) / baseHeight, 1);
       const x = (surfW - baseWidth * fitScale) / 2;
-      const y = 14;
+      const y = (surfH - baseHeight * fitScale) / 2;
       return { s: fitScale, x, y };
     }
 
@@ -647,22 +706,28 @@
 
     function openSiteSnapshot(site) {
       currentSite = site;
-      strokes = [];
+      strokes = strokesByDomain.get(site.domain) || [];
       headerSubtitle.textContent = site.name;
       btnOpenExternal.href = site.url;
 
-      snapshotLoader.style.display = 'flex';
-      loaderTitle.textContent = `Cattura homepage ${site.name}...`;
-      zoomLayer.style.visibility = 'hidden';
+      const isAlreadyCached = snapshotCache.has(site.domain);
+      snapshotLoader.style.display = isAlreadyCached ? 'none' : 'flex';
+      loaderTitle.textContent = `Apertura ${site.name}...`;
+      zoomLayer.style.visibility = isAlreadyCached ? 'visible' : 'hidden';
 
       viewerOverlay.classList.add('active');
       requestAnimationFrame(() => viewerOverlay.classList.add('visible'));
 
-      let triedFallback = false;
+      const candidates = getFastScreenshotUrls(site.url);
+      let attempt = 0;
 
       activeImage.onload = () => {
-        baseWidth = activeImage.naturalWidth || 1280;
-        baseHeight = activeImage.naturalHeight || 2200;
+        snapshotCache.set(site.domain, activeImage.src);
+        const card = wallGrid.querySelector(`[data-domain="${site.domain}"]`);
+        if (card) card.classList.add('is-cached');
+
+        baseWidth = activeImage.naturalWidth || 1100;
+        baseHeight = activeImage.naturalHeight || 1500;
         activeImage.style.width = baseWidth + 'px';
         activeImage.style.height = baseHeight + 'px';
         drawCanvas.width = baseWidth;
@@ -680,21 +745,24 @@
       };
 
       activeImage.onerror = () => {
-        if (!triedFallback) {
-          triedFallback = true;
-          activeImage.src = getFallbackScreenshotUrl(site.url);
+        attempt++;
+        if (attempt < candidates.length) {
+          activeImage.src = candidates[attempt];
         } else {
           snapshotLoader.innerHTML = `
-            <div style="font-weight:700; color:#b91c1c; font-size:15px;">Anteprima non disponibile al momento</div>
+            <div style="font-weight:700; color:#b91c1c; font-size:15px;">Anteprima non disponibile</div>
             <a href="${site.url}" target="_blank" rel="noopener" style="margin-top:8px; background:#0b3d75; color:#fff; padding:9px 18px; border-radius:6px; text-decoration:none; font-weight:700;">Apri ${site.name} ↗</a>
           `;
         }
       };
 
-      activeImage.src = getPrimaryScreenshotUrl(site.url);
+      activeImage.src = isAlreadyCached ? snapshotCache.get(site.domain) : candidates[0];
     }
 
     function closeViewer() {
+      if (currentSite) {
+        strokesByDomain.set(currentSite.domain, strokes);
+      }
       if (isDrawMode) {
         isDrawMode = false;
         btnDrawToggle.classList.remove('active-tool');
@@ -703,22 +771,17 @@
       viewerOverlay.classList.remove('visible');
       setTimeout(() => {
         viewerOverlay.classList.remove('active');
-        activeImage.src = '';
-        strokes = [];
         headerSubtitle.textContent = 'Quotidiani Online';
         currentSite = null;
-        // Ripristina loader standard
         snapshotLoader.innerHTML = `
           <div class="spinner"></div>
-          <div style="font-weight:700; color:#0b3d75; font-size:15px;" id="loaderTitle">Cattura homepage in tempo reale...</div>
-          <div style="font-size:12px; color:#52637a;">Generazione anteprima grafica ad alta risoluzione</div>
+          <div style="font-weight:700; color:#0b3d75; font-size:15px;" id="loaderTitle">Apertura homepage...</div>
         `;
-      }, 260);
+      }, 220);
     }
 
     document.getElementById('btnBack').addEventListener('click', closeViewer);
 
-    // ZOOM & SPOSTAMENTO LIBERO COME UN PDF
     function resetZoom(animate = true) {
       const targetT = computeFitTransform();
       zoomLayer.style.transition = animate ? 'transform 0.24s ease-out' : 'none';
@@ -758,14 +821,12 @@
         const factor = e.deltaY < 0 ? 1.14 : 1 / 1.14;
         zoomBy(factor, e.clientX, e.clientY);
       } else {
-        // Scorrimento verticale/orizzontale fluido della homepage con rotellina/trackpad
         panX -= e.deltaX;
         panY -= e.deltaY;
         applyTransform();
       }
     }, { passive: false });
 
-    // GESTURE TOUCH & MOUSE (TRASCINAMENTO LIBERO + PINCH-TO-ZOOM)
     let isDragging = false;
     let dragStartX = 0;
     let dragStartY = 0;
@@ -827,7 +888,6 @@
 
     window.addEventListener('mouseup', () => { isDragging = false; });
 
-    // EVIDENZIATORE ANCORATO ALLA PAGINA (SI MUOVE CON ESSA)
     const btnDrawToggle = document.getElementById('btnDrawToggle');
     btnDrawToggle.addEventListener('click', () => {
       isDrawMode = !isDrawMode;
@@ -846,6 +906,7 @@
 
     document.getElementById('btnClearMarks').addEventListener('click', () => {
       strokes = [];
+      if (currentSite) strokesByDomain.set(currentSite.domain, []);
       redrawStrokes();
     });
 
@@ -861,7 +922,7 @@
     function startStroke(clientX, clientY) {
       if (!isDrawMode) return;
       const pt = getCanvasCoords(clientX, clientY);
-      const brushSize = Math.max(22, drawCanvas.width * 0.022);
+      const brushSize = Math.max(20, drawCanvas.width * 0.022);
       activeStroke = { color: currentColor, size: brushSize, points: [pt] };
       strokes.push(activeStroke);
       redrawStrokes();
