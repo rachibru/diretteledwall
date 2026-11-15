@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="br.it/ledwall" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <title>br.it/ledwall - Sondaggi Politici</title>
+  <title>br.it/ledwall - Sondaggi, Parlamento &amp; Leader</title>
   <style>
     :root {
       --brand-blue: #0b3d75;
@@ -132,6 +132,7 @@
       color: #fff;
       font-size: 11px;
       font-weight: 700;
+      text-decoration: none;
       cursor: pointer;
       white-space: nowrap;
       display: inline-flex;
@@ -139,18 +140,12 @@
       gap: 4px;
     }
 
-    .btn-top.highlight-btn {
-      background: #ffeb3b;
-      color: #072a52;
-      border-color: #ffeb3b;
-    }
-
     .btn-icon-only {
       padding: 0 7px;
       border-radius: 5px;
     }
 
-    body.on-air-clean #btnOpenPaste {
+    body.on-air-clean #btnEditData {
       display: none;
     }
 
@@ -160,7 +155,7 @@
       background: transparent;
     }
 
-    /* CAROSELLO ORIZZONTALE A SCHERMO INTERO (4 SLIDE GRAFICHE) */
+    /* CAROSELLO ORIZZONTALE A SCHERMO INTERO (5 SLIDE GRAFICHE) */
     .slides-track {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
@@ -185,15 +180,14 @@
       width: 100vw;
       height: 100%;
       scroll-snap-align: start;
-      padding: 16px 22px 68px;
+      padding: 16px 22px 66px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
     }
 
     .slide-card {
       flex: 1;
-      background: rgba(255, 255, 255, 0.94);
+      background: rgba(255, 255, 255, 0.95);
       border-radius: 14px;
       padding: 18px 22px;
       box-shadow: 0 12px 32px rgba(15, 28, 46, 0.1), 0 1px 3px rgba(15, 28, 46, 0.06);
@@ -201,6 +195,23 @@
       flex-direction: column;
       overflow: hidden;
       position: relative;
+    }
+
+    /* CANVAS EVIDENZIATORE ANCÒRATO ALLA SINGOLA SLIDE */
+    .slide-draw-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+      z-index: 30;
+    }
+
+    body.draw-mode .slide-draw-canvas {
+      pointer-events: auto;
+      cursor: crosshair;
+      touch-action: none;
     }
 
     .slide-header {
@@ -230,14 +241,14 @@
       letter-spacing: 0.5px;
     }
 
-    /* SLIDE 1: GRAFICO A BARRE VERTICALI PARTITI (STILE SKYWALL) */
+    /* SLIDE 1: BARRE VERTICALI PARTITI */
     .bars-stage {
       flex: 1;
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       gap: 8px;
-      padding-top: 24px;
+      padding-top: 22px;
       min-height: 0;
     }
 
@@ -254,7 +265,7 @@
     }
 
     .bars-stage.has-focus .party-col:not(.focused) {
-      opacity: 0.25;
+      opacity: 0.24;
     }
 
     .party-col.focused {
@@ -322,13 +333,141 @@
       max-width: 100%;
     }
 
-    /* SLIDE 2: COALIZIONI */
+    /* SLIDE 2: EMICICLO PARLAMENTO (CAMERA 400 SEGGI) */
+    .parliament-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 20px;
+      align-items: center;
+      min-height: 0;
+    }
+
+    @media (max-width: 820px) {
+      .parliament-layout {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+      }
+    }
+
+    .hemicycle-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+    }
+
+    .hemicycle-box svg {
+      width: 100%;
+      max-width: 540px;
+      height: auto;
+      overflow: visible;
+    }
+
+    .seats-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      max-height: 100%;
+      padding-right: 4px;
+    }
+
+    .seat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+
+    /* SLIDE 3: GRADIMENTO LEADER */
+    .leaders-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 18px;
+      align-content: center;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 720px) {
+      .leaders-grid { grid-template-columns: 1fr; }
+    }
+
+    .leader-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .leader-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2.5px solid var(--brand-blue);
+      flex-shrink: 0;
+      background: #e2e8f0;
+    }
+
+    .leader-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .leader-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .leader-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .leader-role {
+      font-size: 11.5px;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .leader-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .leader-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0b3d75 0%, #2563eb 100%);
+      border-radius: 999px;
+    }
+
+    /* SLIDE 4: COALIZIONI */
     .coalitions-list {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 16px;
+      gap: 14px;
       overflow-y: auto;
     }
 
@@ -348,23 +487,8 @@
       align-items: center;
     }
 
-    .coal-name {
-      font-size: 17px;
-      font-weight: 900;
-      color: #0f172a;
-    }
-
-    .coal-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .coal-pct {
-      font-size: 22px;
-      font-weight: 900;
-      color: #0b3d75;
-    }
+    .coal-name { font-size: 17px; font-weight: 900; color: #0f172a; }
+    .coal-pct { font-size: 22px; font-weight: 900; color: #0b3d75; }
 
     .coal-track {
       width: 100%;
@@ -375,10 +499,7 @@
       display: flex;
     }
 
-    .coal-seg {
-      height: 100%;
-      transition: width 0.5s ease;
-    }
+    .coal-seg { height: 100%; }
 
     .coal-members {
       display: flex;
@@ -389,120 +510,80 @@
       color: #475569;
     }
 
-    /* SLIDE 3: TABELLA CASE SONDAGGI */
-    .table-wrap {
-      flex: 1;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    table.poll-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    table.poll-table th {
-      position: sticky;
-      top: 0;
-      background: #0b3d75;
-      color: #fff;
-      font-weight: 800;
-      text-align: center;
-      padding: 9px 8px;
-      font-size: 11px;
-      letter-spacing: 0.4px;
-      white-space: nowrap;
-    }
-
-    table.poll-table th:first-child {
-      text-align: left;
-      border-radius: 6px 0 0 0;
-    }
-
-    table.poll-table th:last-child {
-      border-radius: 0 6px 0 0;
-    }
-
-    table.poll-table td {
-      padding: 8px 8px;
-      border-bottom: 1px solid #e2e8f0;
-      text-align: center;
-      font-weight: 700;
-      color: #1e293b;
-    }
-
-    table.poll-table td:first-child {
-      text-align: left;
+    /* SLIDE 5: TESTA A TESTA */
+    .versus-controls {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .versus-select {
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #cbd5e1;
       font-weight: 800;
-    }
-
-    table.poll-table td.media-col {
-      background: #eff6ff;
+      font-size: 13px;
       color: #0b3d75;
-      font-weight: 900;
-      font-size: 14px;
+      background: #f8fafc;
     }
 
-    /* SLIDE 4: CHI SALE E CHI SCENDE */
-    .movers-grid {
+    .versus-stage {
       flex: 1;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr auto 1fr;
       gap: 20px;
+      align-items: center;
       min-height: 0;
     }
 
-    .mover-col {
+    .versus-card {
       background: #f8fafc;
-      border-radius: 10px;
-      padding: 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 24px 18px;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
       gap: 10px;
-      overflow-y: auto;
     }
 
-    .mover-col h3 {
-      margin: 0 0 4px;
-      font-size: 15px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .mover-item {
+    .versus-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #0b3d75;
       background: #fff;
-      border-radius: 8px;
-      padding: 10px 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+
+    .versus-big-num {
+      font-size: 44px;
+      font-weight: 900;
+      color: #0b3d75;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .vs-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #0b3d75;
+      color: #fff;
+      font-weight: 900;
+      font-size: 16px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(11, 61, 117, 0.3);
     }
 
-    /* CANVAS EVIDENZIATORE 60FPS */
-    #highlightCanvas {
-      position: fixed;
-      top: calc(var(--header-h) + env(safe-area-inset-top));
-      left: 0;
-      width: 100vw;
-      height: calc(100vh - var(--header-h) - env(safe-area-inset-top));
-      pointer-events: none;
-      mix-blend-mode: multiply;
-      z-index: 85;
-    }
-
-    body.draw-mode #highlightCanvas {
-      pointer-events: auto;
-      cursor: crosshair;
-      touch-action: none;
-    }
-
-    /* DOCK IN BASSO: NAVIGAZIONE GRAFICI + EVIDENZIATORE */
+    /* DOCK IN BASSO */
     .viewer-dock {
       position: fixed;
       bottom: max(12px, env(safe-area-inset-bottom));
@@ -514,21 +595,21 @@
       border-radius: 999px;
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
       box-shadow: 0 10px 28px rgba(7, 42, 82, 0.35);
       z-index: 96;
-      max-width: 96vw;
+      max-width: 97vw;
       overflow-x: auto;
     }
 
     .dock-btn {
       height: 30px;
-      padding: 0 11px;
+      padding: 0 10px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.2);
       background: rgba(255, 255, 255, 0.12);
       color: #fff;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
@@ -567,47 +648,6 @@
       border-color: #fff;
       box-shadow: 0 0 0 2px #0b3d75, 0 0 0 4px #fff;
     }
-
-    /* MODALE INCOLLA TABELLA GOOGLE FOGLI */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(6px);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-box {
-      background: #fff;
-      border-radius: 14px;
-      width: 100%;
-      max-width: 620px;
-      padding: 22px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .modal-box textarea {
-      width: 100%;
-      height: 200px;
-      border: 1.5px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 12px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 12px;
-      resize: vertical;
-      user-select: text;
-    }
   </style>
 </head>
 <body>
@@ -618,21 +658,23 @@
       <span class="live-badge"><span class="live-dot"></span>LIVE</span>
       <span class="brand-title" id="brandLogo">br.it/ledwall</span>
       <span class="brand-divider"></span>
-      <span class="view-subtitle" id="headerSubtitle">SUPERMEDIA 14/11/2026</span>
+      <span class="view-subtitle" id="headerSubtitle">Sondaggi &amp; Scenari</span>
     </div>
     <div class="topbar-right">
-      <button class="btn-top highlight-btn" id="btnOpenPaste">+ Incolla Dati Fogli</button>
-      <button class="btn-top btn-icon-only" id="btnToggleClean" title="Nascondi pulsante dati in onda">
+      <a href="dati-sondaggi.html" class="btn-top" id="btnEditData">⚙ Redazione Dati</a>
+      <button class="btn-top btn-icon-only" id="btnToggleClean" title="Nascondi controlli in onda">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
       </button>
     </div>
   </header>
 
-  <!-- 4 GRAFICI SCORREVOLI ORIZZONTALMENTE -->
+  <!-- 5 GRAFICI SCORREVOLI (OGNUNO CON IL PROPRIO EVIDENZIATORE ANCÒRATO) -->
   <div class="slides-track" id="slidesTrack">
-    <!-- SLIDE 1: BARRE PARTITI -->
-    <section class="chart-slide">
+
+    <!-- SLIDE 1: PARTITI -->
+    <section class="chart-slide" data-slide-idx="0">
       <div class="slide-card">
+        <canvas class="slide-draw-canvas"></canvas>
         <div class="slide-header">
           <h1 class="slide-title" id="slide1Title">Intenzioni di Voto — Supermedia</h1>
           <span class="slide-meta">Tocca un partito per isolarlo</span>
@@ -641,49 +683,71 @@
       </div>
     </section>
 
-    <!-- SLIDE 2: COALIZIONI -->
-    <section class="chart-slide">
+    <!-- SLIDE 2: EMICICLO PARLAMENTO -->
+    <section class="chart-slide" data-slide-idx="1">
       <div class="slide-card">
+        <canvas class="slide-draw-canvas"></canvas>
+        <div class="slide-header">
+          <h1 class="slide-title">Proiezione Camera dei Deputati (400 Seggi)</h1>
+          <span class="slide-meta">Maggioranza assoluta: 201 seggi</span>
+        </div>
+        <div class="parliament-layout">
+          <div class="hemicycle-box" id="hemicycleBox"></div>
+          <div class="seats-legend" id="seatsLegend"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: GRADIMENTO LEADER -->
+    <section class="chart-slide" data-slide-idx="2">
+      <div class="slide-card">
+        <canvas class="slide-draw-canvas"></canvas>
+        <div class="slide-header">
+          <h1 class="slide-title">Gradimento dei Leader Politici</h1>
+          <span class="slide-meta" id="leadersDateMeta">Rilevazione attuale</span>
+        </div>
+        <div class="leaders-grid" id="leadersGrid"></div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: COALIZIONI -->
+    <section class="chart-slide" data-slide-idx="3">
+      <div class="slide-card">
+        <canvas class="slide-draw-canvas"></canvas>
         <div class="slide-header">
           <h1 class="slide-title">Confronto Coalizioni</h1>
-          <span class="slide-meta">Aggregazione automatica</span>
+          <span class="slide-meta">Somma percentuali per area</span>
         </div>
         <div class="coalitions-list" id="coalitionsList"></div>
       </div>
     </section>
 
-    <!-- SLIDE 3: CONFRONTO ISTITUTI (CASE SONDAGGI) -->
-    <section class="chart-slide">
+    <!-- SLIDE 5: TESTA A TESTA -->
+    <section class="chart-slide" data-slide-idx="4">
       <div class="slide-card">
+        <canvas class="slide-draw-canvas"></canvas>
         <div class="slide-header">
-          <h1 class="slide-title">Dettaglio Istituti &amp; Media</h1>
-          <span class="slide-meta" id="institutesMeta">Tutte le rilevazioni</span>
+          <h1 class="slide-title">Confronto Diretto Testa a Testa</h1>
+          <span class="slide-meta">Seleziona due protagonisti</span>
         </div>
-        <div class="table-wrap" id="tableWrap"></div>
+        <div class="versus-controls">
+          <select class="versus-select" id="vsLeftSelect"></select>
+          <span style="font-weight:900; color:#64748b;">CONTRO</span>
+          <select class="versus-select" id="vsRightSelect"></select>
+        </div>
+        <div class="versus-stage" id="versusStage"></div>
       </div>
     </section>
 
-    <!-- SLIDE 4: CHI SALE E CHI SCENDE -->
-    <section class="chart-slide">
-      <div class="slide-card">
-        <div class="slide-header">
-          <h1 class="slide-title">Trend Settimanale: Chi Sale e Chi Scende</h1>
-          <span class="slide-meta">Variazione rispetto alla stima precedente</span>
-        </div>
-        <div class="movers-grid" id="moversGrid"></div>
-      </div>
-    </section>
   </div>
-
-  <!-- EVIDENZIATORE SOPRA I GRAFICI -->
-  <canvas id="highlightCanvas"></canvas>
 
   <!-- DOCK NAVIGAZIONE GRAFICI + EVIDENZIATORE -->
   <div class="viewer-dock">
     <button class="dock-btn slide-tab active" data-slide="0">1. Partiti</button>
-    <button class="dock-btn slide-tab" data-slide="1">2. Coalizioni</button>
-    <button class="dock-btn slide-tab" data-slide="2">3. Istituti</button>
-    <button class="dock-btn slide-tab" data-slide="3">4. Trend</button>
+    <button class="dock-btn slide-tab" data-slide="1">2. Parlamento</button>
+    <button class="dock-btn slide-tab" data-slide="2">3. Leader</button>
+    <button class="dock-btn slide-tab" data-slide="3">4. Coalizioni</button>
+    <button class="dock-btn slide-tab" data-slide="4">5. Sfida</button>
     <div class="dock-sep"></div>
     <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
     <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.48)" style="background:#ffee00;"></span>
@@ -692,26 +756,7 @@
     <button class="dock-btn" id="btnClearMarks">Pulisci</button>
   </div>
 
-  <!-- MODALE INCOLLA TABELLA DA GOOGLE FOGLI -->
-  <div class="modal-backdrop" id="pasteModal">
-    <div class="modal-box">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0; font-size:18px; color:#0b3d75;">Incolla tabella da Google Fogli</h2>
-        <button id="btnCloseModal" style="background:none; border:none; font-size:20px; cursor:pointer;">✕</button>
-      </div>
-      <p style="margin:0; font-size:12.5px; color:#475569;">
-        Seleziona l'intera tabella su Google Fogli (inclusa l'intestazione <b>PARTITI, IMG, COALIZIONI...</b>), copia e incolla qui sotto:
-      </p>
-      <textarea id="rawSheetInput" placeholder="Incolla qui i dati copiati da Google Fogli..."></textarea>
-      <div style="display:flex; justify-content:flex-end; gap:10px;">
-        <button id="btnResetDefault" style="padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; font-weight:700; cursor:pointer;">Ripristina esempio</button>
-        <button id="btnApplySheet" style="padding:8px 18px; border-radius:8px; border:none; background:#0b3d75; color:#fff; font-weight:800; cursor:pointer;">Genera Grafici</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // Colori ufficiali partiti e coalizioni
     const PARTY_COLORS = {
       "FRATELLI D'ITALIA": "#0b3d75",
       "PARTITO DEMOCRATICO": "#e11d48",
@@ -742,15 +787,7 @@
       "SUD CHIAMA NORD": "Sud Ch. Nord"
     };
 
-    const COALITION_COLORS = {
-      "Centrodestra": "#0b3d75",
-      "Centrosinistra": "#e11d48",
-      "Terzo Polo": "#7c3aed",
-      "Destra Indipendente": "#334155"
-    };
-
-    // Dataset iniziale già caricato dai tuoi dati
-    const DEFAULT_DATA = {
+    const DEFAULT_PARTIES_DATA = {
       supermediaLabel: "SUPERMEDIA 14/11/2026",
       instituteNames: ["CASA SONDAGGI 1", "CASA SONDAGGI 2"],
       parties: [
@@ -758,8 +795,8 @@
         { name: "PARTITO DEMOCRATICO", img: "https://grafici.brunorachiele.it/img/pd.png", coalition: "Centrosinistra", polls: [20.8, 20.4], media: 20.60, prev: 20.23, trend: 0.37 },
         { name: "MOVIMENTO 5 STELLE", img: "https://grafici.brunorachiele.it/img/m5s.png", coalition: "Centrosinistra", polls: [12.6, 12.0], media: 12.30, prev: 12.83, trend: -0.53 },
         { name: "FORZA ITALIA", img: "https://grafici.brunorachiele.it/img/fi.png", coalition: "Centrodestra", polls: [7.3, 7.5], media: 7.40, prev: 7.17, trend: 0.23 },
-        { name: "LEGA", img: "https://grafici.brunorachiele.it/img/lega.png", coalition: "Centrodestra", polls: [6.2, 6.1], media: 6.15, prev: 5.37, trend: 0.78 },
         { name: "ALLEANZA VERDI-SINISTRA", img: "https://grafici.brunorachiele.it/img/avs.png", coalition: "Centrosinistra", polls: [6.2, 6.2], media: 6.20, prev: 6.13, trend: 0.07 },
+        { name: "LEGA", img: "https://grafici.brunorachiele.it/img/lega.png", coalition: "Centrodestra", polls: [6.2, 6.1], media: 6.15, prev: 5.37, trend: 0.78 },
         { name: "FUTURO NAZIONALE", img: "https://grafici.brunorachiele.it/img/fn.png", coalition: "Destra Indipendente", polls: [5.5, 6.5], media: 6.00, prev: 6.43, trend: -0.43 },
         { name: "AZIONE", img: "https://grafici.brunorachiele.it/img/azione.png", coalition: "Terzo Polo", polls: [3.2, 3.0], media: 3.10, prev: 3.07, trend: 0.03 },
         { name: "ITALIA VIVA", img: "https://grafici.brunorachiele.it/img/iv.png", coalition: "Terzo Polo", polls: [2.2, 2.2], media: 2.20, prev: 2.40, trend: -0.20 },
@@ -769,89 +806,49 @@
       ]
     };
 
-    let currentDataset = JSON.parse(localStorage.getItem('br_ledwall_polls') || 'null') || DEFAULT_DATA;
+    const DEFAULT_LEADERS_DATA = {
+      dateLabel: "16/11/2026",
+      leaders: [
+        { name: "Giorgia Meloni", img: "https://static.brunorachiele.it/leader/meloni.jpeg", role: "Presidente del Consiglio", score: 36.85, trend: 0.10 },
+        { name: "Giuseppe Conte", img: "https://static.brunorachiele.it/leader/conte.jpg", role: "Leader M5S", score: 30.10, trend: 0.10 },
+        { name: "Antonio Tajani", img: "https://static.brunorachiele.it/leader/tajani.jpg", role: "Ministro degli Esteri", score: 22.50, trend: 0.00 },
+        { name: "Elly Schlein", img: "https://static.brunorachiele.it/leader/schlein.jpg", role: "Leader PD", score: 22.50, trend: -0.50 },
+        { name: "Matteo Salvini", img: "https://static.brunorachiele.it/leader/salvini.jpg", role: "Ministro dei Trasporti", score: 21.00, trend: -0.50 },
+        { name: "Roberto Vannacci", img: "https://static.brunorachiele.it/leader/vannacci.jpeg", role: "Leader Futuro Nazionale", score: 21.00, trend: 1.00 },
+        { name: "Carlo Calenda", img: "https://static.brunorachiele.it/leader/calenda.jpeg", role: "Leader Azione", score: 16.00, trend: -0.50 },
+        { name: "Matteo Renzi", img: "https://static.brunorachiele.it/leader/renzi.jpg", role: "Leader Italia Viva", score: 13.50, trend: 0.00 }
+      ]
+    };
 
-    function parseNum(str) {
-      if (!str) return null;
-      const cleaned = str.trim().replace('%', '').replace(',', '.');
-      if (!cleaned || cleaned === '-') return null;
-      const val = parseFloat(cleaned);
-      return isNaN(val) ? null : val;
-    }
+    const partiesData = JSON.parse(localStorage.getItem('br_ledwall_polls') || 'null') || DEFAULT_PARTIES_DATA;
+    const leadersData = JSON.parse(localStorage.getItem('br_ledwall_leaders') || 'null') || DEFAULT_LEADERS_DATA;
 
     function fmtPct(num) {
-      if (num === null || num === undefined || isNaN(num)) return '-';
       return num.toFixed(2).replace('.', ',') + '%';
     }
 
     function fmtTrend(num) {
-      if (num === null || num === undefined || isNaN(num)) return '0,00';
-      const sign = num > 0 ? '+' : '';
+      const sign = num > 0.004 ? '+' : '';
       return sign + num.toFixed(2).replace('.', ',');
     }
 
-    // Parser intelligente per tabella incollata da Google Fogli (TSV con tabulazioni)
-    function parseGoogleSheetText(rawText) {
-      const lines = rawText.trim().split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-      if (lines.length < 2) return null;
+    function renderAll() {
+      const sortedParties = [...partiesData.parties].sort((a, b) => b.media - a.media);
+      const sortedLeaders = [...leadersData.leaders].sort((a, b) => b.score - a.score);
 
-      const headerCols = lines[0].split('\t').map(c => c.trim());
-      let supermediaLabel = headerCols.find(c => c.toUpperCase().includes('SUPERMEDIA') || c.toUpperCase().includes('MEDIA')) || 'SUPERMEDIA';
+      document.getElementById('headerSubtitle').textContent = partiesData.supermediaLabel;
+      document.getElementById('slide1Title').textContent = `Intenzioni di Voto — ${partiesData.supermediaLabel}`;
+      document.getElementById('leadersDateMeta').textContent = `Rilevazione ${leadersData.dateLabel}`;
 
-      // Individua indici colonne
-      const idxCoal = headerCols.findIndex(c => c.toUpperCase().includes('COALIZ'));
-      const idxMedia = headerCols.findIndex(c => c.toUpperCase().includes('SUPERMEDIA') || c.toUpperCase().includes('MEDIA'));
-      const idxPrev = headerCols.findIndex(c => c.toUpperCase().includes('STIMA') || c.toUpperCase().includes('PRECED'));
-      const idxTrend = headerCols.findIndex(c => c.toUpperCase().includes('TREND') || c.toUpperCase().includes('VAR'));
-
-      const pollStart = idxCoal >= 0 ? idxCoal + 1 : 3;
-      const pollEnd = idxMedia >= 0 ? idxMedia : headerCols.length - 3;
-      const instituteNames = headerCols.slice(pollStart, pollEnd).filter(Boolean);
-
-      const parties = [];
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split('\t');
-        if (cols.length < 4) continue;
-        const name = (cols[0] || '').trim().toUpperCase();
-        if (!name) continue;
-        const img = (cols[1] || '').trim();
-        const coalition = (cols[idxCoal >= 0 ? idxCoal : 2] || 'Altro').trim();
-
-        const polls = [];
-        for (let c = pollStart; c < pollEnd; c++) {
-          polls.push(parseNum(cols[c]));
-        }
-
-        const media = parseNum(cols[idxMedia >= 0 ? idxMedia : cols.length - 3]) ?? 0;
-        const prev = parseNum(cols[idxPrev >= 0 ? idxPrev : cols.length - 2]) ?? media;
-        let trend = parseNum(cols[idxTrend >= 0 ? idxTrend : cols.length - 1]);
-        if (trend === null) trend = +(media - prev).toFixed(2);
-
-        parties.push({ name, img, coalition, polls, media, prev, trend });
-      }
-
-      if (!parties.length) return null;
-      return { supermediaLabel, instituteNames, parties };
-    }
-
-    function renderAllCharts() {
-      const { supermediaLabel, instituteNames, parties } = currentDataset;
-      document.getElementById('headerSubtitle').textContent = supermediaLabel;
-      document.getElementById('slide1Title').textContent = `Intenzioni di Voto — ${supermediaLabel}`;
-
-      // Ordina per media decrescente per il grafico principale
-      const sorted = [...parties].sort((a, b) => b.media - a.media);
-      const maxVal = Math.max(...sorted.map(p => p.media), 30);
-
-      // 1. SLIDE BARRE VERTICALI
+      // 1. SLIDE BARRE VERTICALI PARTITI
+      const maxParty = Math.max(...sortedParties.map(p => p.media), 30);
       const barsStage = document.getElementById('barsStage');
-      barsStage.classList.remove('has-focus');
-      barsStage.innerHTML = sorted.map((p, idx) => {
+      barsStage.innerHTML = sortedParties.map((p, idx) => {
         const color = PARTY_COLORS[p.name] || '#0b3d75';
         const shortName = SHORT_NAMES[p.name] || p.name;
-        const heightPct = Math.max(4, Math.round((p.media / (maxVal * 1.12)) * 100));
-        const trendCls = p.trend > 0.005 ? 'trend-up' : p.trend < -0.005 ? 'trend-down' : 'trend-flat';
-        const arrow = p.trend > 0.005 ? '▲' : p.trend < -0.005 ? '▼' : '•';
+        const heightPct = Math.max(4, Math.round((p.media / (maxParty * 1.12)) * 100));
+        const trendCls = p.trend > 0.004 ? 'trend-up' : p.trend < -0.004 ? 'trend-down' : 'trend-flat';
+        const arrow = p.trend > 0.004 ? '▲' : p.trend < -0.004 ? '▼' : '•';
 
         return `
           <div class="party-col" data-idx="${idx}" style="--p-color:${color};">
@@ -879,9 +876,38 @@
         });
       });
 
-      // 2. SLIDE COALIZIONI
+      // 2. SLIDE EMICICLO PARLAMENTO (400 SEGGI CAMERA - SBARRAMENTO 3%)
+      renderParliamentHemicycle(sortedParties);
+
+      // 3. SLIDE GRADIMENTO LEADER
+      const maxLeader = Math.max(...sortedLeaders.map(l => l.score), 45);
+      document.getElementById('leadersGrid').innerHTML = sortedLeaders.map(l => {
+        const trendCls = l.trend > 0.004 ? 'trend-up' : l.trend < -0.004 ? 'trend-down' : 'trend-flat';
+        const arrow = l.trend > 0.004 ? '▲' : l.trend < -0.004 ? '▼' : '•';
+        const barW = Math.min(100, Math.round((l.score / (maxLeader * 1.1)) * 100));
+        return `
+          <div class="leader-card">
+            <img class="leader-avatar" src="${l.img}" alt="${l.name}" onerror="this.style.display='none'" />
+            <div class="leader-info">
+              <div class="leader-top">
+                <span class="leader-name">${l.name}</span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span class="trend-pill ${trendCls}" style="margin:0;">${arrow} ${fmtTrend(l.trend)}</span>
+                  <span style="font-size:17px; font-weight:900; color:#0b3d75;">${fmtPct(l.score)}</span>
+                </div>
+              </div>
+              <div class="leader-role">${l.role}</div>
+              <div class="leader-bar-bg">
+                <div class="leader-bar-fill" style="width:${barW}%;"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 4. SLIDE COALIZIONI
       const coalMap = new Map();
-      sorted.forEach(p => {
+      sortedParties.forEach(p => {
         const cName = p.coalition || 'Altro';
         if (!coalMap.has(cName)) coalMap.set(cName, { name: cName, total: 0, trend: 0, members: [] });
         const entry = coalMap.get(cName);
@@ -892,10 +918,10 @@
 
       const coalitions = Array.from(coalMap.values()).sort((a, b) => b.total - a.total);
       document.getElementById('coalitionsList').innerHTML = coalitions.map(c => {
-        const trendCls = c.trend > 0.005 ? 'trend-up' : c.trend < -0.005 ? 'trend-down' : 'trend-flat';
+        const trendCls = c.trend > 0.004 ? 'trend-up' : c.trend < -0.004 ? 'trend-down' : 'trend-flat';
         const segments = c.members.map(m => {
-          const mColor = PARTY_COLORS[m.name] || COALITION_COLORS[c.name] || '#0b3d75';
-          return `<div class="coal-seg" style="width:${m.media}%; background:${mColor};" title="${m.name}: ${fmtPct(m.media)}"></div>`;
+          const mColor = PARTY_COLORS[m.name] || '#0b3d75';
+          return `<div class="coal-seg" style="width:${m.media}%; background:${mColor};"></div>`;
         }).join('');
         const memberBadges = c.members.map(m => `${SHORT_NAMES[m.name] || m.name} <b>${m.media.toFixed(1).replace('.', ',')}%</b>`).join(' &bull; ');
 
@@ -903,7 +929,7 @@
           <div class="coal-row">
             <div class="coal-top">
               <span class="coal-name">${c.name}</span>
-              <div class="coal-right">
+              <div style="display:flex; align-items:center; gap:10px;">
                 <span class="trend-pill ${trendCls}">${fmtTrend(c.trend)}</span>
                 <span class="coal-pct">${fmtPct(c.total)}</span>
               </div>
@@ -914,79 +940,161 @@
         `;
       }).join('');
 
-      // 3. SLIDE TABELLA ISTITUTI
-      const activeInstIndices = instituteNames
-        .map((n, idx) => ({ name: n, idx }))
-        .filter(item => sorted.some(p => p.polls[item.idx] !== null));
+      // 5. SLIDE TESTA A TESTA
+      setupVersusCompare(sortedParties, sortedLeaders);
+    }
 
-      const thInst = activeInstIndices.map(i => `<th>${i.name}</th>`).join('');
-      const rowsHtml = sorted.map(p => {
-        const cells = activeInstIndices.map(i => {
-          const v = p.polls[i.idx];
-          return `<td>${v !== null ? v.toFixed(1).replace('.', ',') + '%' : '-'}</td>`;
-        }).join('');
-        const trendColor = p.trend > 0.005 ? '#15803d' : p.trend < -0.005 ? '#b91c1c' : '#64748b';
-        return `
-          <tr>
-            <td>
-              ${p.img ? `<img src="${p.img}" style="width:22px; height:22px; border-radius:50%;" onerror="this.style.display='none'" />` : ''}
-              <span>${p.name}</span>
-            </td>
-            ${cells}
-            <td class="media-col">${fmtPct(p.media)}</td>
-            <td style="color:${trendColor};">${fmtTrend(p.trend)}</td>
-          </tr>
-        `;
-      }).join('');
+    function renderParliamentHemicycle(sortedParties) {
+      // Calcolo proporzionale su 400 seggi per partiti >= 3%
+      const eligible = sortedParties.filter(p => p.media >= 3.0);
+      const sumPct = eligible.reduce((acc, p) => acc + p.media, 0) || 100;
+      const totalSeats = 400;
 
-      document.getElementById('tableWrap').innerHTML = `
-        <table class="poll-table">
-          <thead>
-            <tr>
-              <th>PARTITO</th>
-              ${thInst}
-              <th>${supermediaLabel}</th>
-              <th>TREND</th>
-            </tr>
-          </thead>
-          <tbody>${rowsHtml}</tbody>
-        </table>
+      // Ripartizione con metodo dei resti più alti
+      const allocated = eligible.map(p => {
+        const exact = (p.media / sumPct) * totalSeats;
+        return {
+          name: p.name,
+          shortName: SHORT_NAMES[p.name] || p.name,
+          img: p.img,
+          coalition: p.coalition,
+          color: PARTY_COLORS[p.name] || '#0b3d75',
+          seats: Math.floor(exact),
+          rem: exact - Math.floor(exact)
+        };
+      });
+
+      let assigned = allocated.reduce((acc, p) => acc + p.seats, 0);
+      const byRem = [...allocated].sort((a, b) => b.rem - a.rem);
+      let rIdx = 0;
+      while (assigned < totalSeats && byRem.length > 0) {
+        byRem[rIdx % byRem.length].seats++;
+        assigned++;
+        rIdx++;
+      }
+
+      // Ordina da sinistra a destra dell'emiciclo (Sinistra -> Centro -> Destra)
+      const orderMap = { "Centrosinistra": 1, "Terzo Polo": 2, "Centrodestra": 3, "Destra Indipendente": 4 };
+      const hemicycleParties = [...allocated].sort((a, b) => (orderMap[a.coalition] || 2) - (orderMap[b.coalition] || 2));
+
+      // Genera coordinate ad arco su 10 file concentriche
+      const rows = 10;
+      const cx = 260, cy = 245;
+      const innerR = 95, outerR = 225;
+      const allDots = [];
+
+      for (let r = 0; r < rows; r++) {
+        const radius = innerR + (r / (rows - 1)) * (outerR - innerR);
+        const countInRow = Math.round(28 + r * 2.7);
+        for (let i = 0; i < countInRow; i++) {
+          const angle = Math.PI - (i / (countInRow - 1)) * Math.PI;
+          allDots.push({
+            x: cx + radius * Math.cos(angle),
+            y: cy - radius * Math.sin(angle),
+            angle
+          });
+        }
+      }
+
+      // Ordina i punti per angolo decrescente (da sinistra PI a destra 0) e prendi 400 punti
+      allDots.sort((a, b) => b.angle - a.angle);
+      const seatPoints = allDots.slice(0, totalSeats);
+
+      let dotIdx = 0;
+      const circlesSvg = [];
+      hemicycleParties.forEach(p => {
+        for (let s = 0; s < p.seats && dotIdx < seatPoints.length; s++) {
+          const pt = seatPoints[dotIdx++];
+          circlesSvg.push(`<circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="4.1" fill="${p.color}" />`);
+        }
+      });
+
+      document.getElementById('hemicycleBox').innerHTML = `
+        <svg viewBox="0 0 520 265">
+          ${circlesSvg.join('')}
+          <text x="260" y="215" text-anchor="middle" font-size="34" font-weight="900" fill="#0b3d75">400</text>
+          <text x="260" y="236" text-anchor="middle" font-size="11" font-weight="800" fill="#64748b" letter-spacing="1">SEGGI CAMERA</text>
+        </svg>
       `;
 
-      // 4. SLIDE CHI SALE E CHI SCENDE
-      const risers = [...parties].filter(p => p.trend > 0).sort((a, b) => b.trend - a.trend);
-      const fallers = [...parties].filter(p => p.trend < 0).sort((a, b) => a.trend - b.trend);
-
-      const renderMoverItem = (p, isUp) => `
-        <div class="mover-item">
-          <div style="display:flex; align-items:center; gap:10px;">
-            ${p.img ? `<img src="${p.img}" style="width:32px; height:32px; border-radius:50%;" onerror="this.style.display='none'" />` : ''}
-            <div>
-              <div style="font-weight:800; font-size:14px; color:#0f172a;">${p.name}</div>
-              <div style="font-size:11px; color:#64748b;">Oggi: <b>${fmtPct(p.media)}</b></div>
-            </div>
+      const legendSorted = [...allocated].sort((a, b) => b.seats - a.seats);
+      document.getElementById('seatsLegend').innerHTML = legendSorted.map(p => `
+        <div class="seat-row">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="width:12px; height:12px; border-radius:50%; background:${p.color}; display:inline-block;"></span>
+            ${p.img ? `<img src="${p.img}" style="width:24px; height:24px; border-radius:50%;" onerror="this.style.display='none'" />` : ''}
+            <span style="font-weight:800; font-size:13px; color:#0f172a;">${p.name}</span>
           </div>
-          <span class="trend-pill ${isUp ? 'trend-up' : 'trend-down'}" style="font-size:14px; padding:4px 10px;">
-            ${isUp ? '▲' : '▼'} ${fmtTrend(p.trend)}
-          </span>
+          <span style="font-weight:900; font-size:16px; color:${p.color};">${p.seats} <small style="font-size:11px; color:#64748b;">seggi</small></span>
         </div>
-      `;
+      `).join('');
+    }
 
-      document.getElementById('moversGrid').innerHTML = `
-        <div class="mover-col">
-          <h3 style="color:#15803d;">▲ Chi Sale</h3>
-          ${risers.map(p => renderMoverItem(p, true)).join('') || '<div style="color:#64748b; font-size:13px;">Nessun partito in crescita</div>'}
-        </div>
-        <div class="mover-col">
-          <h3 style="color:#b91c1c;">▼ Chi Scende</h3>
-          ${fallers.map(p => renderMoverItem(p, false)).join('') || '<div style="color:#64748b; font-size:13px;">Nessun partito in calo</div>'}
-        </div>
-      `;
+    function setupVersusCompare(sortedParties, sortedLeaders) {
+      const items = [
+        ...sortedLeaders.map(l => ({
+          id: 'L:' + l.name,
+          label: `Leader: ${l.name}`,
+          name: l.name,
+          sub: l.role,
+          img: l.img,
+          val: fmtPct(l.score),
+          trend: l.trend,
+          color: '#0b3d75'
+        })),
+        ...sortedParties.map(p => ({
+          id: 'P:' + p.name,
+          label: `Partito: ${p.name}`,
+          name: p.name,
+          sub: p.coalition,
+          img: p.img,
+          val: fmtPct(p.media),
+          trend: p.trend,
+          color: PARTY_COLORS[p.name] || '#0b3d75'
+        }))
+      ];
+
+      const selL = document.getElementById('vsLeftSelect');
+      const selR = document.getElementById('vsRightSelect');
+      const optionsHtml = items.map(it => `<option value="${it.id}">${it.label}</option>`).join('');
+      selL.innerHTML = optionsHtml;
+      selR.innerHTML = optionsHtml;
+      if (items.length > 3) selR.selectedIndex = 3; // Default: Meloni vs Schlein
+
+      const renderCards = () => {
+        const left = items.find(i => i.id === selL.value) || items[0];
+        const right = items.find(i => i.id === selR.value) || items[1];
+
+        const makeCard = (it) => {
+          const trendCls = it.trend > 0.004 ? 'trend-up' : it.trend < -0.004 ? 'trend-down' : 'trend-flat';
+          const arrow = it.trend > 0.004 ? '▲' : it.trend < -0.004 ? '▼' : '•';
+          return `
+            <div class="versus-card" style="border-top:6px solid ${it.color};">
+              ${it.img ? `<img class="versus-avatar" style="border-color:${it.color};" src="${it.img}" alt="${it.name}" onerror="this.style.display='none'" />` : ''}
+              <div style="font-size:20px; font-weight:900; color:#0f172a;">${it.name}</div>
+              <div style="font-size:13px; font-weight:700; color:#64748b;">${it.sub}</div>
+              <div class="versus-big-num" style="color:${it.color};">${it.val}</div>
+              <span class="trend-pill ${trendCls}" style="font-size:13px; padding:4px 10px;">${arrow} ${fmtTrend(it.trend)}</span>
+            </div>
+          `;
+        };
+
+        document.getElementById('versusStage').innerHTML = `
+          ${makeCard(left)}
+          <div class="vs-badge">VS</div>
+          ${makeCard(right)}
+        `;
+      };
+
+      selL.addEventListener('change', renderCards);
+      selR.addEventListener('change', renderCards);
+      renderCards();
     }
 
     // Navigazione slide orizzontali
     const slidesTrack = document.getElementById('slidesTrack');
     const slideTabs = document.querySelectorAll('.slide-tab');
+    let activeSlideIdx = 0;
 
     slideTabs.forEach(tab => {
       tab.addEventListener('click', () => {
@@ -996,39 +1104,8 @@
     });
 
     slidesTrack.addEventListener('scroll', () => {
-      const idx = Math.round(slidesTrack.scrollLeft / window.innerWidth);
-      slideTabs.forEach((t, i) => t.classList.toggle('active', i === idx));
-    });
-
-    // Modale incolla dati Google Fogli
-    const pasteModal = document.getElementById('pasteModal');
-    const rawSheetInput = document.getElementById('rawSheetInput');
-
-    document.getElementById('btnOpenPaste').addEventListener('click', () => {
-      rawSheetInput.value = '';
-      pasteModal.classList.add('open');
-      setTimeout(() => rawSheetInput.focus(), 100);
-    });
-
-    document.getElementById('btnCloseModal').addEventListener('click', () => pasteModal.classList.remove('open'));
-
-    document.getElementById('btnResetDefault').addEventListener('click', () => {
-      currentDataset = DEFAULT_DATA;
-      localStorage.removeItem('br_ledwall_polls');
-      renderAllCharts();
-      pasteModal.classList.remove('open');
-    });
-
-    document.getElementById('btnApplySheet').addEventListener('click', () => {
-      const parsed = parseGoogleSheetText(rawSheetInput.value);
-      if (parsed) {
-        currentDataset = parsed;
-        localStorage.setItem('br_ledwall_polls', JSON.stringify(parsed));
-        renderAllCharts();
-        pasteModal.classList.remove('open');
-      } else {
-        alert('Formato non riconosciuto: assicurati di copiare le celle direttamente da Google Fogli.');
-      }
+      activeSlideIdx = Math.round(slidesTrack.scrollLeft / window.innerWidth);
+      slideTabs.forEach((t, i) => t.classList.toggle('active', i === activeSlideIdx));
     });
 
     // Pulizia topbar in onda
@@ -1036,19 +1113,59 @@
     document.getElementById('btnToggleClean').addEventListener('click', toggleClean);
     document.getElementById('brandLogo').addEventListener('dblclick', toggleClean);
 
-    // EVIDENZIATORE VELOCE A 60FPS SOPRA I GRAFICI
-    const canvas = document.getElementById('highlightCanvas');
-    const ctx = canvas.getContext('2d');
+    // EVIDENZIATORE ANCÒRATO A CIASCUN GRAFICO (RESTA SUL SINGOLO GRAFICO QUANDO SCORRI!)
+    const slideCanvases = Array.from(document.querySelectorAll('.slide-draw-canvas'));
     const btnDrawToggle = document.getElementById('btnDrawToggle');
     let isDrawMode = false;
     let currentColor = 'rgba(255, 238, 0, 0.48)';
-    let drawing = false;
-    let lastPt = null;
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = canvas.clientHeight;
+    function syncAllCanvases() {
+      slideCanvases.forEach(c => {
+        const parent = c.parentElement;
+        if (c.width !== parent.clientWidth || c.height !== parent.clientHeight) {
+          c.width = parent.clientWidth;
+          c.height = parent.clientHeight;
+        }
+      });
     }
+
+    slideCanvases.forEach(canvas => {
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+      let lastPt = null;
+
+      canvas.addEventListener('pointerdown', (e) => {
+        if (!isDrawMode) return;
+        e.stopPropagation();
+        drawing = true;
+        canvas.setPointerCapture(e.pointerId);
+        const rect = canvas.getBoundingClientRect();
+        lastPt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = 22;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(lastPt.x, lastPt.y);
+        ctx.lineTo(lastPt.x + 0.1, lastPt.y);
+        ctx.stroke();
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        if (!drawing || !isDrawMode || !lastPt) return;
+        e.stopPropagation();
+        const rect = canvas.getBoundingClientRect();
+        const pt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        ctx.beginPath();
+        ctx.moveTo(lastPt.x, lastPt.y);
+        ctx.lineTo(pt.x, pt.y);
+        ctx.stroke();
+        lastPt = pt;
+      });
+
+      canvas.addEventListener('pointerup', () => { drawing = false; lastPt = null; });
+      canvas.addEventListener('pointercancel', () => { drawing = false; lastPt = null; });
+    });
 
     btnDrawToggle.addEventListener('click', () => {
       isDrawMode = !isDrawMode;
@@ -1065,43 +1182,17 @@
       });
     });
 
+    // Pulisce l'evidenziatore solo sulla slide corrente
     document.getElementById('btnClearMarks').addEventListener('click', () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const currentCanvas = slideCanvases[activeSlideIdx];
+      if (currentCanvas) {
+        currentCanvas.getContext('2d').clearRect(0, 0, currentCanvas.width, currentCanvas.height);
+      }
     });
 
-    canvas.addEventListener('pointerdown', (e) => {
-      if (!isDrawMode) return;
-      drawing = true;
-      canvas.setPointerCapture(e.pointerId);
-      const rect = canvas.getBoundingClientRect();
-      lastPt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-      ctx.strokeStyle = currentColor;
-      ctx.lineWidth = 22;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.beginPath();
-      ctx.moveTo(lastPt.x, lastPt.y);
-      ctx.lineTo(lastPt.x + 0.1, lastPt.y);
-      ctx.stroke();
-    });
-
-    canvas.addEventListener('pointermove', (e) => {
-      if (!drawing || !isDrawMode || !lastPt) return;
-      const rect = canvas.getBoundingClientRect();
-      const pt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-      ctx.beginPath();
-      ctx.moveTo(lastPt.x, lastPt.y);
-      ctx.lineTo(pt.x, pt.y);
-      ctx.stroke();
-      lastPt = pt;
-    });
-
-    canvas.addEventListener('pointerup', () => { drawing = false; lastPt = null; });
-    canvas.addEventListener('pointercancel', () => { drawing = false; lastPt = null; });
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    renderAllCharts();
+    window.addEventListener('resize', syncAllCanvases);
+    renderAll();
+    requestAnimationFrame(syncAllCanvases);
   </script>
 </body>
 </html>
