@@ -2,673 +2,781 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rassegna Stampa TV - Skywall Studio</title>
-    <!-- Tailwind CSS per il layout e la responsività -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>br.it/ledwall - Rassegna Stampa TV</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Inter e Serif per le testate -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Font Inter & Playfair Display -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at 50% 30%, #1e293b 0%, #0f172a 55%, #020617 100%);
-            color: #f8fafc;
+        :root {
+            --brand-blue: #0b3d75;
+            --brand-blue-dark: #082d57;
+            --brand-blue-border: #165296;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            /* Sfondo chiaro studio TV stile Sky TG24 */
+            background-color: #e5e7eb;
+            color: #0f172a;
             user-select: none;
             -webkit-user-select: none;
+            touch-action: manipulation;
         }
 
-        /* Effetto lucido studio TV sul pavimento/sfondo */
-        .studio-glow {
+        /* Sfondo architettonico studio televisivo chiaro (grigio-argento / bianco perla) */
+        .sky-studio-bg {
             position: fixed;
             inset: 0;
-            background: 
-                radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 60%),
-                radial-gradient(ellipse at 50% 100%, rgba(14, 165, 233, 0.08) 0%, transparent 50%);
-            pointer-events: none;
             z-index: 0;
+            background:
+                radial-gradient(ellipse at 50% 38%, #f8fafc 0%, #f1f5f9 35%, #e2e8f0 70%, #cbd5e1 100%);
+            pointer-events: none;
         }
 
-        /* Animazione fluida griglia Skywall */
+        /* Sottili pannelli e linee di fuga architettoniche del ledwall */
+        .sky-studio-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                linear-gradient(to right, rgba(148, 163, 184, 0.14) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(148, 163, 184, 0.14) 1px, transparent 1px),
+                radial-gradient(circle at 50% 100%, rgba(11, 61, 117, 0.06) 0%, transparent 60%);
+            background-size: 120px 120px, 120px 120px, 100% 100%;
+            pointer-events: none;
+        }
+
+        /* Barra superiore blu istituzionale brunorachiele.it (52px) */
+        #top-header {
+            height: 52px;
+            background: linear-gradient(180deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
+            border-bottom: 1px solid var(--brand-blue-border);
+            box-shadow: 0 4px 16px rgba(8, 45, 87, 0.25);
+        }
+
+        /* Card delle prime pagine sul Ledwall */
         .newspaper-card {
-            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, filter 0.35s ease;
-            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
-            transform-style: preserve-3d;
+            background: #ffffff;
+            border-radius: 4px;
+            box-shadow:
+                0 10px 24px -4px rgba(15, 23, 42, 0.22),
+                0 4px 8px -2px rgba(15, 23, 42, 0.12),
+                0 0 0 1px rgba(148, 163, 184, 0.45);
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease;
+            overflow: hidden;
+            position: relative;
         }
 
-        .newspaper-card:hover {
-            transform: translateY(-8px) scale(1.035);
-            box-shadow: 0 25px 45px -5px rgba(0, 0, 0, 0.85), 0 0 20px rgba(56, 189, 248, 0.35), 0 0 0 2px rgba(56, 189, 248, 0.6);
+        .newspaper-card:hover, .newspaper-card:active {
+            transform: translateY(-5px) scale(1.025);
+            box-shadow:
+                0 20px 35px -5px rgba(11, 61, 117, 0.32),
+                0 8px 15px -3px rgba(15, 23, 42, 0.18),
+                0 0 0 2px #0b3d75;
             z-index: 10;
         }
 
-        /* Sfocatura griglia quando in Focus Mode */
-        .grid-blurred {
-            filter: blur(12px) brightness(0.35);
-            transform: scale(0.96);
+        /* Effetto sfocatura del muro quando si apre un quotidiano */
+        .wall-blurred {
+            filter: blur(10px) brightness(0.88);
+            transform: scale(0.98);
             pointer-events: none;
         }
 
-        /* Transizione ingrandimento stile Viz Multiplay */
-        #focus-overlay {
-            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s;
+        /* Viewport del giornale aperto: contiene lo zoom interno senza ingrandire lo schermo */
+        #reader-viewport {
+            touch-action: none; /* Disabilita gesti nativi browser dentro l'area di lettura/disegno */
+            overflow: hidden;
+            position: relative;
         }
 
-        #paper-stage {
-            transition: transform 0.12s ease-out;
+        /* Contenitore foto + canvas evidenziatore che si trasforma insieme */
+        #paper-transform-layer {
             transform-origin: center center;
             will-change: transform;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 25px 60px rgba(15, 23, 42, 0.38), 0 0 0 1px rgba(148, 163, 184, 0.5);
+            background: #ffffff;
         }
 
-        #paper-stage.smooth-reset {
-            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        #paper-transform-layer.smooth-anim {
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        /* Effetto evidenziatore realistico sopra la carta */
-        .highlight-layer {
+        /* Fusione realistica dell'inchiostro evidenziatore sulla carta del giornale */
+        #freehand-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             mix-blend-mode: multiply;
-        }
-
-        /* Barra superiore a scomparsa */
-        #top-toolbar {
-            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
-        }
-
-        #top-toolbar.toolbar-hidden {
-            transform: translateY(-100%);
-            opacity: 0;
             pointer-events: none;
         }
 
-        /* Scrollbar personalizzata elegante */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 184, 0.3);
-            border-radius: 9999px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(148, 163, 184, 0.5);
+        /* Barra flottante inferiore stile broadcast */
+        #reader-toolbar {
+            transition: opacity 0.25s ease, transform 0.25s ease;
         }
 
-        /* Pulsante flottante discreto per riattivare la barra in modalità diretta */
-        #restore-ui-btn {
-            transition: opacity 0.3s ease, transform 0.3s ease;
+        #reader-toolbar.hud-hidden {
+            opacity: 0;
+            transform: translate(-50%, 24px);
+            pointer-events: none;
+        }
+
+        /* Scrollbar discreta per griglia su schermi piccoli */
+        #ledwall-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        #ledwall-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #ledwall-scroll::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.35);
+            border-radius: 9999px;
         }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col relative">
+<body class="flex flex-col h-screen w-screen">
 
-    <!-- Luci ambiente studio TV -->
-    <div class="studio-glow"></div>
+    <!-- Sfondo studio televisivo chiaro stile Sky TG24 -->
+    <div class="sky-studio-bg"></div>
+    <div class="sky-studio-grid"></div>
 
-    <!-- Overlay Drag & Drop globale -->
-    <div id="drop-zone-overlay" class="fixed inset-0 z-50 bg-sky-950/90 backdrop-blur-md border-4 border-dashed border-sky-400 hidden flex-col items-center justify-center p-6 text-center pointer-events-none">
-        <svg class="w-20 h-20 text-sky-400 mb-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-        </svg>
-        <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2">Rilascia qui le Prime Pagine</h2>
-        <p class="text-sky-200 text-sm sm:text-base">Supporta file JPG, PNG e WebP ad alta risoluzione</p>
-    </div>
-
-    <!-- BARRA DI CONTROLLO SUPERIORE -->
-    <header id="top-toolbar" class="relative z-40 bg-slate-900/85 backdrop-blur-xl border-b border-slate-700/60 px-3 sm:px-5 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-2xl">
+    <!-- BARRA SUPERIORE BLU ISTITUZIONALE (52px) -->
+    <header id="top-header" class="relative z-40 w-full px-3 sm:px-5 flex items-center justify-between shrink-0 text-white">
         
-        <!-- Logo / Titolo Studio -->
-        <div class="flex items-center gap-2.5">
-            <div class="flex items-center gap-1.5 bg-red-600 text-white text-xs font-extrabold px-2.5 py-1 rounded tracking-wider uppercase shadow-sm">
+        <!-- Sinistra: Indicatore LIVE + br.it/ledwall -->
+        <div class="flex items-center gap-2.5 sm:gap-3">
+            <div class="flex items-center gap-1.5 bg-red-600 text-white text-[11px] sm:text-xs font-extrabold px-2.5 py-1 rounded tracking-wider uppercase shadow-sm">
                 <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-                LIVE
+                <span>LIVE</span>
             </div>
-            <span class="font-bold text-sm sm:text-base tracking-tight text-slate-100 hidden md:inline">RASSEGNA STAMPA</span>
+            <div class="flex items-baseline gap-2">
+                <span class="font-extrabold text-base sm:text-lg tracking-tight text-white">br.it/ledwall</span>
+                <span id="edition-badge" class="hidden md:inline-block text-xs font-medium text-sky-200/90 border-l border-sky-400/30 pl-2">
+                    Prime Pagine
+                </span>
+            </div>
         </div>
 
-        <!-- Controlli Centrali (Caricamento & Evidenziatore) -->
-        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-            <!-- Input file nascosto -->
-            <input type="file" id="file-input" multiple accept="image/*" class="hidden">
-            
-            <button onclick="document.getElementById('file-input').click()" class="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-500 active:bg-sky-700 text-white text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg transition shadow-md cursor-pointer" title="Carica immagini dal computer">
+        <!-- Destra: Azioni principali touch-friendly -->
+        <div class="flex items-center gap-2">
+            <!-- Pulsante Torna Indietro (visibile quando un giornale è aperto) -->
+            <button id="header-back-btn" onclick="closeReader()" class="hidden items-center gap-1.5 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-bold text-xs sm:text-sm px-3.5 h-9 rounded-lg shadow transition cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span>Torna indietro</span>
+            </button>
+
+            <!-- Pulsante Aggiorna dal sito brunorachiele.it -->
+            <button id="btn-sync-blog" onclick="fetchFromBlog(true)" class="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 active:bg-white/30 text-white border border-white/20 text-xs sm:text-sm font-medium px-3 h-9 rounded-lg transition cursor-pointer" title="Ricarica le prime pagine da brunorachiele.it">
+                <svg id="sync-icon" class="w-4 h-4 text-sky-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span class="hidden sm:inline">Aggiorna dal sito</span>
+                <span class="sm:hidden">Aggiorna</span>
+            </button>
+
+            <!-- Caricamento manuale di backup -->
+            <input type="file" id="manual-file-input" multiple accept="image/*" class="hidden">
+            <button onclick="document.getElementById('manual-file-input').click()" class="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-sky-100 border border-white/15 text-xs sm:text-sm font-medium px-2.5 sm:px-3 h-9 rounded-lg transition cursor-pointer" title="Carica immagini dal dispositivo">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                <span>Carica Pagine</span>
-            </button>
-
-            <button onclick="loadDemoPages()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600/70 text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg transition cursor-pointer" title="Carica 8 quotidiani dimostrativi">
-                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-                <span class="hidden sm:inline">Esempi Demo</span>
-                <span class="sm:hidden">Demo</span>
-            </button>
-
-            <!-- Separatore -->
-            <div class="h-6 w-px bg-slate-700 mx-0.5 hidden sm:block"></div>
-
-            <!-- Controlli Focus Mode (Visibili soprattutto quando una pagina è aperta, ma sempre accessibili) -->
-            <div id="focus-tools" class="flex items-center gap-1.5 bg-slate-800/90 border border-slate-700/80 p-1 rounded-lg">
-                <!-- Toggle Strumento Evidenziatore -->
-                <button id="btn-highlight-mode" onclick="toggleHighlightMode()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition text-slate-300 hover:text-white hover:bg-slate-700 cursor-pointer" title="Attiva pennarello evidenziatore (oppure tieni premuto SHIFT mentre trascini)">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                    <span class="hidden md:inline">Evidenzia</span>
-                </button>
-
-                <!-- Selettore Colori Evidenziatore -->
-                <div class="flex items-center gap-1 px-1" title="Scegli colore evidenziatore">
-                    <button onclick="setHighlightColor('rgba(253, 224, 71, 0.72)', this)" class="color-swatch w-4 h-4 rounded-full bg-yellow-300 ring-2 ring-white scale-110 transition cursor-pointer" aria-label="Giallo"></button>
-                    <button onclick="setHighlightColor('rgba(134, 239, 172, 0.72)', this)" class="color-swatch w-4 h-4 rounded-full bg-green-300 opacity-75 hover:opacity-100 transition cursor-pointer" aria-label="Verde"></button>
-                    <button onclick="setHighlightColor('rgba(253, 164, 175, 0.72)', this)" class="color-swatch w-4 h-4 rounded-full bg-rose-300 opacity-75 hover:opacity-100 transition cursor-pointer" aria-label="Rosa/Rosso"></button>
-                    <button onclick="setHighlightColor('rgba(125, 211, 252, 0.72)', this)" class="color-swatch w-4 h-4 rounded-full bg-sky-300 opacity-75 hover:opacity-100 transition cursor-pointer" aria-label="Azzurro"></button>
-                </div>
-
-                <!-- Annulla ultimo tratto / Pulisci -->
-                <button onclick="undoLastHighlight()" class="p-1.5 text-slate-300 hover:text-white hover:bg-slate-700 rounded-md transition cursor-pointer" title="Annulla ultima evidenziatura (Ctrl+Z)">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
-                </button>
-                <button onclick="clearCurrentHighlights()" class="p-1.5 text-slate-300 hover:text-red-400 hover:bg-slate-700 rounded-md transition cursor-pointer" title="Pulisci tutte le evidenziature su questa pagina">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                </button>
-            </div>
-
-            <!-- Pulsante Torna alla Griglia -->
-            <button id="btn-back-grid" onclick="closeFocusMode()" class="hidden items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-xs sm:text-sm px-3 py-1.5 rounded-lg transition shadow-md cursor-pointer" title="Torna al muro delle prime pagine (ESC)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                <span>Griglia</span>
-            </button>
-        </div>
-
-        <!-- Controlli Destra (Modalità Diretta & Aiuto) -->
-        <div class="flex items-center gap-1.5">
-            <button onclick="toggleToolbar()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600/70 text-xs font-medium px-2.5 py-1.5 rounded-lg transition cursor-pointer" title="Nascondi controlli per registrazione schermo (Tasto H)">
-                <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                <span class="hidden lg:inline">Modalità Diretta</span>
-            </button>
-
-            <button onclick="toggleHelpModal()" class="w-8 h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600/70 rounded-lg font-bold text-sm transition cursor-pointer" title="Guida rapida e scorciatoie">
-                ?
+                <span class="hidden md:inline">Carica File</span>
             </button>
         </div>
     </header>
 
-    <!-- PULSANTE DISCRETO PER MOSTRARE DI NUOVO LA BARRA (Visibile solo in Modalità Diretta) -->
-    <button id="restore-ui-btn" onclick="toggleToolbar()" class="fixed top-3 right-3 z-50 opacity-0 pointer-events-none bg-slate-900/70 hover:bg-slate-800 text-slate-300 hover:text-white backdrop-blur-md border border-slate-700/60 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 shadow-lg cursor-pointer" title="Mostra barra controlli (Tasto H)">
-        <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
-        <span>Controlli (H)</span>
-    </button>
-
-    <!-- AREA PRINCIPALE: SKYWALL (VISTA GRIGLIA) -->
-    <main id="skywall-container" class="relative z-10 flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 flex items-center justify-center transition-all duration-500">
+    <!-- AREA 1: LEDWALL (GRIGLIA PRIME PAGINE) -->
+    <main id="ledwall-scroll" class="relative z-10 flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6 flex items-center justify-center transition-all duration-300">
         
-        <!-- Messaggio Stato Vuoto (se non ci sono pagine) -->
-        <div id="empty-state" class="text-center max-w-md mx-auto bg-slate-900/60 backdrop-blur-md border border-slate-700/60 p-8 rounded-2xl shadow-2xl">
-            <div class="w-16 h-16 bg-sky-500/20 text-sky-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-sky-400/30">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-            </div>
-            <h1 class="text-xl font-bold text-white mb-2">Studio Rassegna Stampa</h1>
-            <p class="text-slate-400 text-sm mb-6 leading-relaxed">
-                Trascina qui le immagini delle prime pagine (JPG/PNG) oppure carica gli esempi dimostrativi per avviare il videowall.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <button onclick="document.getElementById('file-input').click()" class="bg-sky-600 hover:bg-sky-500 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-lg cursor-pointer">
-                    Carica Prime Pagine
-                </button>
-                <button onclick="loadDemoPages()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 font-semibold px-5 py-2.5 rounded-xl text-sm transition cursor-pointer">
-                    Prova con Demo
-                </button>
-            </div>
+        <!-- Loader iniziale durante estrazione da brunorachiele.it -->
+        <div id="loading-panel" class="flex flex-col items-center justify-center text-center bg-white/80 backdrop-blur-md border border-slate-200 px-8 py-7 rounded-2xl shadow-xl">
+            <div class="w-10 h-10 border-4 border-[#0b3d75] border-t-transparent rounded-full animate-spin mb-3"></div>
+            <p class="text-sm sm:text-base font-bold text-slate-800">Caricamento prime pagine in corso...</p>
+            <p class="text-xs text-slate-500 mt-1">Connessione a brunorachiele.it</p>
         </div>
 
-        <!-- Griglia Dinamica delle Prime Pagine -->
-        <div id="newspapers-grid" class="hidden w-full max-w-7xl mx-auto grid gap-4 sm:gap-6 md:gap-7 place-items-center">
-            <!-- Le card vengono generate dinamicamente via JS -->
+        <!-- Griglia Responsive (Ottimizzata per iPad Landscape 4x2 / 5x2 e Portrait 2x4 / 3x3) -->
+        <div id="newspapers-grid" class="hidden w-full max-w-[1440px] mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 md:gap-6 place-items-center my-auto">
+            <!-- Card generate via JavaScript -->
         </div>
-
     </main>
 
-    <!-- VISTA INGRANDIMENTO (FOCUS MODE - STILE VIZ MULTIPLAY) -->
-    <div id="focus-overlay" class="fixed inset-0 z-30 opacity-0 invisible flex items-center justify-center overflow-hidden">
+    <!-- AREA 2: LETTORE GIORNALE IN PRIMO PIANO (ZOOM SOLO SULLA FOTO + EVIDENZIATORE A MANO LIBERA) -->
+    <section id="reader-overlay" class="fixed inset-x-0 top-[52px] bottom-0 z-30 hidden flex-col items-center justify-center bg-slate-900/35 backdrop-blur-sm">
         
-        <!-- Sfondo cliccabile per chiudere -->
-        <div id="focus-backdrop" onclick="closeFocusMode()" class="absolute inset-0 bg-slate-950/40 cursor-zoom-out"></div>
-
-        <!-- Contenitore Trasformabile (Zoom & Pan) -->
-        <div id="paper-stage" class="relative z-10 flex items-center justify-center shadow-[0_30px_90px_rgba(0,0,0,0.95)] rounded-sm overflow-hidden bg-white cursor-grab">
-            <!-- Immagine del quotidiano -->
-            <img id="focus-image" src="" alt="Prima Pagina" class="block max-h-[86vh] max-w-[90vw] w-auto h-auto object-contain pointer-events-none select-none">
+        <!-- Riquadro Viewport del giornale: lo zoom avviene SOLO qui dentro -->
+        <div id="reader-viewport" class="w-full h-full flex items-center justify-center p-2 sm:p-4">
             
-            <!-- Canvas trasparente per le evidenziature ancorate alla pagina -->
-            <canvas id="highlight-canvas" class="highlight-layer absolute inset-0 w-full h-full pointer-events-none"></canvas>
-        </div>
-
-        <!-- Frecce Navigazione Laterali (Precedente / Successivo) -->
-        <button id="nav-prev" onclick="navigatePaper(-1)" class="fixed left-3 sm:left-6 top-1/2 -translate-y-1/2 z-40 bg-slate-900/75 hover:bg-sky-600 text-white border border-slate-600/60 hover:border-sky-400 p-3 sm:p-4 rounded-full backdrop-blur-md shadow-2xl transition transform hover:scale-110 cursor-pointer" title="Quotidiano precedente (Freccia Sinistra)">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
-        </button>
-
-        <button id="nav-next" onclick="navigatePaper(1)" class="fixed right-3 sm:right-6 top-1/2 -translate-y-1/2 z-40 bg-slate-900/75 hover:bg-sky-600 text-white border border-slate-600/60 hover:border-sky-400 p-3 sm:p-4 rounded-full backdrop-blur-md shadow-2xl transition transform hover:scale-110 cursor-pointer" title="Quotidiano successivo (Freccia Destra)">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-        </button>
-
-        <!-- Barra Flottante Inferiore per Zoom e Stato (Discreta) -->
-        <div id="focus-bottom-hud" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 bg-slate-900/85 backdrop-blur-xl border border-slate-700/70 px-4 py-2 rounded-full shadow-2xl flex items-center gap-3 text-xs sm:text-sm">
-            <span id="focus-paper-title" class="font-semibold text-slate-200 max-w-[140px] sm:max-w-[220px] truncate">Quotidiano</span>
-            <div class="h-4 w-px bg-slate-700"></div>
-            
-            <!-- Controlli Zoom -->
-            <button onclick="adjustZoom(-0.35)" class="p-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded-full transition cursor-pointer" title="Riduci zoom (-)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
-            </button>
-            <span id="zoom-level-label" class="font-mono text-sky-400 w-11 text-center">100%</span>
-            <button onclick="adjustZoom(0.35)" class="p-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded-full transition cursor-pointer" title="Aumenta zoom (+)">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            </button>
-            <button onclick="resetTransform()" class="text-xs text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 transition cursor-pointer" title="Adatta allo schermo (Tasto 0)">
-                Adatta
-            </button>
-            <div class="h-4 w-px bg-slate-700"></div>
-            <button onclick="closeFocusMode()" class="text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1 cursor-pointer" title="Torna alla griglia (ESC)">
-                <span>Chiudi</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- MODALE ISTRUZIONI RAPIDE (?) -->
-    <div id="help-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative text-slate-200">
-            <button onclick="toggleHelpModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 cursor-pointer">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            
-            <h2 class="text-lg font-bold text-white flex items-center gap-2 mb-4">
-                <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
-                Guida Regia & Scorciatoie Diretta
-            </h2>
-
-            <div class="space-y-3 text-sm text-slate-300">
-                <div class="bg-slate-800/70 p-3 rounded-xl border border-slate-700/50">
-                    <p class="font-semibold text-sky-400 mb-1">1. Caricamento Prime Pagine</p>
-                    <p class="text-xs leading-relaxed">Clicca su <strong>"Carica Pagine"</strong> o trascina i file JPG/PNG direttamente nella finestra del browser. Le pagine si disporranno automaticamente sul muro.</p>
-                </div>
-
-                <div class="bg-slate-800/70 p-3 rounded-xl border border-slate-700/50">
-                    <p class="font-semibold text-sky-400 mb-1">2. Zoom e Lettura Articoli</p>
-                    <p class="text-xs leading-relaxed">Clicca su un giornale per portarlo in primo piano. Usa la <strong>rotellina del mouse</strong> per ingrandire i titoli e <strong>trascina</strong> per spostarti sulla pagina. Doppio clic per zoom rapido.</p>
-                </div>
-
-                <div class="bg-slate-800/70 p-3 rounded-xl border border-slate-700/50">
-                    <p class="font-semibold text-amber-300 mb-1">3. Effetto Evidenziatore (Telestration)</p>
-                    <p class="text-xs leading-relaxed">Tieni premuto <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-white font-mono">SHIFT</kbd> e trascina il mouse sopra un articolo (oppure attiva il pulsante <strong>Evidenzia</strong>). I tratti restano ancorati alla pagina anche mentre fai zoom!</p>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2 pt-2 text-xs">
-                    <div class="flex justify-between bg-slate-800/40 px-3 py-2 rounded-lg">
-                        <span class="text-slate-400">Nascondi Barre</span>
-                        <kbd class="font-mono text-white bg-slate-700 px-1.5 rounded">H</kbd>
-                    </div>
-                    <div class="flex justify-between bg-slate-800/40 px-3 py-2 rounded-lg">
-                        <span class="text-slate-400">Torna alla Griglia</span>
-                        <kbd class="font-mono text-white bg-slate-700 px-1.5 rounded">ESC</kbd>
-                    </div>
-                    <div class="flex justify-between bg-slate-800/40 px-3 py-2 rounded-lg">
-                        <span class="text-slate-400">Cambia Giornale</span>
-                        <kbd class="font-mono text-white bg-slate-700 px-1.5 rounded">← / →</kbd>
-                    </div>
-                    <div class="flex justify-between bg-slate-800/40 px-3 py-2 rounded-lg">
-                        <span class="text-slate-400">Annulla Tratto</span>
-                        <kbd class="font-mono text-white bg-slate-700 px-1.5 rounded">Ctrl+Z</kbd>
-                    </div>
-                </div>
+            <!-- Livello trasformabile (Foto + Canvas solidali) -->
+            <div id="paper-transform-layer" class="rounded-sm overflow-hidden">
+                <img id="active-paper-img" src="" alt="Prima Pagina" class="block max-h-[calc(100vh-140px)] max-w-[94vw] w-auto h-auto object-contain pointer-events-none select-none" draggable="false">
+                <canvas id="freehand-canvas"></canvas>
             </div>
 
-            <div class="mt-5 text-right">
-                <button onclick="toggleHelpModal()" class="bg-sky-600 hover:bg-sky-500 text-white font-medium px-4 py-2 rounded-lg text-sm transition cursor-pointer">
-                    Ho capito
+        </div>
+
+        <!-- Frecce Navigazione Laterali grandi per Tablet -->
+        <button id="btn-prev-paper" onclick="switchPaper(-1)" class="fixed left-2 sm:left-5 top-1/2 -translate-y-1/2 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0b3d75]/90 hover:bg-[#0b3d75] text-white border border-white/25 shadow-xl flex items-center justify-center transition active:scale-95 cursor-pointer" title="Quotidiano precedente">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+
+        <button id="btn-next-paper" onclick="switchPaper(1)" class="fixed right-2 sm:right-5 top-1/2 -translate-y-1/2 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0b3d75]/90 hover:bg-[#0b3d75] text-white border border-white/25 shadow-xl flex items-center justify-center transition active:scale-95 cursor-pointer" title="Quotidiano successivo">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+
+        <!-- BARRA FLOTTANTE STRUMENTI TOUCH (Zoom foto, Evidenziatore mano libera, Torna indietro) -->
+        <div id="reader-toolbar" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 max-w-[96vw] bg-slate-900/92 backdrop-blur-xl text-white border border-slate-700/80 px-2.5 py-2 rounded-2xl shadow-2xl flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+            
+            <!-- Pulsante Torna Indietro -->
+            <button onclick="closeReader()" class="flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-slate-950 font-bold text-xs sm:text-sm px-3 h-11 rounded-xl transition cursor-pointer shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span>Indietro</span>
+            </button>
+
+            <div class="h-7 w-px bg-slate-700 mx-0.5"></div>
+
+            <!-- Selettore Modalità: Mano (Sposta/Zoom) vs Evidenziatore a Mano Libera -->
+            <div class="flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700">
+                <button id="tool-pan" onclick="setTool('pan')" class="flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold bg-[#0b3d75] text-white shadow transition cursor-pointer" title="Sposta e ingrandisci la foto">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"></path></svg>
+                    <span class="hidden sm:inline">Sposta</span>
+                </button>
+                <button id="tool-draw" onclick="setTool('draw')" class="flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer" title="Evidenziatore a mano libera">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                    <span>Evidenzia</span>
                 </button>
             </div>
-        </div>
-    </div>
 
-    <!-- Toast notifica discreta -->
-    <div id="toast-msg" class="fixed bottom-16 left-1/2 -translate-x-1/2 z-50 bg-slate-800/95 text-white border border-slate-600 px-4 py-2 rounded-full text-xs font-medium shadow-xl opacity-0 pointer-events-none transition-opacity duration-300">
+            <!-- Colori Evidenziatore (44px touch target) -->
+            <div class="flex items-center gap-1 bg-slate-800/80 px-2 h-11 rounded-xl border border-slate-700/70">
+                <button onclick="setBrushColor('#fde047', this)" class="swatch-btn w-7 h-7 rounded-full bg-[#fde047] ring-2 ring-white scale-110 transition cursor-pointer" aria-label="Giallo"></button>
+                <button onclick="setBrushColor('#86efac', this)" class="swatch-btn w-7 h-7 rounded-full bg-[#86efac] opacity-80 hover:opacity-100 transition cursor-pointer" aria-label="Verde"></button>
+                <button onclick="setBrushColor('#f9a8d4', this)" class="swatch-btn w-7 h-7 rounded-full bg-[#f9a8d4] opacity-80 hover:opacity-100 transition cursor-pointer" aria-label="Rosa"></button>
+                <button onclick="setBrushColor('#7dd3fc', this)" class="swatch-btn w-7 h-7 rounded-full bg-[#7dd3fc] opacity-80 hover:opacity-100 transition cursor-pointer" aria-label="Azzurro"></button>
+            </div>
+
+            <!-- Spessore tratto evidenziatore -->
+            <div class="hidden md:flex items-center gap-1 bg-slate-800/80 px-2 h-11 rounded-xl border border-slate-700/70" title="Spessore tratto">
+                <button onclick="setBrushSize(0.014, this)" class="size-btn w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:bg-slate-700 cursor-pointer">
+                    <span class="w-2 h-2 rounded-full bg-current"></span>
+                </button>
+                <button onclick="setBrushSize(0.024, this)" class="size-btn w-8 h-8 rounded-lg flex items-center justify-center bg-slate-700 text-white cursor-pointer">
+                    <span class="w-3.5 h-3.5 rounded-full bg-current"></span>
+                </button>
+                <button onclick="setBrushSize(0.038, this)" class="size-btn w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:bg-slate-700 cursor-pointer">
+                    <span class="w-5 h-5 rounded-full bg-current"></span>
+                </button>
+            </div>
+
+            <!-- Undo & Cancella tratti -->
+            <div class="flex items-center gap-1">
+                <button onclick="undoStroke()" class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center justify-center transition cursor-pointer" title="Annulla ultimo tratto">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                </button>
+                <button onclick="clearStrokes()" class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-red-900/60 text-slate-200 hover:text-red-300 border border-slate-700 flex items-center justify-center transition cursor-pointer" title="Cancella tutte le evidenziature">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+            </div>
+
+            <div class="h-7 w-px bg-slate-700 mx-0.5 hidden sm:block"></div>
+
+            <!-- Controlli Zoom Foto -->
+            <div class="flex items-center gap-1 bg-slate-800 px-1.5 h-11 rounded-xl border border-slate-700">
+                <button onclick="changePhotoZoom(-0.35)" class="w-9 h-9 rounded-lg hover:bg-slate-700 flex items-center justify-center text-white font-bold text-lg cursor-pointer" title="Riduci foto">-</button>
+                <button onclick="resetPhotoZoom()" id="zoom-pct-btn" class="px-2 h-9 rounded-lg hover:bg-slate-700 font-mono text-xs text-sky-300 font-semibold cursor-pointer" title="Ripristina 100%">100%</button>
+                <button onclick="changePhotoZoom(0.35)" class="w-9 h-9 rounded-lg hover:bg-slate-700 flex items-center justify-center text-white font-bold text-lg cursor-pointer" title="Ingrandisci foto">+</button>
+            </div>
+
+            <!-- Modalità Diretta Pulita (nasconde barra flottante) -->
+            <button onclick="toggleCleanLiveHud()" class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 flex items-center justify-center transition cursor-pointer" title="Nascondi barra strumenti per diretta pulita">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            </button>
+        </div>
+
+        <!-- Pulsante discreto per riaprire gli strumenti quando nascosti -->
+        <button id="show-hud-btn" onclick="toggleCleanLiveHud()" class="hidden fixed bottom-4 right-4 z-40 bg-[#0b3d75]/90 text-white border border-white/25 px-3.5 h-11 rounded-full shadow-xl text-xs font-semibold items-center gap-1.5 backdrop-blur-md cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            <span>Strumenti</span>
+        </button>
+    </section>
+
+    <!-- Notifica Toast discreta -->
+    <div id="toast-banner" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white border border-slate-700 px-4 py-2 rounded-full text-xs font-medium shadow-xl opacity-0 pointer-events-none transition-opacity duration-300 text-center max-w-[90vw]">
         Messaggio
     </div>
 
     <script>
         /**
-         * STATO DELL'APPLICAZIONE
+         * CONFIGURAZIONE E STATO GLOBALE
          */
-        const state = {
-            papers: [], // Array di oggetti: { id, title, src, highlights: [] }
-            currentIndex: -1,
-            isFocusOpen: false,
-            isToolbarHidden: false,
-            highlightMode: false,
-            isShiftPressed: false,
-            highlightColor: 'rgba(253, 224, 71, 0.72)', // Giallo fluo default
-            
-            // Trasformazioni Zoom & Pan
+        const TARGET_BLOG_URL = 'https://www.brunorachiele.it/p/prime-pagine-dei-giornali.html';
+        const BLOGGER_FEED_URL = 'https://www.brunorachiele.it/feeds/pages/default?alt=json';
+
+        const appState = {
+            papers: [],           // { id, title, src, strokes: [ { color, size, points: [{x, y}] } ], isDemo }
+            activeIndex: -1,
+            isReaderOpen: false,
+            activeTool: 'pan',    // 'pan' (sposta/zoom) | 'draw' (evidenziatore mano libera)
+            brushColor: '#fde047',
+            brushSize: 0.024,     // Spessore normalizzato rispetto alla larghezza immagine
+            isHudHidden: false,
+
+            // Stato trasformazione interna SOLO della foto del giornale
             scale: 1,
-            translateX: 0,
-            translateY: 0,
-            isPanning: false,
-            startPanX: 0,
-            startPanY: 0,
-            
-            // Disegno Evidenziatore
-            isDrawing: false,
-            drawStartX: 0,
-            drawStartY: 0,
-            currentRect: null
+            panX: 0,
+            panY: 0,
+
+            // Gestione multi-touch / pointer unificati (Mouse, Dita, Apple Pencil)
+            pointers: new Map(),
+            isDraggingPan: false,
+            panStartX: 0,
+            panStartY: 0,
+            initialPinchDist: 0,
+            initialPinchScale: 1,
+            pinchCenter: { x: 0, y: 0 },
+
+            // Stato tratto a mano libera corrente
+            isDrawingStroke: false,
+            currentStroke: null
         };
 
-        // Riferimenti DOM principali
-        const skywallContainer = document.getElementById('skywall-container');
+        // Riferimenti DOM
+        const ledwallScroll = document.getElementById('ledwall-scroll');
+        const loadingPanel = document.getElementById('loading-panel');
         const newspapersGrid = document.getElementById('newspapers-grid');
-        const emptyState = document.getElementById('empty-state');
-        const focusOverlay = document.getElementById('focus-overlay');
-        const paperStage = document.getElementById('paper-stage');
-        const focusImage = document.getElementById('focus-image');
-        const highlightCanvas = document.getElementById('highlight-canvas');
-        const ctx = highlightCanvas.getContext('2d');
-        const btnBackGrid = document.getElementById('btn-back-grid');
-        const focusPaperTitle = document.getElementById('focus-paper-title');
-        const zoomLevelLabel = document.getElementById('zoom-level-label');
+        const readerOverlay = document.getElementById('reader-overlay');
+        const readerViewport = document.getElementById('reader-viewport');
+        const transformLayer = document.getElementById('paper-transform-layer');
+        const activePaperImg = document.getElementById('active-paper-img');
+        const freehandCanvas = document.getElementById('freehand-canvas');
+        const canvasCtx = freehandCanvas.getContext('2d');
+        const headerBackBtn = document.getElementById('header-back-btn');
+        const zoomPctBtn = document.getElementById('zoom-pct-btn');
 
         /**
-         * INIZIALIZZAZIONE
+         * AVVIO APPLICAZIONE
          */
         window.addEventListener('DOMContentLoaded', () => {
-            setupDragAndDrop();
-            setupFocusInteractions();
-            setupKeyboardShortcuts();
-            // Carica automaticamente le demo all'avvio per rendere subito operativa l'interfaccia
-            loadDemoPages();
+            setupManualUpload();
+            setupViewportGestures();
+            setupKeyboardControls();
+            // Estrazione automatica dal sito brunorachiele.it all'apertura
+            fetchFromBlog(false);
         });
 
         /**
-         * GESTIONE CARICAMENTO FILE (Input + Drag & Drop)
+         * 1. ESTRAZIONE AUTOMATICA DAL SITO BRUNORACHIELE.IT
          */
-        document.getElementById('file-input').addEventListener('change', (e) => {
-            if (e.target.files && e.target.files.length > 0) {
-                handleFiles(e.target.files);
-                e.target.value = ''; // Permette di ricaricare gli stessi file se necessario
+        async function fetchFromBlog(isManualRefresh = false) {
+            const syncIcon = document.getElementById('sync-icon');
+            syncIcon.classList.add('animate-spin');
+
+            if (appState.papers.length === 0) {
+                loadingPanel.classList.remove('hidden');
+                newspapersGrid.classList.add('hidden');
             }
-        });
 
-        function setupDragAndDrop() {
-            const overlay = document.getElementById('drop-zone-overlay');
-            let dragCounter = 0;
+            try {
+                let extractedPapers = [];
 
-            window.addEventListener('dragenter', (e) => {
-                e.preventDefault();
-                dragCounter++;
-                overlay.classList.remove('hidden');
-                overlay.classList.add('flex');
-            });
-
-            window.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                dragCounter--;
-                if (dragCounter <= 0) {
-                    dragCounter = 0;
-                    overlay.classList.add('hidden');
-                    overlay.classList.remove('flex');
+                // Strategia A: Feed JSONP nativo di Blogger (bypassa blocchi CORS su molti browser)
+                try {
+                    extractedPapers = await fetchViaBloggerJSONP();
+                } catch (e) {
+                    console.warn('JSONP Blogger non disponibile, passo ai proxy CORS:', e);
                 }
-            });
 
-            window.addEventListener('dragover', (e) => {
-                e.preventDefault();
-            });
+                // Strategia B: Proxy CORS multipli sull'URL della pagina HTML
+                if (extractedPapers.length === 0) {
+                    const proxies = [
+                        `https://api.allorigins.win/get?url=${encodeURIComponent(TARGET_BLOG_URL)}`,
+                        `https://corsproxy.io/?${encodeURIComponent(TARGET_BLOG_URL)}`,
+                        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(TARGET_BLOG_URL)}`
+                    ];
 
-            window.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dragCounter = 0;
-                overlay.classList.add('hidden');
-                overlay.classList.remove('flex');
+                    for (const proxyUrl of proxies) {
+                        try {
+                            const controller = new AbortController();
+                            const timeoutId = setTimeout(() => controller.abort(), 7000);
+                            const response = await fetch(proxyUrl, { signal: controller.signal });
+                            clearTimeout(timeoutId);
 
-                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    handleFiles(e.dataTransfer.files);
+                            if (!response.ok) continue;
+
+                            let htmlContent = '';
+                            if (proxyUrl.includes('allorigins.win')) {
+                                const json = await response.json();
+                                htmlContent = json.contents || '';
+                            } else {
+                                htmlContent = await response.text();
+                            }
+
+                            if (htmlContent && htmlContent.length > 500) {
+                                extractedPapers = parseBloggerHTML(htmlContent);
+                                if (extractedPapers.length > 0) break;
+                            }
+                        } catch (err) {
+                            console.warn('Tentativo proxy fallito:', proxyUrl);
+                        }
+                    }
                 }
-            });
+
+                if (extractedPapers.length > 0) {
+                    appState.papers = extractedPapers;
+                    if (appState.isReaderOpen) closeReader();
+                    renderLedwallGrid();
+                    showToast(`Caricate ${extractedPapers.length} prime pagine da brunorachiele.it`);
+                } else {
+                    throw new Error('Nessuna immagine estratta');
+                }
+
+            } catch (error) {
+                console.warn('Impossibile raggiungere brunorachiele.it in questo ambiente, carico modalità demo:', error);
+                if (appState.papers.length === 0) {
+                    loadFallbackDemoPages();
+                }
+                showToast('Anteprima offline: caricate pagine demo (usa "Aggiorna" su GitHub Pages)');
+            } finally {
+                syncIcon.classList.remove('animate-spin');
+                loadingPanel.classList.add('hidden');
+            }
         }
 
-        function handleFiles(fileList) {
-            const imageFiles = Array.from(fileList).filter(file => file.type.startsWith('image/'));
-            if (imageFiles.length === 0) {
-                showToast('Seleziona solo file immagine (JPG, PNG, WebP)');
-                return;
-            }
+        /**
+         * Estrazione tramite JSONP pubblico di Blogger (/feeds/pages/default?alt=json-in-script)
+         */
+        function fetchViaBloggerJSONP() {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'bloggerCallback_' + Date.now();
+                const script = document.createElement('script');
+                const timer = setTimeout(() => {
+                    cleanup();
+                    reject(new Error('Timeout JSONP'));
+                }, 6000);
 
-            // Sostituisce le pagine demo se presenti, oppure aggiunge alle pagine caricate
-            const hasOnlyDemos = state.papers.length > 0 && state.papers.every(p => p.isDemo);
-            if (hasOnlyDemos) {
-                state.papers = [];
-            }
+                function cleanup() {
+                    clearTimeout(timer);
+                    delete window[callbackName];
+                    if (script.parentNode) script.parentNode.removeChild(script);
+                }
 
-            let loadedCount = 0;
-            imageFiles.forEach((file) => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-                    state.papers.push({
-                        id: 'paper_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                        title: cleanName,
-                        src: event.target.result,
-                        highlights: [],
-                        isDemo: false
-                    });
-                    loadedCount++;
-                    if (loadedCount === imageFiles.length) {
-                        if (state.isFocusOpen) closeFocusMode();
-                        renderGrid();
-                        showToast(`${loadedCount} ${loadedCount === 1 ? 'pagina caricata' : 'pagine caricate'}`);
+                window[callbackName] = (data) => {
+                    cleanup();
+                    try {
+                        const entries = (data.feed && data.feed.entry) || [];
+                        // Cerca la pagina "prime-pagine-dei-giornali"
+                        const targetEntry = entries.find(entry => {
+                            const altLink = (entry.link || []).find(l => l.rel === 'alternate');
+                            return altLink && altLink.href && altLink.href.includes('prime-pagine');
+                        }) || entries[0];
+
+                        if (targetEntry && targetEntry.content && targetEntry.content.$t) {
+                            const papers = parseBloggerHTML(targetEntry.content.$t);
+                            resolve(papers);
+                        } else {
+                            resolve([]);
+                        }
+                    } catch (e) {
+                        reject(e);
                     }
                 };
-                reader.readAsDataURL(file);
+
+                script.src = `https://www.brunorachiele.it/feeds/pages/default?alt=json-in-script&callback=${callbackName}`;
+                script.onerror = () => {
+                    cleanup();
+                    reject(new Error('Errore caricamento script JSONP'));
+                };
+                document.body.appendChild(script);
             });
         }
 
         /**
-         * GENERATORE DI 8 PRIME PAGINE DEMO REALISTICHE (Canvas procedurali)
+         * Parser HTML intelligente per pagine Blogger:
+         * Converte le miniature Blogger (/s320/, /w400/, ecc.) in alta risoluzione (/s1600/)
          */
-        function loadDemoPages() {
-            const demoPapers = [
-                { name: "IL CORRIERE NAZIONALE", color: "#1e3a8a", headline: "MANOVRA, VERTICE NOTTURNO SULLE PENSIONI E TAGLIO DEL CUNEO", sub: "Accordo nella maggioranza: risorse per sanità e famiglie. Mercati stabili", tag: "PRIMO PIANO" },
-                { name: "LA REPUBBLICA D'OGGI", color: "#b91c1c", headline: "ENERGIA E TRANSIZIONE, L'EUROPA ACCELERA SUGLI INCENTIVI VERDI", sub: "Nuovo piano industriale da 40 miliardi per le imprese manifatturiere", tag: "ECONOMIA" },
-                { name: "LA STAMPA DEL MATTINO", color: "#0f766e", headline: "INTELLIGENZA ARTIFICIALE NELLE SCUOLE: PARTE LA SPERIMENTAZIONE", sub: "Linee guida per docenti e studenti in 500 istituti superiori italiani", tag: "INNOVAZIONE" },
-                { name: "IL SOLE ECONOMICO", color: "#c2410c", headline: "EXPORT RECORD NEL TRIMESTRE: TRAINANO MECCANICA E AGROALIMENTARE", sub: "Cresce la domanda negli Stati Uniti e nei mercati asiatici", tag: "MERCATI" },
-                { name: "IL MESSAGGERO", color: "#1d4ed8", headline: "TRASPORTI E GRANDI OPERE, IL CRONOPROGRAMMA DEI CANTIERI 2026", sub: "Nuove linee metropolitane e potenziamento dell'alta velocità", tag: "INFRASTRUTTURE" },
-                { name: "IL GIORNALE NUOVO", color: "#334155", headline: "RIFORMA DELLA GIUSTIZIA, INIZIA IL CONFRONTO IN PARLAMENTO", sub: "Tempi più rapidi per i processi civili e digitalizzazione totale", tag: "POLITICA" },
-                { name: "AVVENIRE", color: "#0369a1", headline: "DEMOGRAFIA E LAVORO GIOVANILE: LE PROPOSTE PER IL FUTURO", sub: "Sostegno alla natalità e nuovi contratti di formazione per gli under 30", tag: "SOCIETÀ" },
-                { name: "LA GAZZETTA SPORTIVA", color: "#be123c", headline: "NOTTE MAGICA IN EUROPA: IMPRESA AZZURRA E QUALIFICAZIONE IN TASCA", sub: "Gol spettacolare nel finale, domani i sorteggi per i quarti", tag: "CHAMPIONS" }
+        function parseBloggerHTML(htmlString) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlString, 'text/html');
+
+            // Limita la ricerca al corpo del post/pagina se presente
+            const postContainer =
+                doc.querySelector('.post-body') ||
+                doc.querySelector('.entry-content') ||
+                doc.querySelector('article') ||
+                doc.body;
+
+            const imgElements = Array.from(postContainer.querySelectorAll('img'));
+            const seenUrls = new Set();
+            const results = [];
+
+            imgElements.forEach((img, index) => {
+                let rawSrc = img.getAttribute('src') || img.getAttribute('data-src') || '';
+                if (!rawSrc || rawSrc.startsWith('data:')) return;
+
+                // Se l'immagine è avvolta da un link <a> verso l'immagine originale Blogger, preferisci l'href
+                const parentLink = img.closest('a');
+                if (parentLink) {
+                    const href = parentLink.getAttribute('href') || '';
+                    if (/\.(jpg|jpeg|png|webp)(\?.*)?$/i.test(href) || href.includes('bp.blogspot.com') || href.includes('blogger.googleusercontent.com')) {
+                        rawSrc = href;
+                    }
+                }
+
+                // Filtra icone, avatar, bottoni social o banner piccoli
+                const lowerSrc = rawSrc.toLowerCase();
+                if (
+                    lowerSrc.includes('icon') ||
+                    lowerSrc.includes('logo') ||
+                    lowerSrc.includes('avatar') ||
+                    lowerSrc.includes('emoji') ||
+                    lowerSrc.includes('pixel') ||
+                    lowerSrc.includes('facebook') ||
+                    lowerSrc.includes('whatsapp') ||
+                    lowerSrc.includes('telegram')
+                ) {
+                    return;
+                }
+
+                // Upgrade automatico risoluzione URL Blogger/Googleusercontent -> /s1600/
+                const hiResUrl = upgradeBloggerImageUrl(rawSrc);
+
+                if (seenUrls.has(hiResUrl)) return;
+                seenUrls.add(hiResUrl);
+
+                // Estrae il nome della testata dall'alt, title o testo vicino
+                let title = (img.getAttribute('alt') || img.getAttribute('title') || '').trim();
+                if (!title && parentLink) {
+                    title = (parentLink.getAttribute('title') || parentLink.textContent || '').trim();
+                }
+                if (!title) {
+                    title = `Quotidiano ${results.length + 1}`;
+                }
+
+                results.push({
+                    id: 'blog_paper_' + index,
+                    title: title,
+                    src: hiResUrl,
+                    strokes: [],
+                    isDemo: false
+                });
+            });
+
+            return results;
+        }
+
+        function upgradeBloggerImageUrl(url) {
+            // Sostituisce parametri dimensionali standard di Blogger (/s320/, /w400-h600/, =s320, =w400) con /s1600/
+            let upgraded = url
+                .replace(/\/s\d+(-c)?\//g, '/s1600/')
+                .replace(/\/w\d+-h\d+(-p-k-no-nu)?\//g, '/s1600/')
+                .replace(/=s\d+(-c)?$/g, '=s1600')
+                .replace(/=w\d+-h\d+.*$/g, '=s1600');
+
+            // Assicura HTTPS
+            if (upgraded.startsWith('//')) {
+                upgraded = 'https:' + upgraded;
+            }
+            return upgraded;
+        }
+
+        /**
+         * Caricamento manuale di backup (se l'utente vuole aggiungere pagine locali)
+         */
+        function setupManualUpload() {
+            const input = document.getElementById('manual-file-input');
+            input.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files || []).filter(f => f.type.startsWith('image/'));
+                if (files.length === 0) return;
+
+                const onlyDemos = appState.papers.every(p => p.isDemo);
+                if (onlyDemos) appState.papers = [];
+
+                let loaded = 0;
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        appState.papers.push({
+                            id: 'local_' + Date.now() + '_' + loaded,
+                            title: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
+                            src: ev.target.result,
+                            strokes: [],
+                            isDemo: false
+                        });
+                        loaded++;
+                        if (loaded === files.length) {
+                            if (appState.isReaderOpen) closeReader();
+                            renderLedwallGrid();
+                            showToast(`${loaded} prime pagine aggiunte dal dispositivo`);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+                input.value = '';
+            });
+        }
+
+        /**
+         * Set dimostrativo di backup (8 quotidiani italiani generati localmente)
+         */
+        function loadFallbackDemoPages() {
+            const demos = [
+                { name: "IL CORRIERE DELLA SERA", color: "#0b3d75", head: "MANOVRA E PENSIONI, VERTICE A PALAZZO CHIGI SULLE MISURE PER LE FAMIGLIE", sub: "Confermato il taglio del cuneo fiscale, risorse extra per la sanità pubblica" },
+                { name: "LA REPUBBLICA", color: "#b91c1c", head: "EUROPA E ENERGIA, PIANO COMUNE PER RIDURRE I COSTI DELLE BOLLETTE", sub: "Accordo tra i ministri a Bruxelles sugli stoccaggi e le rinnovabili" },
+                { name: "LA STAMPA", color: "#0f766e", head: "INTELLIGENZA ARTIFICIALE A SCUOLA, AL VIA I LABORATORI DIGITALI", sub: "Formazione per docenti e studenti in tutta Italia dal prossimo mese" },
+                { name: "IL SOLE 24 ORE", color: "#c2410c", head: "EXPORT MADE IN ITALY IN CRESCITA: TRAINANO AGROALIMENTARE E MECCANICA", sub: "Saldo commerciale positivo nel trimestre, bene le pmi esportatrici" },
+                { name: "IL MESSAGGERO", color: "#1d4ed8", head: "GRANDI OPERE E TRASPORTI, ECCO IL CRONOPROGRAMMA DEI NUOVI CANTIERI", sub: "Alta velocità e reti metropolitane: gli interventi finanziati nel 2026" },
+                { name: "IL GIORNALE", color: "#334155", head: "RIFORMA DELLA GIUSTIZIA, INIZIA IL CONFRONTO IN COMMISSIONE", sub: "Tempi più rapidi per i processi civili e separazione delle carriere" },
+                { name: "AVVENIRE", color: "#0369a1", head: "GIOVANI E LAVORO, NUOVI INCENTIVI PER L'OCCUPAZIONE STABILE", sub: "Sgravi contributivi per le aziende che assumono under 30" },
+                { name: "LA GAZZETTA DELLO SPORT", color: "#be123c", head: "NOTTE MAGICA IN EUROPA: IMPRESA AZZURRA E QUALIFICAZIONE IN TASCA", sub: "Vittoria in rimonta nel finale, domani il sorteggio dei quarti" }
             ];
 
-            state.papers = demoPapers.map((item, idx) => ({
+            appState.papers = demos.map((d, idx) => ({
                 id: 'demo_' + idx,
-                title: item.name,
-                src: createMockNewspaperDataURL(item),
-                highlights: [],
+                title: d.name,
+                src: generateDemoNewspaperDataURL(d),
+                strokes: [],
                 isDemo: true
             }));
 
-            if (state.isFocusOpen) closeFocusMode();
-            renderGrid();
-            showToast('Caricate 8 prime pagine dimostrative');
+            renderLedwallGrid();
         }
 
-        function createMockNewspaperDataURL(data) {
+        function generateDemoNewspaperDataURL(d) {
             const c = document.createElement('canvas');
-            c.width = 700;
-            c.height = 980;
+            c.width = 720;
+            c.height = 1000;
             const g = c.getContext('2d');
 
-            // Carta leggermente avorio realistica
-            g.fillStyle = '#faf8f5';
+            g.fillStyle = '#fcfbf9';
             g.fillRect(0, 0, c.width, c.height);
 
-            // Bordo esterno sottile
-            g.strokeStyle = '#d6d3d1';
+            g.strokeStyle = '#cbd5e1';
             g.lineWidth = 4;
             g.strokeRect(16, 16, c.width - 32, c.height - 32);
 
-            // Barra superiore data e prezzo
-            g.fillStyle = '#57534e';
+            g.fillStyle = '#64748b';
             g.font = '600 13px Inter, sans-serif';
-            g.fillText('ANNO CLI - N. 318  |  EDIZIONE NAZIONALE', 36, 48);
+            g.fillText('EDIZIONE NAZIONALE  |  RASSEGNA STAMPA', 36, 48);
             g.textAlign = 'right';
-            g.fillText('€ 1,80  |  QUOTIDIANO INDIPENDENTE', c.width - 36, 48);
+            g.fillText('€ 1,80', c.width - 36, 48);
             g.textAlign = 'left';
 
-            // Linea divisoria testata
-            g.fillStyle = '#1c1917';
+            g.fillStyle = '#0f172a';
             g.fillRect(36, 58, c.width - 72, 3);
 
-            // Nome Testata
-            g.fillStyle = data.color;
-            g.font = '900 44px "Playfair Display", Georgia, serif';
+            g.fillStyle = d.color;
+            g.font = '900 40px "Playfair Display", Georgia, serif';
             g.textAlign = 'center';
-            g.fillText(data.name, c.width / 2, 112);
+            g.fillText(d.name, c.width / 2, 110);
             g.textAlign = 'left';
 
-            // Doppia linea sotto testata
-            g.fillStyle = '#1c1917';
-            g.fillRect(36, 130, c.width - 72, 2);
-            g.fillRect(36, 135, c.width - 72, 1);
+            g.fillStyle = '#0f172a';
+            g.fillRect(36, 128, c.width - 72, 2);
 
-            // Occhiello / Tag
-            g.fillStyle = data.color;
-            g.fillRect(36, 154, 150, 24);
-            g.fillStyle = '#ffffff';
-            g.font = 'bold 12px Inter, sans-serif';
-            g.fillText(data.tag, 46, 170);
+            g.font = '900 36px "Playfair Display", Georgia, serif';
+            const endTitleY = drawWrappedText(g, d.head, 36, 182, c.width - 72, 42);
 
-            // Titolo Principale (a capo automatico)
-            g.fillStyle = '#0c0a09';
-            g.font = '900 38px "Playfair Display", Georgia, serif';
-            const headlineEndY = wrapText(g, data.headline, 36, 222, c.width - 72, 44);
+            g.fillStyle = '#475569';
+            g.font = '500 18px Inter, sans-serif';
+            const endSubY = drawWrappedText(g, d.sub, 36, endTitleY + 10, c.width - 72, 25);
 
-            // Sommario / Sottotitolo
-            g.fillStyle = '#44403c';
-            g.font = '500 19px Inter, sans-serif';
-            const subEndY = wrapText(g, data.sub, 36, headlineEndY + 14, c.width - 72, 26);
-
-            // Box Foto Centrale simulata
-            const photoY = subEndY + 22;
-            const photoH = 260;
-            const grad = g.createLinearGradient(36, photoY, c.width - 36, photoY + photoH);
-            grad.addColorStop(0, '#334155');
-            grad.addColorStop(1, data.color);
+            const boxY = endSubY + 20;
+            const boxH = 270;
+            const grad = g.createLinearGradient(36, boxY, c.width - 36, boxY + boxH);
+            grad.addColorStop(0, '#1e293b');
+            grad.addColorStop(1, d.color);
             g.fillStyle = grad;
-            g.fillRect(36, photoY, c.width - 72, photoH);
+            g.fillRect(36, boxY, c.width - 72, boxH);
 
-            // Elementi grafici dentro la foto
-            g.fillStyle = 'rgba(255,255,255,0.15)';
-            g.beginPath();
-            g.arc(c.width / 2, photoY + photoH / 2, 65, 0, Math.PI * 2);
-            g.fill();
             g.fillStyle = 'rgba(255,255,255,0.85)';
             g.font = '600 14px Inter, sans-serif';
             g.textAlign = 'center';
-            g.fillText('IMMAGINE DI APERTURA - SERVIZIO ALLE PAGINE 2-5', c.width / 2, photoY + photoH - 18);
+            g.fillText('SERVIZIO DI APERTURA ALLE PAGINE 2 - 5', c.width / 2, boxY + boxH - 18);
             g.textAlign = 'left';
 
-            // Colonne di testo simulate (effetto articolo vero)
-            const colsStartY = photoY + photoH + 34;
-            const colWidth = (c.width - 72 - 40) / 3;
+            const colsY = boxY + boxH + 34;
+            const colW = (c.width - 72 - 36) / 3;
+            for (let i = 0; i < 3; i++) {
+                const x = 36 + i * (colW + 18);
+                g.fillStyle = '#0f172a';
+                g.font = 'bold 15px "Playfair Display", serif';
+                g.fillText(i === 0 ? "L'EDITORIALE" : i === 1 ? "IL RETROSCENA" : "L'INTERVISTA", x, colsY);
 
-            for (let col = 0; col < 3; col++) {
-                const x = 36 + col * (colWidth + 20);
-                
-                // Titolo colonnina
-                g.fillStyle = '#1c1917';
-                g.font = 'bold 16px "Playfair Display", serif';
-                g.fillText(col === 0 ? "L'ANALISI DEL GIORNO" : col === 1 ? "RETROSCENA PALAZZO" : "SCENARI INTERNAZIONALI", x, colsStartY);
-
-                // Righe di testo simulato
-                g.fillStyle = '#a8a29e';
-                let lineY = colsStartY + 18;
-                while (lineY < c.height - 55) {
-                    const lineW = (lineY % 48 === 0) ? colWidth * 0.72 : colWidth;
-                    g.fillRect(x, lineY, lineW, 6);
-                    lineY += 13;
-                }
-
-                // Separatore verticale tra colonne
-                if (col < 2) {
-                    g.fillStyle = '#e7e5e4';
-                    g.fillRect(x + colWidth + 10, colsStartY - 12, 1, c.height - colsStartY - 35);
+                g.fillStyle = '#94a3b8';
+                let y = colsY + 18;
+                while (y < c.height - 50) {
+                    g.fillRect(x, y, (y % 39 === 0) ? colW * 0.7 : colW, 6);
+                    y += 13;
                 }
             }
 
             return c.toDataURL('image/jpeg', 0.9);
         }
 
-        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+        function drawWrappedText(ctx, text, x, y, maxW, lineH) {
             const words = text.split(' ');
             let line = '';
-            let currentY = y;
-
-            for (let n = 0; n < words.length; n++) {
-                const testLine = line + words[n] + ' ';
-                const metrics = context.measureText(testLine);
-                if (metrics.width > maxWidth && n > 0) {
-                    context.fillText(line, x, currentY);
-                    line = words[n] + ' ';
-                    currentY += lineHeight;
+            let currY = y;
+            for (let i = 0; i < words.length; i++) {
+                const test = line + words[i] + ' ';
+                if (ctx.measureText(test).width > maxW && i > 0) {
+                    ctx.fillText(line, x, currY);
+                    line = words[i] + ' ';
+                    currY += lineH;
                 } else {
-                    line = testLine;
+                    line = test;
                 }
             }
-            context.fillText(line, x, currentY);
-            return currentY + lineHeight;
+            ctx.fillText(line, x, currY);
+            return currY + lineH;
         }
 
         /**
-         * RENDERIZZAZIONE DELLA GRIGLIA SKYWALL
+         * 2. RENDERING GRIGLIA LEDWALL (RESPONSIVE TABLET / DESKTOP)
          */
-        function renderGrid() {
-            if (state.papers.length === 0) {
-                emptyState.classList.remove('hidden');
-                newspapersGrid.classList.add('hidden');
-                return;
-            }
-
-            emptyState.classList.add('hidden');
+        function renderLedwallGrid() {
+            loadingPanel.classList.add('hidden');
             newspapersGrid.classList.remove('hidden');
 
-            // Calcolo automatico colonne ottimali stile parete TV
-            const count = state.papers.length;
-            let colsClass = 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4';
-            if (count === 1) colsClass = 'grid-cols-1 max-w-md';
-            else if (count === 2) colsClass = 'grid-cols-1 sm:grid-cols-2 max-w-3xl';
-            else if (count === 3) colsClass = 'grid-cols-1 sm:grid-cols-3 max-w-5xl';
-            else if (count <= 6) colsClass = 'grid-cols-2 sm:grid-cols-3 max-w-6xl';
-            else if (count <= 8) colsClass = 'grid-cols-2 sm:grid-cols-4 max-w-7xl';
-            else colsClass = 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 max-w-[1600px]';
+            const count = appState.papers.length;
+            // Adatta automaticamente le colonne per tablet portrait (2 col) e landscape (4/5 col)
+            let gridCols = 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5';
+            if (count <= 4) gridCols = 'grid-cols-2 sm:grid-cols-4 max-w-6xl';
+            else if (count <= 6) gridCols = 'grid-cols-2 sm:grid-cols-3 max-w-5xl';
+            else if (count <= 8) gridCols = 'grid-cols-2 sm:grid-cols-4 max-w-7xl';
 
-            newspapersGrid.className = `w-full mx-auto grid gap-4 sm:gap-6 md:gap-7 place-items-center ${colsClass}`;
+            newspapersGrid.className = `w-full mx-auto grid gap-4 sm:gap-5 md:gap-6 place-items-center my-auto ${gridCols}`;
             newspapersGrid.innerHTML = '';
 
-            state.papers.forEach((paper, index) => {
+            appState.papers.forEach((paper, idx) => {
                 const card = document.createElement('div');
-                card.className = 'newspaper-card relative group bg-white rounded-sm overflow-hidden cursor-pointer w-full max-w-[260px] aspect-[1/1.4] flex flex-col justify-between';
-                card.onclick = () => openFocusMode(index);
+                card.className = 'newspaper-card group cursor-pointer w-full max-w-[270px] aspect-[1/1.38] flex flex-col';
+                card.onclick = () => openReader(idx);
 
-                // Badge numero evidenziature se presenti
-                const badgeHtml = paper.highlights.length > 0 
-                    ? `<div class="absolute top-2 right-2 bg-amber-400 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md flex items-center gap-1">
-                        <span>✎ ${paper.highlights.length}</span>
-                       </div>` 
+                const badge = paper.strokes.length > 0
+                    ? `<span class="absolute top-2 right-2 bg-amber-400 text-slate-950 text-[11px] font-extrabold px-2 py-0.5 rounded-full shadow">✎ ${paper.strokes.length}</span>`
                     : '';
 
                 card.innerHTML = `
-                    <img src="${paper.src}" alt="${paper.title}" class="w-full h-full object-cover object-top block">
-                    ${badgeHtml}
-                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent p-3 pt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-between">
+                    <img src="${paper.src}" alt="${paper.title}" loading="lazy" class="w-full h-full object-cover object-top block bg-white">
+                    ${badge}
+                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#082d57]/95 via-[#0b3d75]/75 to-transparent px-3 py-2.5 pt-7 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-between">
                         <span class="text-white text-xs font-semibold truncate pr-2">${paper.title}</span>
-                        <span class="bg-sky-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shrink-0">APRI</span>
+                        <span class="bg-white text-[#0b3d75] text-[10px] font-extrabold px-2 py-0.5 rounded shrink-0">APRI</span>
                     </div>
                 `;
 
@@ -677,466 +785,444 @@
         }
 
         /**
-         * APERTURA / CHIUSURA VISTA INGRANDIMENTO (FOCUS MODE)
+         * 3. APERTURA E CHIUSURA DEL GIORNALE (ZOOM INTERNO SOLO SULLA FOTO)
          */
-        function openFocusMode(index) {
-            if (index < 0 || index >= state.papers.length) return;
-            
-            state.currentIndex = index;
-            state.isFocusOpen = true;
-            const paper = state.papers[index];
+        function openReader(index) {
+            if (index < 0 || index >= appState.papers.length) return;
 
-            // Sfoca la griglia sullo sfondo
-            skywallContainer.classList.add('grid-blurred');
-            
-            // Mostra pulsante Griglia nella barra superiore
-            btnBackGrid.classList.remove('hidden');
-            btnBackGrid.classList.add('flex');
+            appState.activeIndex = index;
+            appState.isReaderOpen = true;
+            const paper = appState.papers[index];
 
-            // Imposta immagine e titolo
-            focusPaperTitle.textContent = paper.title;
-            resetTransform(false);
+            // Sfoca il ledwall sottostante
+            ledwallScroll.classList.add('wall-blurred');
 
-            focusImage.onload = () => {
-                syncCanvasResolution();
-                redrawHighlights();
+            // Mostra il pulsante "Torna indietro" anche nella barra blu in alto
+            headerBackBtn.classList.remove('hidden');
+            headerBackBtn.classList.add('flex');
+
+            // Reset zoom interno della foto a 100%
+            resetPhotoZoom(false);
+
+            activePaperImg.onload = () => {
+                syncCanvasSize();
+                redrawAllStrokes();
             };
-            focusImage.src = paper.src;
+            activePaperImg.src = paper.src;
 
-            // Mostra overlay con animazione fluida
-            focusOverlay.classList.remove('invisible', 'opacity-0');
-            focusOverlay.classList.add('opacity-100');
+            readerOverlay.classList.remove('hidden');
+            readerOverlay.classList.add('flex');
 
-            updateNavButtons();
+            // Nascondi frecce laterali se c'è 1 solo giornale
+            const showArrows = appState.papers.length > 1;
+            document.getElementById('btn-prev-paper').style.display = showArrows ? 'flex' : 'none';
+            document.getElementById('btn-next-paper').style.display = showArrows ? 'flex' : 'none';
         }
 
-        function closeFocusMode() {
-            state.isFocusOpen = false;
-            skywallContainer.classList.remove('grid-blurred');
-            
-            focusOverlay.classList.add('opacity-0');
-            setTimeout(() => {
-                if (!state.isFocusOpen) {
-                    focusOverlay.classList.add('invisible');
-                }
-            }, 300);
+        function closeReader() {
+            appState.isReaderOpen = false;
+            ledwallScroll.classList.remove('wall-blurred');
 
-            btnBackGrid.classList.add('hidden');
-            btnBackGrid.classList.remove('flex');
-            
-            // Aggiorna griglia (es. per mostrare badge evidenziature)
-            renderGrid();
-        }
+            readerOverlay.classList.add('hidden');
+            readerOverlay.classList.remove('flex');
 
-        function navigatePaper(direction) {
-            if (!state.isFocusOpen || state.papers.length <= 1) return;
-            let nextIdx = state.currentIndex + direction;
-            if (nextIdx < 0) nextIdx = state.papers.length - 1;
-            if (nextIdx >= state.papers.length) nextIdx = 0;
-            openFocusMode(nextIdx);
-        }
+            headerBackBtn.classList.add('hidden');
+            headerBackBtn.classList.remove('flex');
 
-        function updateNavButtons() {
-            const prevBtn = document.getElementById('nav-prev');
-            const nextBtn = document.getElementById('nav-next');
-            if (state.papers.length <= 1) {
-                prevBtn.classList.add('hidden');
-                nextBtn.classList.add('hidden');
-            } else {
-                prevBtn.classList.remove('hidden');
-                nextBtn.classList.remove('hidden');
+            // Se l'HUD era nascosto in modalità diretta, ripristinalo alla chiusura
+            if (appState.isHudHidden) {
+                toggleCleanLiveHud();
             }
+
+            renderLedwallGrid();
+        }
+
+        function switchPaper(step) {
+            if (!appState.isReaderOpen || appState.papers.length <= 1) return;
+            let next = appState.activeIndex + step;
+            if (next < 0) next = appState.papers.length - 1;
+            if (next >= appState.papers.length) next = 0;
+            openReader(next);
         }
 
         /**
-         * GESTIONE ZOOM, PAN E STRUMENTO EVIDENZIATORE (TELESTRATION)
+         * 4. GESTIONE ZOOM INTERNO ALLA FOTO, PAN E PINCH-TO-ZOOM (SENZA INGRANDIRE LO SCHERMO)
          */
-        function setupFocusInteractions() {
-            // Zoom con rotellina del mouse
-            focusOverlay.addEventListener('wheel', (e) => {
-                if (!state.isFocusOpen) return;
-                e.preventDefault();
-                const zoomStep = e.deltaY < 0 ? 0.22 : -0.22;
-                adjustZoom(zoomStep);
-            }, { passive: false });
-
-            // Doppio clic sulla pagina per zoom rapido 2x / reset
-            paperStage.addEventListener('dblclick', (e) => {
-                if (isHighlightActive()) return;
-                e.stopPropagation();
-                if (state.scale > 1.1) {
-                    resetTransform(true);
-                } else {
-                    state.scale = 2.1;
-                    applyTransform(true);
-                }
-            });
-
-            // Mouse Down su paperStage (Inizia Pan oppure Disegno Evidenziatore)
-            paperStage.addEventListener('mousedown', (e) => {
-                if (e.button !== 0) return; // Solo tasto sinistro
-                e.stopPropagation();
-
-                if (isHighlightActive()) {
-                    // Inizia tracciamento rettangolo evidenziatore in coordinate normalizzate (0..1)
-                    state.isDrawing = true;
-                    const coords = getNormalizedCoords(e.clientX, e.clientY);
-                    state.drawStartX = coords.x;
-                    state.drawStartY = coords.y;
-                    state.currentRect = {
-                        x: coords.x,
-                        y: coords.y,
-                        w: 0,
-                        h: 0,
-                        color: state.highlightColor
-                    };
-                } else {
-                    // Inizia trascinamento pagina (Pan)
-                    state.isPanning = true;
-                    state.startPanX = e.clientX - state.translateX;
-                    state.startPanY = e.clientY - state.translateY;
-                    paperStage.style.cursor = 'grabbing';
-                }
-            });
-
-            // Mouse Move globale per Pan o Evidenziatore
-            window.addEventListener('mousemove', (e) => {
-                if (state.isDrawing && state.currentRect) {
-                    const coords = getNormalizedCoords(e.clientX, e.clientY);
-                    state.currentRect.w = coords.x - state.drawStartX;
-                    state.currentRect.h = coords.y - state.drawStartY;
-                    redrawHighlights();
-                    drawSingleHighlight(state.currentRect);
-                } else if (state.isPanning) {
-                    state.translateX = e.clientX - state.startPanX;
-                    state.translateY = e.clientY - state.startPanY;
-                    applyTransform(false);
-                }
-            });
-
-            // Mouse Up globale
-            window.addEventListener('mouseup', () => {
-                if (state.isDrawing && state.currentRect) {
-                    state.isDrawing = false;
-                    // Salva solo se il tratto ha una dimensione minima sensata
-                    if (Math.abs(state.currentRect.w) > 0.008 && Math.abs(state.currentRect.h) > 0.005) {
-                        // Normalizza larghezza/altezza positive
-                        const normRect = {
-                            x: state.currentRect.w < 0 ? state.currentRect.x + state.currentRect.w : state.currentRect.x,
-                            y: state.currentRect.h < 0 ? state.currentRect.y + state.currentRect.h : state.currentRect.y,
-                            w: Math.abs(state.currentRect.w),
-                            h: Math.abs(state.currentRect.h),
-                            color: state.currentRect.color
-                        };
-                        state.papers[state.currentIndex].highlights.push(normRect);
-                    }
-                    state.currentRect = null;
-                    redrawHighlights();
-                }
-
-                if (state.isPanning) {
-                    state.isPanning = false;
-                    updateStageCursor();
-                }
-            });
-
-            // Supporto Touch per tablet/iPad (Pan ed Evidenziatore)
-            paperStage.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 1) {
-                    const touch = e.touches[0];
-                    if (isHighlightActive()) {
-                        e.preventDefault();
-                        state.isDrawing = true;
-                        const coords = getNormalizedCoords(touch.clientX, touch.clientY);
-                        state.drawStartX = coords.x;
-                        state.drawStartY = coords.y;
-                        state.currentRect = { x: coords.x, y: coords.y, w: 0, h: 0, color: state.highlightColor };
-                    } else {
-                        state.isPanning = true;
-                        state.startPanX = touch.clientX - state.translateX;
-                        state.startPanY = touch.clientY - state.translateY;
-                    }
-                }
-            }, { passive: false });
-
-            paperStage.addEventListener('touchmove', (e) => {
-                if (e.touches.length === 1) {
-                    const touch = e.touches[0];
-                    if (state.isDrawing && state.currentRect) {
-                        e.preventDefault();
-                        const coords = getNormalizedCoords(touch.clientX, touch.clientY);
-                        state.currentRect.w = coords.x - state.drawStartX;
-                        state.currentRect.h = coords.y - state.drawStartY;
-                        redrawHighlights();
-                        drawSingleHighlight(state.currentRect);
-                    } else if (state.isPanning) {
-                        e.preventDefault();
-                        state.translateX = touch.clientX - state.startPanX;
-                        state.translateY = touch.clientY - state.startPanY;
-                        applyTransform(false);
-                    }
-                }
-            }, { passive: false });
-
-            paperStage.addEventListener('touchend', () => {
-                if (state.isDrawing && state.currentRect) {
-                    state.isDrawing = false;
-                    if (Math.abs(state.currentRect.w) > 0.008 && Math.abs(state.currentRect.h) > 0.005) {
-                        const normRect = {
-                            x: state.currentRect.w < 0 ? state.currentRect.x + state.currentRect.w : state.currentRect.x,
-                            y: state.currentRect.h < 0 ? state.currentRect.y + state.currentRect.h : state.currentRect.y,
-                            w: Math.abs(state.currentRect.w),
-                            h: Math.abs(state.currentRect.h),
-                            color: state.currentRect.color
-                        };
-                        state.papers[state.currentIndex].highlights.push(normRect);
-                    }
-                    state.currentRect = null;
-                    redrawHighlights();
-                }
-                state.isPanning = false;
-            });
-
-            // Ridimensionamento finestra
-            window.addEventListener('resize', () => {
-                if (state.isFocusOpen) {
-                    syncCanvasResolution();
-                    redrawHighlights();
-                }
-            });
-        }
-
-        function adjustZoom(delta) {
-            const newScale = Math.min(Math.max(state.scale + delta, 0.7), 4.5);
-            state.scale = newScale;
-            if (state.scale <= 1.05) {
-                state.translateX = 0;
-                state.translateY = 0;
+        function changePhotoZoom(delta, smooth = true) {
+            const nextScale = Math.min(Math.max(appState.scale + delta, 1), 4.5);
+            appState.scale = nextScale;
+            if (appState.scale <= 1.02) {
+                appState.scale = 1;
+                appState.panX = 0;
+                appState.panY = 0;
             }
-            applyTransform(true);
+            applyPhotoTransform(smooth);
         }
 
-        function resetTransform(smooth = true) {
-            state.scale = 1;
-            state.translateX = 0;
-            state.translateY = 0;
-            applyTransform(smooth);
+        function resetPhotoZoom(smooth = true) {
+            appState.scale = 1;
+            appState.panX = 0;
+            appState.panY = 0;
+            applyPhotoTransform(smooth);
         }
 
-        function applyTransform(smooth = false) {
+        function applyPhotoTransform(smooth = false) {
             if (smooth) {
-                paperStage.classList.add('smooth-reset');
+                transformLayer.classList.add('smooth-anim');
             } else {
-                paperStage.classList.remove('smooth-reset');
+                transformLayer.classList.remove('smooth-anim');
             }
-            paperStage.style.transform = `translate(${state.translateX}px, ${state.translateY}px) scale(${state.scale})`;
-            zoomLevelLabel.textContent = `${Math.round(state.scale * 100)}%`;
+            // Limita lo spostamento (pan) per non perdere mai la foto fuori dallo schermo
+            const maxOffsetX = (transformLayer.offsetWidth * (appState.scale - 1)) / 2 + 80;
+            const maxOffsetY = (transformLayer.offsetHeight * (appState.scale - 1)) / 2 + 80;
+            if (appState.scale === 1) {
+                appState.panX = 0;
+                appState.panY = 0;
+            } else {
+                appState.panX = Math.max(-maxOffsetX, Math.min(maxOffsetX, appState.panX));
+                appState.panY = Math.max(-maxOffsetY, Math.min(maxOffsetY, appState.panY));
+            }
+
+            transformLayer.style.transform = `translate3d(${appState.panX}px, ${appState.panY}px, 0) scale(${appState.scale})`;
+            zoomPctBtn.textContent = `${Math.round(appState.scale * 100)}%`;
         }
 
         /**
-         * LOGICA CANVAS EVIDENZIATORE ANCORATO ALLA PAGINA
+         * 5. GESTI UNIFICATI POINTER EVENTS (Mouse, Touch Tablet, Apple Pencil, Pinch 2 Dita)
          */
-        function syncCanvasResolution() {
-            highlightCanvas.width = focusImage.naturalWidth || focusImage.clientWidth;
-            highlightCanvas.height = focusImage.naturalHeight || focusImage.clientHeight;
+        function setupViewportGestures() {
+            // Rotellina mouse -> zooma solo la foto
+            readerViewport.addEventListener('wheel', (e) => {
+                if (!appState.isReaderOpen) return;
+                e.preventDefault();
+                const delta = e.deltaY < 0 ? 0.25 : -0.25;
+                changePhotoZoom(delta, false);
+            }, { passive: false });
+
+            // Doppio tap/clic rapido sulla foto per zoom 2x / 100%
+            let lastTapTime = 0;
+            readerViewport.addEventListener('pointerup', (e) => {
+                if (appState.activeTool === 'draw') return;
+                const now = Date.now();
+                if (now - lastTapTime < 280 && appState.pointers.size === 0) {
+                    if (appState.scale > 1.1) {
+                        resetPhotoZoom(true);
+                    } else {
+                        appState.scale = 2.2;
+                        applyPhotoTransform(true);
+                    }
+                }
+                lastTapTime = now;
+            });
+
+            // Pointer Down
+            readerViewport.addEventListener('pointerdown', (e) => {
+                if (!appState.isReaderOpen) return;
+                readerViewport.setPointerCapture(e.pointerId);
+                appState.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+                // Se ci sono 2 dita sullo schermo -> Pinch-to-Zoom & Pan simultaneo anche in modalità evidenzia!
+                if (appState.pointers.size === 2) {
+                    appState.isDrawingStroke = false;
+                    appState.currentStroke = null;
+                    appState.isDraggingPan = false;
+
+                    const pts = Array.from(appState.pointers.values());
+                    appState.initialPinchDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+                    appState.initialPinchScale = appState.scale;
+                    appState.pinchCenter = {
+                        x: (pts[0].x + pts[1].x) / 2 - appState.panX,
+                        y: (pts[0].y + pts[1].y) / 2 - appState.panY
+                    };
+                    return;
+                }
+
+                // Singolo puntatore (1 dito, mouse o Apple Pencil)
+                if (appState.pointers.size === 1) {
+                    if (appState.activeTool === 'draw') {
+                        // Inizia tratto evidenziatore a mano libera
+                        const normPt = clientToNormalizedImageCoords(e.clientX, e.clientY);
+                        if (normPt) {
+                            appState.isDrawingStroke = true;
+                            appState.currentStroke = {
+                                color: appState.brushColor,
+                                size: appState.brushSize,
+                                points: [normPt]
+                            };
+                            redrawAllStrokes();
+                            renderStroke(appState.currentStroke);
+                        }
+                    } else {
+                        // Modalità Mano: trascina (pan) la foto
+                        appState.isDraggingPan = true;
+                        appState.panStartX = e.clientX - appState.panX;
+                        appState.panStartY = e.clientY - appState.panY;
+                    }
+                }
+            });
+
+            // Pointer Move
+            readerViewport.addEventListener('pointermove', (e) => {
+                if (!appState.pointers.has(e.pointerId)) return;
+                appState.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+                // Gestione Pinch-to-Zoom con 2 dita su tablet
+                if (appState.pointers.size === 2) {
+                    const pts = Array.from(appState.pointers.values());
+                    const currentDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+                    if (appState.initialPinchDist > 10) {
+                        const scaleFactor = currentDist / appState.initialPinchDist;
+                        appState.scale = Math.min(Math.max(appState.initialPinchScale * scaleFactor, 1), 4.5);
+                        const midX = (pts[0].x + pts[1].x) / 2;
+                        const midY = (pts[0].y + pts[1].y) / 2;
+                        appState.panX = midX - appState.pinchCenter.x;
+                        appState.panY = midY - appState.pinchCenter.y;
+                        applyPhotoTransform(false);
+                    }
+                    return;
+                }
+
+                // Disegno evidenziatore a mano libera
+                if (appState.isDrawingStroke && appState.currentStroke) {
+                    const normPt = clientToNormalizedImageCoords(e.clientX, e.clientY);
+                    if (normPt) {
+                        const pts = appState.currentStroke.points;
+                        const last = pts[pts.length - 1];
+                        // Registra punto se c'è un movimento minimo per curve fluide
+                        if (!last || Math.hypot(normPt.x - last.x, normPt.y - last.y) > 0.0015) {
+                            pts.push(normPt);
+                            redrawAllStrokes();
+                            renderStroke(appState.currentStroke);
+                        }
+                    }
+                    return;
+                }
+
+                // Pan della foto
+                if (appState.isDraggingPan) {
+                    appState.panX = e.clientX - appState.panStartX;
+                    appState.panY = e.clientY - appState.panStartY;
+                    applyPhotoTransform(false);
+                }
+            });
+
+            // Pointer Up / Cancel
+            const endPointer = (e) => {
+                appState.pointers.delete(e.pointerId);
+
+                if (appState.isDrawingStroke && appState.currentStroke) {
+                    if (appState.currentStroke.points.length > 0 && appState.papers[appState.activeIndex]) {
+                        appState.papers[appState.activeIndex].strokes.push(appState.currentStroke);
+                    }
+                    appState.isDrawingStroke = false;
+                    appState.currentStroke = null;
+                    redrawAllStrokes();
+                }
+
+                if (appState.pointers.size === 0) {
+                    appState.isDraggingPan = false;
+                }
+            };
+
+            readerViewport.addEventListener('pointerup', endPointer);
+            readerViewport.addEventListener('pointercancel', endPointer);
+
+            window.addEventListener('resize', () => {
+                if (appState.isReaderOpen) {
+                    syncCanvasSize();
+                    redrawAllStrokes();
+                }
+            });
         }
 
-        function getNormalizedCoords(clientX, clientY) {
-            // getBoundingClientRect tiene già conto di scale e translateCSS
-            const rect = paperStage.getBoundingClientRect();
+        /**
+         * 6. MOTORE EVIDENZIATORE A MANO LIBERA SOLIDALE ALLA FOTO
+         */
+        function syncCanvasSize() {
+            freehandCanvas.width = activePaperImg.naturalWidth || activePaperImg.clientWidth || 800;
+            freehandCanvas.height = activePaperImg.naturalHeight || activePaperImg.clientHeight || 1100;
+        }
+
+        function clientToNormalizedImageCoords(clientX, clientY) {
+            // getBoundingClientRect restituisce le coordinate esatte della foto già scalata e traslata
+            const rect = transformLayer.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return null;
+
             const x = (clientX - rect.left) / rect.width;
             const y = (clientY - rect.top) / rect.height;
+
             return {
                 x: Math.max(0, Math.min(1, x)),
                 y: Math.max(0, Math.min(1, y))
             };
         }
 
-        function redrawHighlights() {
-            ctx.clearRect(0, 0, highlightCanvas.width, highlightCanvas.height);
-            if (state.currentIndex < 0 || !state.papers[state.currentIndex]) return;
+        function redrawAllStrokes() {
+            canvasCtx.clearRect(0, 0, freehandCanvas.width, freehandCanvas.height);
+            const paper = appState.papers[appState.activeIndex];
+            if (!paper) return;
 
-            const list = state.papers[state.currentIndex].highlights;
-            list.forEach(item => drawSingleHighlight(item));
+            paper.strokes.forEach(stroke => renderStroke(stroke));
         }
 
-        function drawSingleHighlight(rectObj) {
-            const w = highlightCanvas.width;
-            const h = highlightCanvas.height;
-            
-            const px = rectObj.x * w;
-            const py = rectObj.y * h;
-            const pw = rectObj.w * w;
-            const ph = rectObj.h * h;
+        function renderStroke(stroke) {
+            const pts = stroke.points;
+            if (!pts || pts.length === 0) return;
 
-            ctx.fillStyle = rectObj.color;
-            // Disegna con bordi leggermente smussati stile pennarello
-            ctx.beginPath();
-            if (ctx.roundRect) {
-                ctx.roundRect(px, py, pw, ph, 4);
+            const w = freehandCanvas.width;
+            const h = freehandCanvas.height;
+
+            canvasCtx.save();
+            canvasCtx.strokeStyle = stroke.color;
+            canvasCtx.fillStyle = stroke.color;
+            canvasCtx.lineWidth = stroke.size * w;
+            canvasCtx.lineCap = 'round';
+            canvasCtx.lineJoin = 'round';
+
+            if (pts.length === 1) {
+                // Singolo tocco / punto
+                canvasCtx.beginPath();
+                canvasCtx.arc(pts[0].x * w, pts[0].y * h, (stroke.size * w) / 2, 0, Math.PI * 2);
+                canvasCtx.fill();
             } else {
-                ctx.rect(px, py, pw, ph);
+                // Curva quadratica smussata per un tratto naturale a mano libera
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(pts[0].x * w, pts[0].y * h);
+
+                for (let i = 1; i < pts.length - 1; i++) {
+                    const xc = ((pts[i].x + pts[i + 1].x) / 2) * w;
+                    const yc = ((pts[i].y + pts[i + 1].y) / 2) * h;
+                    canvasCtx.quadraticCurveTo(pts[i].x * w, pts[i].y * h, xc, yc);
+                }
+
+                const last = pts[pts.length - 1];
+                canvasCtx.lineTo(last.x * w, last.y * h);
+                canvasCtx.stroke();
             }
-            ctx.fill();
+
+            canvasCtx.restore();
         }
 
         /**
-         * CONTROLLI EVIDENZIATORE & UI
+         * CONTROLLI BARRA STRUMENTI
          */
-        function isHighlightActive() {
-            return state.highlightMode || state.isShiftPressed;
-        }
+        function setTool(toolName) {
+            appState.activeTool = toolName;
+            const btnPan = document.getElementById('tool-pan');
+            const btnDraw = document.getElementById('tool-draw');
 
-        function toggleHighlightMode() {
-            state.highlightMode = !state.highlightMode;
-            const btn = document.getElementById('btn-highlight-mode');
-            if (state.highlightMode) {
-                btn.classList.add('bg-amber-400', 'text-slate-950', 'font-bold');
-                btn.classList.remove('text-slate-300', 'hover:bg-slate-700');
-                showToast('Modalità Evidenziatore ATTIVA (trascina sui titoli)');
+            if (toolName === 'draw') {
+                btnDraw.className = 'flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold bg-amber-400 text-slate-950 shadow transition cursor-pointer';
+                btnPan.className = 'flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer';
+                transformLayer.style.cursor = 'crosshair';
             } else {
-                btn.classList.remove('bg-amber-400', 'text-slate-950', 'font-bold');
-                btn.classList.add('text-slate-300', 'hover:bg-slate-700');
+                btnPan.className = 'flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold bg-[#0b3d75] text-white shadow transition cursor-pointer';
+                btnDraw.className = 'flex items-center gap-1.5 px-3 h-9 rounded-lg text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition cursor-pointer';
+                transformLayer.style.cursor = 'grab';
             }
-            updateStageCursor();
         }
 
-        function setHighlightColor(colorRgba, el) {
-            state.highlightColor = colorRgba;
-            document.querySelectorAll('.color-swatch').forEach(sw => {
-                sw.classList.remove('ring-2', 'ring-white', 'scale-110');
-                sw.classList.add('opacity-75');
+        function setBrushColor(hexColor, btnEl) {
+            appState.brushColor = hexColor;
+            document.querySelectorAll('.swatch-btn').forEach(b => {
+                b.classList.remove('ring-2', 'ring-white', 'scale-110');
+                b.classList.add('opacity-80');
             });
-            el.classList.add('ring-2', 'ring-white', 'scale-110');
-            el.classList.remove('opacity-75');
+            btnEl.classList.add('ring-2', 'ring-white', 'scale-110');
+            btnEl.classList.remove('opacity-80');
 
-            // Attiva automaticamente la modalità evidenziatore se si clicca un colore in Focus Mode
-            if (state.isFocusOpen && !state.highlightMode) {
-                toggleHighlightMode();
+            // Attiva subito l'evidenziatore quando si tocca un colore
+            if (appState.activeTool !== 'draw') {
+                setTool('draw');
             }
         }
 
-        function undoLastHighlight() {
-            if (state.currentIndex < 0 || !state.papers[state.currentIndex]) return;
-            const list = state.papers[state.currentIndex].highlights;
-            if (list.length > 0) {
-                list.pop();
-                redrawHighlights();
-                showToast('Ultima evidenziatura annullata');
+        function setBrushSize(normSize, btnEl) {
+            appState.brushSize = normSize;
+            document.querySelectorAll('.size-btn').forEach(b => {
+                b.classList.remove('bg-slate-700', 'text-white');
+                b.classList.add('text-slate-300');
+            });
+            btnEl.classList.add('bg-slate-700', 'text-white');
+            btnEl.classList.remove('text-slate-300');
+
+            if (appState.activeTool !== 'draw') {
+                setTool('draw');
             }
         }
 
-        function clearCurrentHighlights() {
-            if (state.currentIndex < 0 || !state.papers[state.currentIndex]) return;
-            state.papers[state.currentIndex].highlights = [];
-            redrawHighlights();
-            showToast('Evidenziature rimosse dalla pagina');
+        function undoStroke() {
+            const paper = appState.papers[appState.activeIndex];
+            if (paper && paper.strokes.length > 0) {
+                paper.strokes.pop();
+                redrawAllStrokes();
+            }
         }
 
-        function updateStageCursor() {
-            if (isHighlightActive()) {
-                paperStage.style.cursor = 'crosshair';
+        function clearStrokes() {
+            const paper = appState.papers[appState.activeIndex];
+            if (paper && paper.strokes.length > 0) {
+                paper.strokes = [];
+                redrawAllStrokes();
+                showToast('Evidenziature cancellate');
+            }
+        }
+
+        function toggleCleanLiveHud() {
+            appState.isHudHidden = !appState.isHudHidden;
+            const toolbar = document.getElementById('reader-toolbar');
+            const showBtn = document.getElementById('show-hud-btn');
+            const prevBtn = document.getElementById('btn-prev-paper');
+            const nextBtn = document.getElementById('btn-next-paper');
+
+            if (appState.isHudHidden) {
+                toolbar.classList.add('hud-hidden');
+                prevBtn.classList.add('opacity-0', 'pointer-events-none');
+                nextBtn.classList.add('opacity-0', 'pointer-events-none');
+                showBtn.classList.remove('hidden');
+                showBtn.classList.add('flex');
             } else {
-                paperStage.style.cursor = state.isPanning ? 'grabbing' : 'grab';
+                toolbar.classList.remove('hud-hidden');
+                prevBtn.classList.remove('opacity-0', 'pointer-events-none');
+                nextBtn.classList.remove('opacity-0', 'pointer-events-none');
+                showBtn.classList.add('hidden');
+                showBtn.classList.remove('flex');
             }
         }
 
         /**
-         * MODALITÀ DIRETTA (NASCONDI BARRE PER REGISTRAZIONE SCHERMO)
+         * SCORCIATOIE DA TASTIERA (per uso con tastiera Bluetooth su tablet o Mac)
          */
-        function toggleToolbar() {
-            state.isToolbarHidden = !state.isToolbarHidden;
-            const toolbar = document.getElementById('top-toolbar');
-            const restoreBtn = document.getElementById('restore-ui-btn');
-            const bottomHud = document.getElementById('focus-bottom-hud');
-
-            if (state.isToolbarHidden) {
-                toolbar.classList.add('toolbar-hidden');
-                bottomHud.classList.add('opacity-0', 'pointer-events-none');
-                restoreBtn.classList.remove('opacity-0', 'pointer-events-none');
-                restoreBtn.classList.add('opacity-40', 'hover:opacity-100');
-                showToast('Modalità Diretta attiva (premi H per mostrare i controlli)');
-            } else {
-                toolbar.classList.remove('toolbar-hidden');
-                bottomHud.classList.remove('opacity-0', 'pointer-events-none');
-                restoreBtn.classList.add('opacity-0', 'pointer-events-none');
-                restoreBtn.classList.remove('opacity-40', 'hover:opacity-100');
-            }
-        }
-
-        function toggleHelpModal() {
-            const modal = document.getElementById('help-modal');
-            if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            } else {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        }
-
-        /**
-         * SCORCIATOIE DA TASTIERA
-         */
-        function setupKeyboardShortcuts() {
+        function setupKeyboardControls() {
             window.addEventListener('keydown', (e) => {
-                // Ignora se si sta scrivendo in un input
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-                if (e.key === 'Shift') {
-                    state.isShiftPressed = true;
-                    updateStageCursor();
-                }
-
-                if (e.key === 'Escape') {
-                    const helpModal = document.getElementById('help-modal');
-                    if (!helpModal.classList.contains('hidden')) {
-                        toggleHelpModal();
-                    } else if (state.isFocusOpen) {
-                        closeFocusMode();
-                    }
-                }
-
-                if (e.key.toLowerCase() === 'h') {
-                    toggleToolbar();
-                }
-
-                if (state.isFocusOpen) {
-                    if (e.key === 'ArrowRight') navigatePaper(1);
-                    if (e.key === 'ArrowLeft') navigatePaper(-1);
-                    if (e.key === '+' || e.key === '=') adjustZoom(0.3);
-                    if (e.key === '-') adjustZoom(-0.3);
-                    if (e.key === '0') resetTransform(true);
-                    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-                        e.preventDefault();
-                        undoLastHighlight();
-                    }
-                }
-            });
-
-            window.addEventListener('keyup', (e) => {
-                if (e.key === 'Shift') {
-                    state.isShiftPressed = false;
-                    updateStageCursor();
+                if (!appState.isReaderOpen) return;
+                if (e.key === 'Escape') closeReader();
+                if (e.key === 'ArrowRight') switchPaper(1);
+                if (e.key === 'ArrowLeft') switchPaper(-1);
+                if (e.key === '+' || e.key === '=') changePhotoZoom(0.3);
+                if (e.key === '-') changePhotoZoom(-0.3);
+                if (e.key === '0') resetPhotoZoom(true);
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+                    e.preventDefault();
+                    undoStroke();
                 }
             });
         }
 
         /**
-         * NOTIFICA TOAST DISCRETA
+         * TOAST NOTIFICHE DISCRETE
          */
-        let toastTimeout;
-        function showToast(message) {
-            const toast = document.getElementById('toast-msg');
-            toast.textContent = message;
+        let toastTimer = null;
+        function showToast(text) {
+            const toast = document.getElementById('toast-banner');
+            toast.textContent = text;
             toast.classList.remove('opacity-0');
             toast.classList.add('opacity-100');
-
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
                 toast.classList.remove('opacity-100');
                 toast.classList.add('opacity-0');
-            }, 2600);
+            }, 3000);
         }
     </script>
 </body>
