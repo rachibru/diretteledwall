@@ -12,11 +12,10 @@
     :root {
       --brand-blue: #0b3d75;
       --brand-blue-dark: #072a52;
-      --brand-accent: #1d63b8;
       --studio-bg: #e7ebf0;
       --studio-bg-light: #f7f9fc;
       --live-red: #e52521;
-      --header-h: 46px;
+      --header-h: 44px;
     }
 
     * {
@@ -36,7 +35,7 @@
       color: #0f172a;
     }
 
-    /* TOPBAR STUDIO TELEVISIVO */
+    /* TOPBAR STUDIO UNICA RIGA */
     header.topbar {
       position: fixed;
       top: 0;
@@ -52,7 +51,7 @@
       align-items: center;
       justify-content: space-between;
       z-index: 200;
-      box-shadow: 0 3px 14px rgba(7, 42, 82, 0.3);
+      box-shadow: 0 2px 10px rgba(7, 42, 82, 0.25);
       gap: 10px;
     }
 
@@ -72,10 +71,10 @@
       font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.8px;
-      padding: 3px 8px;
+      padding: 3px 7px;
       border-radius: 4px;
       flex-shrink: 0;
-      box-shadow: 0 0 10px rgba(229, 37, 33, 0.55);
+      box-shadow: 0 0 8px rgba(229, 37, 33, 0.5);
     }
 
     .live-dot {
@@ -92,16 +91,16 @@
     }
 
     .brand-title {
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: -0.3px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
       color: #fff;
+      text-decoration: none;
       white-space: nowrap;
-      cursor: pointer;
     }
 
     .studio-clock {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
       background: rgba(255, 255, 255, 0.14);
@@ -124,15 +123,17 @@
     }
 
     .nav-pill {
-      height: 28px;
-      padding: 0 12px;
+      height: 26px;
+      padding: 0 11px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.22);
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.94);
       font-size: 11.5px;
       font-weight: 700;
-      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
       white-space: nowrap;
       transition: all 0.15s ease;
     }
@@ -141,13 +142,12 @@
       background: #fff;
       color: var(--brand-blue);
       border-color: #fff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
     }
 
     .btn-icon-only {
-      height: 28px;
-      padding: 0 8px;
-      border-radius: 6px;
+      height: 26px;
+      padding: 0 7px;
+      border-radius: 5px;
       border: 1px solid rgba(255, 255, 255, 0.22);
       background: rgba(255, 255, 255, 0.12);
       color: #fff;
@@ -166,7 +166,7 @@
       background: transparent;
     }
 
-    /* AREA PRINCIPALE REGIA (HOME SKYWALL) */
+    /* AREA PRINCIPALE REGIA (A TUTTO SCHERMO SENZA TICKER IN BASSO) */
     .home-stage {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
@@ -175,14 +175,8 @@
       bottom: 0;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 24px 28px max(20px, env(safe-area-inset-bottom));
-      gap: 20px;
-      transition: opacity 0.22s ease;
-    }
-
-    .home-stage.hidden {
-      display: none;
+      padding: 22px 26px max(24px, env(safe-area-inset-bottom));
+      gap: 18px;
     }
 
     .studio-banner {
@@ -190,21 +184,22 @@
       align-items: flex-end;
       justify-content: space-between;
       border-bottom: 2px solid rgba(11, 61, 117, 0.14);
-      padding-bottom: 12px;
+      padding-bottom: 10px;
       gap: 16px;
+      flex-shrink: 0;
     }
 
     .studio-banner h1 {
       margin: 0;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 900;
       color: var(--brand-blue);
-      letter-spacing: -0.6px;
+      letter-spacing: -0.5px;
       line-height: 1.1;
     }
 
     .studio-date {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       color: #475569;
       text-transform: uppercase;
@@ -231,12 +226,13 @@
       position: relative;
       background: #fff;
       border-radius: 16px;
-      padding: 24px 22px;
+      padding: 26px 24px;
       box-shadow: 0 14px 34px rgba(15, 28, 46, 0.11), 0 2px 6px rgba(15, 28, 46, 0.06);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
       overflow: hidden;
       border-top: 6px solid var(--tile-accent, #0b3d75);
       transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
@@ -285,19 +281,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 14px 0;
+      margin: 16px 0;
     }
 
-    /* Mini anteprime grafiche vettoriali nei tile */
     .mini-bars {
       display: flex;
       align-items: flex-end;
-      gap: 10px;
-      height: 84px;
+      gap: 11px;
+      height: 94px;
     }
 
     .mini-bars span {
-      width: 18px;
+      width: 20px;
       border-radius: 4px 4px 2px 2px;
       display: block;
     }
@@ -307,13 +302,13 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      height: 88px;
-      width: 140px;
+      height: 96px;
+      width: 150px;
     }
 
     .mini-paper-sheet {
-      width: 58px;
-      height: 80px;
+      width: 64px;
+      height: 88px;
       background: #f8fafc;
       border: 1.5px solid #cbd5e1;
       border-radius: 4px;
@@ -327,12 +322,12 @@
     .mini-sites-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 9px;
     }
 
     .mini-site-dot {
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
       border-radius: 8px;
       background: #f1f5f9;
       border: 1px solid #cbd5e1;
@@ -340,13 +335,13 @@
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 11px;
+      font-size: 11.5px;
       color: #0b3d75;
     }
 
     .tile-bottom h2 {
-      margin: 0 0 4px;
-      font-size: 22px;
+      margin: 0 0 6px;
+      font-size: 23px;
       font-weight: 900;
       color: #0f172a;
       letter-spacing: -0.4px;
@@ -354,105 +349,28 @@
 
     .tile-bottom p {
       margin: 0;
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 600;
       color: #64748b;
-      line-height: 1.35;
-    }
-
-    /* SOTTOPANCIA / TICKER STUDIO IN BASSO */
-    .studio-ticker {
-      height: 44px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 6px 20px rgba(15, 28, 46, 0.09);
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      flex-shrink: 0;
-      border: 1px solid rgba(11, 61, 117, 0.12);
-    }
-
-    .ticker-tag {
-      height: 100%;
-      padding: 0 16px;
-      background: var(--live-red);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 0.8px;
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-    }
-
-    .ticker-text {
-      flex: 1;
-      padding: 0 16px;
-      font-size: 14px;
-      font-weight: 800;
-      color: #0f172a;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      cursor: pointer;
-    }
-
-    .ticker-edit-btn {
-      margin-right: 10px;
-      padding: 4px 10px;
-      border-radius: 6px;
-      border: 1px solid #cbd5e1;
-      background: #f8fafc;
-      font-size: 11px;
-      font-weight: 700;
-      color: #475569;
-      cursor: pointer;
-    }
-
-    body.on-air-clean .ticker-edit-btn {
-      display: none;
-    }
-
-    /* CONTENITORE MODULI ATTIVI (IFRAME FULLSCREEN SENZA DOPPIA BARRA) */
-    .module-frame-wrap {
-      position: fixed;
-      top: calc(var(--header-h) + env(safe-area-inset-top));
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: none;
-      background: var(--studio-bg);
-      z-index: 150;
-    }
-
-    .module-frame-wrap.active {
-      display: block;
-    }
-
-    .module-frame-wrap iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
+      line-height: 1.4;
     }
   </style>
 </head>
 <body>
 
-  <!-- TOPBAR REGIA UNICA -->
+  <!-- BARRA BLU UNICA -->
   <header class="topbar">
     <div class="topbar-left">
       <span class="live-badge"><span class="live-dot"></span>LIVE</span>
-      <span class="brand-title" id="brandLogo">br.it/ledwall</span>
+      <a href="index.html" class="brand-title">br.it/ledwall</a>
       <span class="studio-clock" id="studioClock">--:--</span>
     </div>
 
     <nav class="topbar-nav">
-      <button class="nav-pill active" data-target="home">⌂ Regia</button>
-      <button class="nav-pill" data-target="prime-pagine.html">Prime Pagine</button>
-      <button class="nav-pill" data-target="quotidiani.html">Quotidiani Online</button>
-      <button class="nav-pill" data-target="sondaggi.html">Sondaggi &amp; Parlamento</button>
+      <a href="index.html" class="nav-pill active">⌂ Regia</a>
+      <a href="prime-pagine.html" class="nav-pill">Prime Pagine</a>
+      <a href="quotidiani.html" class="nav-pill">Quotidiani</a>
+      <a href="sondaggi.html" class="nav-pill">Sondaggi</a>
       <button class="btn-icon-only" id="btnToggleClean" title="Modalità Pulita in Onda">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
       </button>
@@ -460,17 +378,14 @@
   </header>
 
   <!-- SCHERMATA HOME REGIA -->
-  <main class="home-stage" id="homeStage">
+  <main class="home-stage">
     <div class="studio-banner">
-      <div>
-        <h1>Touch Wall Studio</h1>
-      </div>
+      <h1>Touch Wall Studio</h1>
       <div class="studio-date" id="studioDate">Edizione odierna</div>
     </div>
 
     <div class="tiles-grid">
-      <!-- TILE 1: PRIME PAGINE -->
-      <div class="wall-tile" data-open="prime-pagine.html" style="--tile-accent:#0b3d75;">
+      <a href="prime-pagine.html" class="wall-tile" style="--tile-accent:#0b3d75;">
         <div class="tile-top">
           <span class="tile-kicker">Edicola del Mattino</span>
           <div class="tile-icon">
@@ -479,19 +394,19 @@
         </div>
         <div class="tile-visual">
           <div class="mini-papers">
-            <div class="mini-paper-sheet" style="transform:rotate(-8deg) translateX(-14px);">
+            <div class="mini-paper-sheet" style="transform:rotate(-8deg) translateX(-16px);">
               <div style="height:8px; background:#0b3d75; border-radius:2px;"></div>
-              <div style="height:24px; background:#cbd5e1; border-radius:2px;"></div>
+              <div style="height:26px; background:#cbd5e1; border-radius:2px;"></div>
               <div style="height:4px; background:#94a3b8; width:80%;"></div>
             </div>
             <div class="mini-paper-sheet" style="position:absolute; z-index:2; transform:translateY(-4px);">
               <div style="height:9px; background:#e52521; border-radius:2px;"></div>
-              <div style="height:28px; background:#93c5fd; border-radius:2px;"></div>
+              <div style="height:30px; background:#93c5fd; border-radius:2px;"></div>
               <div style="height:4px; background:#64748b; width:90%;"></div>
             </div>
-            <div class="mini-paper-sheet" style="transform:rotate(8deg) translateX(14px);">
+            <div class="mini-paper-sheet" style="transform:rotate(8deg) translateX(16px);">
               <div style="height:8px; background:#c2410c; border-radius:2px;"></div>
-              <div style="height:24px; background:#fed7aa; border-radius:2px;"></div>
+              <div style="height:26px; background:#fed7aa; border-radius:2px;"></div>
               <div style="height:4px; background:#94a3b8; width:75%;"></div>
             </div>
           </div>
@@ -500,10 +415,9 @@
           <h2>Prime Pagine</h2>
           <p>Sfoglia i giornali di oggi, ingrandisci i titoli e sottolinea con l'evidenziatore</p>
         </div>
-      </div>
+      </a>
 
-      <!-- TILE 2: QUOTIDIANI ONLINE -->
-      <div class="wall-tile" data-open="quotidiani.html" style="--tile-accent:#0284c7;">
+      <a href="quotidiani.html" class="wall-tile" style="--tile-accent:#0284c7;">
         <div class="tile-top">
           <span class="tile-kicker" style="background:#e0f2fe; color:#0369a1;">Web &amp; Ritagli</span>
           <div class="tile-icon" style="background:#0284c7;">
@@ -524,10 +438,9 @@
           <h2>Quotidiani Online</h2>
           <p>Accesso diretto alle testate italiane ed estere e lavagna per ritagli articolo</p>
         </div>
-      </div>
+      </a>
 
-      <!-- TILE 3: SONDAGGI & PARLAMENTO -->
-      <div class="wall-tile" data-open="sondaggi.html" style="--tile-accent:#15803d;">
+      <a href="sondaggi.html" class="wall-tile" style="--tile-accent:#15803d;">
         <div class="tile-top">
           <span class="tile-kicker" style="background:#dcfce7; color:#15803d;">Datawall Live</span>
           <div class="tile-icon" style="background:#15803d;">
@@ -536,7 +449,7 @@
         </div>
         <div class="tile-visual">
           <div class="mini-bars">
-            <span style="height:82%; background:#0b3d75;"></span>
+            <span style="height:84%; background:#0b3d75;"></span>
             <span style="height:64%; background:#e11d48;"></span>
             <span style="height:44%; background:#f59e0b;"></span>
             <span style="height:32%; background:#0284c7;"></span>
@@ -547,29 +460,11 @@
           <h2>Sondaggi &amp; Parlamento</h2>
           <p>Partiti, Emiciclo 400 seggi, Gradimento Leader e Sfida Testa a Testa</p>
         </div>
-      </div>
-    </div>
-
-    <!-- SOTTOPANCIA / TICKER STUDIO -->
-    <div class="studio-ticker">
-      <div class="ticker-tag">ULTIM'ORA</div>
-      <div class="ticker-text" id="tickerText">In diretta su br.it/ledwall — Tocca un pannello per avviare la presentazione</div>
-      <button class="ticker-edit-btn" id="btnEditTicker">Modifica testo</button>
+      </a>
     </div>
   </main>
 
-  <!-- CONTENITORE PAGINE INTERNE -->
-  <div class="module-frame-wrap" id="moduleWrap">
-    <iframe id="moduleFrame" title="Modulo Ledwall"></iframe>
-  </div>
-
   <script>
-    const homeStage = document.getElementById('homeStage');
-    const moduleWrap = document.getElementById('moduleWrap');
-    const moduleFrame = document.getElementById('moduleFrame');
-    const navPills = document.querySelectorAll('.nav-pill');
-
-    // Orologio e data studio
     function updateClock() {
       const now = new Date();
       const hh = String(now.getHours()).padStart(2, '0');
@@ -588,49 +483,9 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Navigazione tra Regia Home e Moduli
-    function navigateTo(target) {
-      navPills.forEach(p => p.classList.toggle('active', p.dataset.target === target));
-      if (target === 'home') {
-        moduleWrap.classList.remove('active');
-        homeStage.classList.remove('hidden');
-      } else {
-        homeStage.classList.add('hidden');
-        moduleWrap.classList.add('active');
-        if (!moduleFrame.src.endsWith(target)) {
-          moduleFrame.src = target;
-        }
-      }
-    }
-
-    navPills.forEach(pill => {
-      pill.addEventListener('click', () => navigateTo(pill.dataset.target));
+    document.getElementById('btnToggleClean').addEventListener('click', () => {
+      document.body.classList.toggle('on-air-clean');
     });
-
-    document.querySelectorAll('.wall-tile').forEach(tile => {
-      tile.addEventListener('click', () => navigateTo(tile.dataset.open));
-    });
-
-    // Modalità pulita in onda
-    const toggleClean = () => document.body.classList.toggle('on-air-clean');
-    document.getElementById('btnToggleClean').addEventListener('click', toggleClean);
-    document.getElementById('brandLogo').addEventListener('click', () => navigateTo('home'));
-
-    // Ticker modificabile e salvato su iPad
-    const tickerTextEl = document.getElementById('tickerText');
-    const savedTicker = localStorage.getItem('br_ledwall_ticker');
-    if (savedTicker) tickerTextEl.textContent = savedTicker;
-
-    function editTicker() {
-      const next = prompt('Inserisci il testo della barra Ultim\'ora in basso:', tickerTextEl.textContent);
-      if (next !== null && next.trim() !== '') {
-        tickerTextEl.textContent = next.trim();
-        localStorage.setItem('br_ledwall_ticker', next.trim());
-      }
-    }
-
-    document.getElementById('btnEditTicker').addEventListener('click', editTicker);
-    tickerTextEl.addEventListener('dblclick', editTicker);
   </script>
 </body>
 </html>
