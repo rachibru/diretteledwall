@@ -1104,5 +1104,25 @@
     requestAnimationFrame(syncAllCanvases);
     syncFromGoogleSheets();
   </script>
+  <script>
+    // Mantiene la navigazione sempre dentro la Web App su iPad senza aprire Safari
+    if (window.self !== window.top) {
+      document.documentElement.classList.add('in-shell');
+      const s = document.createElement('style');
+      s.textContent = `header.topbar { display: none !important; } :root { --header-h: 0px !important; }`;
+      document.head.appendChild(s);
+    }
+    document.querySelectorAll('a.nav-pill, a.brand-title').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = a.getAttribute('href');
+        if (window.parent && window.parent !== window && typeof window.parent.navigateTo === 'function') {
+          window.parent.navigateTo(href === 'index.html' ? 'home' : href, a.textContent.trim());
+        } else {
+          window.location.href = href;
+        }
+      });
+    });
+  </script>
 </body>
 </html>
