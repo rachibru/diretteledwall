@@ -273,7 +273,7 @@
       padding-top: 10px;
     }
 
-    /* VIEWER DATAWALL IN STILE SKY TG24 */
+    /* VIEWER DATAWALL */
     .sheet-viewer {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
@@ -359,7 +359,7 @@
 
     .vbar-col {
       flex: 1;
-      max-width: 130px;
+      max-width: 140px;
       height: 100%;
       display: flex;
       flex-direction: column;
@@ -387,7 +387,7 @@
     }
 
     .vbar-val {
-      font-size: 22px;
+      font-size: 23px;
       font-weight: 900;
       color: #0f172a;
       margin-bottom: 8px;
@@ -396,16 +396,16 @@
 
     .vbar-fill {
       width: 68%;
-      max-width: 72px;
+      max-width: 74px;
       border-radius: 8px 8px 2px 2px;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
-      transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
       min-height: 8px;
     }
 
     .vbar-label {
       margin-top: 10px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 900;
       color: #1e293b;
       text-align: center;
@@ -415,7 +415,7 @@
     }
 
     .vbar-sub {
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 600;
       color: #64748b;
       text-align: center;
@@ -467,7 +467,7 @@
       border-radius: 999px;
     }
 
-    /* GRAFICA 3: BREAKING NEWS / SCHEDE IN ONDA */
+    /* GRAFICA 3: NOTIZIE IN DIRETTA */
     .news-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
@@ -486,11 +486,6 @@
       gap: 8px;
       cursor: pointer;
       transition: transform 0.16s ease, box-shadow 0.16s ease;
-    }
-
-    .news-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(15, 28, 46, 0.08);
     }
 
     .news-card.urgent {
@@ -514,6 +509,25 @@
     .news-card.expanded .news-body {
       font-size: 17px;
       line-height: 1.5;
+    }
+
+    .news-meta-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .news-time {
+      background: var(--brand-blue);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .news-card.urgent .news-time {
+      background: var(--live-red);
     }
 
     .news-tag {
@@ -683,7 +697,7 @@
       <h1>Fogli Diretta Speciale</h1>
       <span class="hub-meta" id="hubMeta">Sincronizzazione...</span>
     </div>
-    <div id="hubStatus" class="status-box">Lettura automatica di tutti i fogli da Google...</div>
+    <div id="hubStatus" class="status-box">Caricamento rapido fogli...</div>
     <div class="sheets-grid" id="sheetsGrid" style="display:none;"></div>
   </main>
 
@@ -703,7 +717,7 @@
       <div class="dock-sep"></div>
       <button class="dock-btn mode-btn active-tool" data-mode="vbars">Colonne</button>
       <button class="dock-btn mode-btn" data-mode="hbars">Barre</button>
-      <button class="dock-btn mode-btn" data-mode="news">Schede</button>
+      <button class="dock-btn mode-btn" data-mode="news">Notizie</button>
       <button class="dock-btn mode-btn" data-mode="table">Tabella</button>
       <div class="dock-sep"></div>
       <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
@@ -734,6 +748,13 @@
     const viewerBody = document.getElementById('viewerBody');
     const headerSubtitle = document.getElementById('headerSubtitle');
 
+    // Carica subito eventuale cache locale in 0 millisecondi mentre aggiorna in background
+    const initialCache = JSON.parse(localStorage.getItem('br_ledwall_speciali_v5') || 'null');
+    if (initialCache && initialCache.length) {
+      allSheets = initialCache;
+      renderSheetsGrid();
+    }
+
     function parseNum(str) {
       if (str === null || str === undefined) return null;
       const s = String(str).trim().replace('%', '').replace(/\s+/g, '').replace(',', '.');
@@ -757,6 +778,38 @@
         while (res.length > 0 && res[res.length - 1] === '') res.pop();
         return res;
       }).filter(r => r.some(c => c !== ''));
+    }
+
+    function fetchWithTimeout(url, ms = 5500) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ms);
+      return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(timer));
+    }
+
+    // Lancia tutti i proxy in parallelo e prende il primo che risponde (velocissimo!)
+    async function fetchFast(targetUrl) {
+      const urlTs = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+      const raceTasks = [
+        fetchWithTimeout(urlTs, 4000).then(async r => {
+          if (!r.ok) throw new Error();
+          const t = await r.text();
+          if (t.length < 60) throw new Error();
+          return t;
+        }),
+        fetchWithTimeout(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(urlTs)}`, 5500).then(async r => {
+          if (!r.ok) throw new Error();
+          const t = await r.text();
+          if (t.length < 60) throw new Error();
+          return t;
+        }),
+        fetchWithTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(urlTs)}`, 6000).then(async r => {
+          if (!r.ok) throw new Error();
+          const j = await r.json();
+          if (!j.contents || j.contents.length < 60) throw new Error();
+          return j.contents;
+        })
+      ];
+      return Promise.any(raceTasks);
     }
 
     function parsePubHtmlFull(html) {
@@ -814,41 +867,15 @@
       return sheets;
     }
 
-    async function fetchViaMultiProxy(targetUrl) {
-      const urlWithTs = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
-      const endpoints = [
-        { url: `https://api.allorigins.win/get?url=${encodeURIComponent(urlWithTs)}`, json: true },
-        { url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(urlWithTs)}`, json: false },
-        { url: `https://corsproxy.io/?${encodeURIComponent(urlWithTs)}`, json: false },
-        { url: urlWithTs, json: false }
-      ];
-
-      for (const ep of endpoints) {
-        try {
-          const res = await fetch(ep.url);
-          if (!res.ok) continue;
-          let content = '';
-          if (ep.json) {
-            const data = await res.json();
-            content = data.contents || '';
-          } else {
-            content = await res.text();
-          }
-          if (content && content.length > 80) return content;
-        } catch (e) {}
-      }
-      throw new Error('Proxy non raggiungibili');
-    }
-
     async function loadAllSheets() {
       const btn = document.getElementById('btnSyncNow');
       btn.textContent = '…';
-      hubMeta.textContent = 'Sincronizzazione in corso...';
+      hubMeta.textContent = 'Aggiornamento...';
 
       let discovered = [];
 
       try {
-        const html = await fetchViaMultiProxy(PUBHTML_URL);
+        const html = await fetchFast(PUBHTML_URL);
         discovered = parsePubHtmlFull(html);
       } catch (e) {}
 
@@ -856,8 +883,7 @@
         await Promise.all(discovered.map(async (sh) => {
           if (!sh.rows || sh.rows.length === 0) {
             try {
-              const csvUrl = `${PUB_CSV_BASE}&gid=${encodeURIComponent(sh.id)}`;
-              const csvTxt = await fetchViaMultiProxy(csvUrl);
+              const csvTxt = await fetchFast(`${PUB_CSV_BASE}&gid=${encodeURIComponent(sh.id)}`);
               const parsedRows = parseCSV(csvTxt);
               if (parsedRows.length > 0) sh.rows = parsedRows;
             } catch (e) {}
@@ -865,7 +891,7 @@
         }));
       } else {
         try {
-          const csvTxt = await fetchViaMultiProxy(PUB_CSV_BASE);
+          const csvTxt = await fetchFast(PUB_CSV_BASE);
           const rows = parseCSV(csvTxt);
           if (rows.length > 0) discovered = [{ id: '0', title: 'Foglio 1', rows }];
         } catch (e) {}
@@ -873,10 +899,7 @@
 
       if (discovered.length > 0) {
         allSheets = discovered;
-        localStorage.setItem('br_ledwall_speciali_v4', JSON.stringify(discovered));
-      } else {
-        const cached = JSON.parse(localStorage.getItem('br_ledwall_speciali_v4') || 'null');
-        if (cached) allSheets = cached;
+        localStorage.setItem('br_ledwall_speciali_v5', JSON.stringify(discovered));
       }
 
       btn.textContent = '↻';
@@ -891,22 +914,36 @@
       }
     }
 
-    function detectBestMode(rows) {
-      if (!rows || rows.length < 2) return 'table';
-      const headers = rows[0].map(h => h.toUpperCase());
-      const dataRows = rows.slice(1);
+    // Riconosce con precisione assoluta il tag in cella A1 ([NOTIZIE], [COLONNE], [BARRE], [TABELLA])
+    function detectBestMode(rows, sheetTitle = '') {
+      if (!rows || rows.length === 0) return 'table';
+      const a1 = (rows[0][0] || '').toUpperCase().trim();
+      const titleUp = sheetTitle.toUpperCase();
 
+      if (a1.includes('[NOTIZI') || titleUp.includes('NOTIZI')) return 'news';
+      if (a1.includes('[COLONN') || titleUp.includes('SPOGLI')) return 'vbars';
+      if (a1.includes('[BARR') || titleUp.includes('AFFLUENZ')) return 'hbars';
+      if (a1.includes('[TABELL') || titleUp.includes('TABELL') || titleUp.includes('COMUN')) return 'table';
+
+      if (rows.length < 2) return 'table';
+      const headers = rows[0].map(h => h.toUpperCase());
+      if (headers.some(h => h.includes('TITOL') || h.includes('OCCHIELL') || h.includes('DETTAGL'))) return 'news';
+
+      const dataRows = rows.slice(1);
       let numericCols = 0;
       for (let c = 1; c < rows[0].length; c++) {
         const nums = dataRows.map(r => parseNum(r[c])).filter(v => v !== null);
         if (nums.length >= Math.max(1, Math.floor(dataRows.length * 0.5))) numericCols++;
       }
 
-      if (headers.some(h => h.includes('TITOL') || h.includes('NOTIZ') || h.includes('FLASH') || h.includes('TESTO'))) return 'news';
       if (numericCols === 0) return 'news';
-      if (numericCols >= 1 && dataRows.length <= 8) return 'vbars';
-      if (numericCols >= 1) return 'hbars';
+      if (numericCols <= 2 && dataRows.length <= 6) return 'vbars';
+      if (numericCols <= 2) return 'hbars';
       return 'table';
+    }
+
+    function cleanHeaderLabel(h) {
+      return String(h || '').replace(/\[(NOTIZIE|COLONNE|BARRE|TABELLA)\]/gi, '').trim();
     }
 
     function renderSheetsGrid() {
@@ -914,7 +951,7 @@
         hubStatus.style.display = 'block';
         hubStatus.innerHTML = `
           <div style="font-weight:800; color:#b91c1c; margin-bottom:8px;">Connessione ai fogli non riuscita</div>
-          <div style="font-size:13px; color:#475569; margin-bottom:14px;">Premi il pulsante qui sotto per riprovare il caricamento.</div>
+          <div style="font-size:13px; color:#475569; margin-bottom:14px;">Premi il pulsante qui sotto per riprovare.</div>
           <button onclick="loadAllSheets()" style="background:#0b3d75; color:#fff; border:none; padding:9px 18px; border-radius:8px; font-weight:800; cursor:pointer;">Riprova adesso</button>
         `;
         sheetsGrid.style.display = 'none';
@@ -924,13 +961,13 @@
 
       hubStatus.style.display = 'none';
       sheetsGrid.style.display = 'grid';
-      hubMeta.textContent = `${allSheets.length} ${allSheets.length === 1 ? 'foglio trovato' : 'fogli trovati'}`;
+      hubMeta.textContent = `${allSheets.length} ${allSheets.length === 1 ? 'foglio pronto' : 'fogli pronti'}`;
 
       sheetsGrid.innerHTML = allSheets.map((sh, idx) => {
-        const mode = detectBestMode(sh.rows);
-        const badgeText = mode === 'vbars' ? 'Grafico a Colonne' : mode === 'hbars' ? 'Grafico a Barre' : mode === 'news' ? 'Schede Notizie' : 'Tabella Dati';
+        const mode = detectBestMode(sh.rows, sh.title);
+        const badgeText = mode === 'vbars' ? 'Grafico a Colonne' : mode === 'hbars' ? 'Grafico a Barre' : mode === 'news' ? 'Notizie Live' : 'Tabella Dati';
         const color = PALETTE[idx % PALETTE.length];
-        const previewCols = (sh.rows[0] || []).filter(Boolean).slice(0, 4).join(' • ');
+        const previewCols = (sh.rows[0] || []).map(cleanHeaderLabel).filter(Boolean).slice(0, 4).join(' • ');
         const countRows = Math.max(0, sh.rows.length - 1);
 
         return `
@@ -945,7 +982,7 @@
       sheetsGrid.querySelectorAll('.sheet-card').forEach(card => {
         card.addEventListener('click', () => {
           currentSheet = allSheets[parseInt(card.dataset.idx, 10)];
-          currentMode = detectBestMode(currentSheet.rows);
+          currentMode = detectBestMode(currentSheet.rows, currentSheet.title);
           updateModeButtons();
           openSheetViewer();
         });
@@ -1101,24 +1138,26 @@
         });
 
       } else if (currentMode === 'news') {
-        viewerTypeMeta.textContent = 'Tocca una scheda per ingrandirla in primo piano';
-        const headers = rows[0] || [];
+        viewerTypeMeta.textContent = 'Tocca una notizia per ingrandirla a schermo intero';
         const dataRows = rows.slice(1);
 
         viewerBody.innerHTML = `
           <div class="news-grid">
             ${dataRows.map(r => {
-              const nonEmpty = r.filter(Boolean);
-              const tag = nonEmpty.length > 2 ? nonEmpty[0] : (headers[0] || 'LIVE');
-              const title = nonEmpty.length > 2 ? nonEmpty[1] : (nonEmpty[0] || '');
-              const body = nonEmpty.length > 2 ? nonEmpty.slice(2).join(' — ') : (nonEmpty[1] || '');
-              const isUrgent = r.some(c => ['SI', 'URGENTE', 'LIVE', 'BREAKING'].includes(c.toUpperCase()));
+              const ora = r[0] || '';
+              const occhiello = r[1] || 'AGGIORNAMENTO';
+              const titolo = r[2] || r[1] || r[0] || '';
+              const dettaglio = r[3] || '';
+              const isUrgent = r.some(c => ['SI', 'URGENTE', 'LIVE', 'BREAKING'].includes(String(c).toUpperCase().trim()));
 
               return `
                 <div class="news-card ${isUrgent ? 'urgent' : ''}">
-                  <div class="news-tag">${tag}</div>
-                  <div class="news-title">${title}</div>
-                  ${body ? `<div class="news-body">${body}</div>` : ''}
+                  <div class="news-meta-line">
+                    ${ora ? `<span class="news-time">${ora}</span>` : ''}
+                    <span class="news-tag">${occhiello}</span>
+                  </div>
+                  <div class="news-title">${titolo}</div>
+                  ${dettaglio ? `<div class="news-body">${dettaglio}</div>` : ''}
                 </div>
               `;
             }).join('')}
@@ -1131,7 +1170,7 @@
 
       } else {
         viewerTypeMeta.textContent = 'Tocca una riga per evidenziarla';
-        const headers = rows[0] || [];
+        const headers = rows[0].map((h, i) => cleanHeaderLabel(h) || (i === 0 ? 'VOCE' : `COL ${i + 1}`));
         const bodyRows = rows.slice(1);
 
         viewerBody.innerHTML = `
