@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="br.it/ledwall" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>br.it/ledwall — Dirette Speciali</title>
+  <style>
+    :root {
+      --brand-blue: #0b3d75;
+      --brand-blue-dark: #072a52;
+      --studio-bg: #e7ebf0;
+      --studio-bg-light: #f5f7fa;
+      --live-red: #e52521;
+      --header-h: 44px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at 50% 25%, var(--studio-bg-light) 0%, var(--studio-bg) 75%, #d6dde6 100%);
+      color: #0f172a;
+    }
+
+    /* TOPBAR UNICA CON MENU INTEGRATO */
+    header.topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: calc(var(--header-h) + env(safe-area-inset-top));
+      padding-top: env(safe-area-inset-top);
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
+      background: linear-gradient(180deg, var(--brand-blue) 0%, var(--brand-blue-dark) 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 120;
+      box-shadow: 0 2px 10px rgba(7, 42, 82, 0.25);
+      gap: 10px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--live-red);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(229, 37, 33, 0.5);
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse 1.4s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.8); }
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      color: #fff;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .brand-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.25);
+      flex-shrink: 0;
+    }
+
+    .view-subtitle {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .topbar-right::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-pill {
+      height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.94);
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .nav-pill.active {
+      background: #fff;
+      color: var(--brand-blue);
+      border-color: #fff;
+    }
+
+    .btn-icon-only {
+      height: 26px;
+      padding: 0 7px;
+      border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    body.on-air-clean .nav-pill:not(.active),
+    body.on-air-clean .brand-divider {
+      display: none;
+    }
+
+    body.on-air-clean #btnToggleClean {
+      opacity: 0.35;
+      border-color: transparent;
+      background: transparent;
+    }
+
+    /* VISTA 1: ELENCO AUTOMATICO DI TUTTI I FOGLI DEL GOOGLE SHEET */
+    .sheets-hub {
+      position: fixed;
+      top: calc(var(--header-h) + env(safe-area-inset-top));
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 22px 26px max(22px, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+    }
+
+    .hub-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      border-bottom: 2px solid rgba(11, 61, 117, 0.14);
+      padding-bottom: 10px;
+      flex-shrink: 0;
+    }
+
+    .hub-header h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--brand-blue);
+      letter-spacing: -0.4px;
+    }
+
+    .hub-meta {
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+
+    .sheets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+      align-content: start;
+    }
+
+    .sheet-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 26px rgba(15, 28, 46, 0.1), 0 1px 3px rgba(15, 28, 46, 0.06);
+      border-left: 6px solid var(--brand-blue);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .sheet-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 34px rgba(11, 61, 117, 0.18);
+    }
+
+    .sheet-card:active {
+      transform: scale(0.98);
+    }
+
+    .sheet-badge {
+      align-self: flex-start;
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: var(--brand-blue);
+    }
+
+    .sheet-name {
+      font-size: 20px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+
+    .sheet-preview {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    /* VISTA 2: GRAFICA INTERATTIVA DEL FOGLIO APERTO */
+    .sheet-viewer {
+      position: fixed;
+      top: calc(var(--header-h) + env(safe-area-inset-top));
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 16px 22px 68px;
+      display: none;
+      flex-direction: column;
+      z-index: 100;
+      background: radial-gradient(circle at 50% 25%, var(--studio-bg-light) 0%, var(--studio-bg) 75%, #d6dde6 100%);
+    }
+
+    .sheet-viewer.active {
+      display: flex;
+    }
+
+    .viewer-card {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 16px;
+      padding: 20px 24px;
+      box-shadow: 0 14px 36px rgba(15, 28, 46, 0.12);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .draw-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+      z-index: 30;
+    }
+
+    body.draw-mode .draw-canvas {
+      pointer-events: auto;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .viewer-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .viewer-title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--brand-blue);
+      letter-spacing: -0.4px;
+    }
+
+    .viewer-body {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* LAYOUT AUTOMATICO 1: BARRE / PERCENTUALI */
+    .auto-bars-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+      flex: 1;
+    }
+
+    .abar-row {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .auto-bars-list.has-focus .abar-row:not(.focused) {
+      opacity: 0.25;
+    }
+
+    .abar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .abar-label {
+      font-size: 17px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .abar-sub {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .abar-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--brand-blue);
+    }
+
+    .abar-track {
+      width: 100%;
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .abar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* LAYOUT AUTOMATICO 2: SCHEDE NOTIZIE / FLASH LIVE */
+    .news-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+
+    .news-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 5px solid var(--brand-blue);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .news-box.highlight {
+      background: #fef2f2;
+      border-color: #fecaca;
+      border-left-color: var(--live-red);
+    }
+
+    .news-kicker {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--live-red);
+      letter-spacing: 0.6px;
+    }
+
+    .news-headline {
+      font-size: 17px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.25;
+    }
+
+    .news-detail {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #334155;
+      line-height: 1.4;
+    }
+
+    /* LAYOUT AUTOMATICO 3: TABELLA TELEVISIVA AD ALTA LEGGIBILITÀ */
+    .tv-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+
+    table.tv-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    table.tv-table th {
+      background: var(--brand-blue);
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px 14px;
+      white-space: nowrap;
+    }
+
+    table.tv-table td {
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    table.tv-table tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    table.tv-table tr.row-focused td {
+      background: #fef9c3;
+    }
+
+    /* DOCK IN BASSO NEL VIEWER */
+    .viewer-dock {
+      position: fixed;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(11, 61, 117, 0.96);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 10px 28px rgba(7, 42, 82, 0.35);
+      z-index: 110;
+      max-width: 96vw;
+      overflow-x: auto;
+    }
+
+    .dock-btn {
+      height: 30px;
+      padding: 0 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .dock-btn.primary-back {
+      background: #fff;
+      color: var(--brand-blue);
+      border-color: #fff;
+    }
+
+    .dock-btn.active-tool {
+      background: #ffeb3b;
+      color: #072a52;
+      border-color: #ffeb3b;
+    }
+
+    .dock-sep {
+      width: 1px;
+      height: 18px;
+      background: rgba(255, 255, 255, 0.22);
+      flex-shrink: 0;
+    }
+
+    .color-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .color-dot.selected {
+      transform: scale(1.2);
+      border-color: #fff;
+      box-shadow: 0 0 0 2px #0b3d75, 0 0 0 4px #fff;
+    }
+
+    .status-box {
+      margin: auto;
+      text-align: center;
+      background: #fff;
+      padding: 26px 32px;
+      border-radius: 14px;
+      box-shadow: 0 10px 28px rgba(11, 61, 117, 0.12);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA BLU UNICA CON MENU INTEGRATO -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+      <a href="index.html" class="brand-title">br.it/ledwall</a>
+      <span class="brand-divider"></span>
+      <span class="view-subtitle" id="headerSubtitle">Dirette Speciali</span>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" class="nav-pill">⌂ Regia</a>
+      <a href="prime-pagine.html" class="nav-pill">Prime Pagine</a>
+      <a href="speciali.html" class="nav-pill active">Speciali</a>
+      <a href="sondaggi.html" class="nav-pill">Sondaggi</a>
+      <button class="nav-pill" id="btnSyncNow" title="Rileggi tutti i fogli da Google">↻</button>
+      <button class="btn-icon-only" id="btnToggleClean" title="Nascondi controlli in onda">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- SCHERMATA 1: GRIGLIA AUTOMATICA DI TUTTI I FOGLI DEL DOCUMENTO -->
+  <main class="sheets-hub" id="sheetsHub">
+    <div class="hub-header">
+      <h1>Fogli Diretta Speciale</h1>
+      <span class="hub-meta" id="hubMeta">Caricamento schede...</span>
+    </div>
+    <div id="hubStatus" class="status-box">Lettura automatica di tutti i fogli da Google...</div>
+    <div class="sheets-grid" id="sheetsGrid" style="display:none;"></div>
+  </main>
+
+  <!-- SCHERMATA 2: GRAFICA INTERATTIVA DEL FOGLIO SELEZIONATO -->
+  <section class="sheet-viewer" id="sheetViewer">
+    <div class="viewer-card">
+      <canvas class="draw-canvas" id="drawCanvas"></canvas>
+      <div class="viewer-top">
+        <h2 class="viewer-title" id="viewerTitle">Titolo Foglio</h2>
+        <span class="hub-meta" id="viewerTypeMeta">Grafica Live</span>
+      </div>
+      <div class="viewer-body" id="viewerBody"></div>
+    </div>
+
+    <div class="viewer-dock">
+      <button class="dock-btn primary-back" id="btnBackToSheets">&#8592; Tutti i fogli</button>
+      <div class="dock-sep"></div>
+      <button class="dock-btn active-tool" id="btnModeAuto">Grafica</button>
+      <button class="dock-btn" id="btnModeTable">Tabella</button>
+      <div class="dock-sep"></div>
+      <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
+      <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.5)" style="background:#ffee00;"></span>
+      <span class="color-dot" data-color="rgba(0, 230, 118, 0.4)" style="background:#00e676;"></span>
+      <span class="color-dot" data-color="rgba(255, 82, 82, 0.4)" style="background:#ff5252;"></span>
+      <button class="dock-btn" id="btnClearMarks">Pulisci</button>
+    </div>
+  </section>
+
+  <script>
+    // IL TUO LINK GOOGLE FOGLI (legge in automatico TUTTE le schede presenti e quelle che aggiungerai)
+    const BASE_PUB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQhKtuszAe47ZCU8gtl39Ttyf1saf_0ls3ZMM4pnbvdHjCrLNULSgauI43UbunQp2eC_l3Qrpt2oNX/pub";
+    const PUBHTML_URL = BASE_PUB_URL + "html";
+    const FALLBACK_CSV_URL = BASE_PUB_URL + "?output=csv";
+
+    const BAR_PALETTE = ["#0b3d75", "#e11d48", "#16a34a", "#f59e0b", "#0284c7", "#7c3aed", "#ea580c"];
+
+    let allSheets = []; // [{ id, title, rows: [[...], ...] }]
+    let currentSheet = null;
+    let viewMode = 'auto'; // 'auto' | 'table'
+
+    const sheetsHub = document.getElementById('sheetsHub');
+    const hubStatus = document.getElementById('hubStatus');
+    const sheetsGrid = document.getElementById('sheetsGrid');
+    const hubMeta = document.getElementById('hubMeta');
+    const sheetViewer = document.getElementById('sheetViewer');
+    const viewerTitle = document.getElementById('viewerTitle');
+    const viewerTypeMeta = document.getElementById('viewerTypeMeta');
+    const viewerBody = document.getElementById('viewerBody');
+    const headerSubtitle = document.getElementById('headerSubtitle');
+
+    function parseNum(str) {
+      if (str === null || str === undefined) return null;
+      const s = String(str).trim().replace('%', '').replace(',', '.');
+      if (!s || s === '-') return null;
+      const n = parseFloat(s);
+      return isNaN(n) ? null : n;
+    }
+
+    function parseCSV(csvText) {
+      const lines = csvText.trim().split(/\r?\n/).filter(Boolean);
+      return lines.map(line => {
+        const res = [];
+        let cur = '', inQ = false;
+        for (let i = 0; i < line.length; i++) {
+          const c = line[i];
+          if (c === '"') inQ = !inQ;
+          else if (c === ',' && !inQ) { res.push(cur.trim()); cur = ''; }
+          else cur += c;
+        }
+        res.push(cur.trim());
+        return res;
+      });
+    }
+
+    // Estrae automaticamente TUTTI i fogli (tab) dalla versione pubhtml pubblicata da Google
+    function parsePubHtmlAllSheets(html) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const menuItems = Array.from(doc.querySelectorAll('#sheet-menu li'));
+      const sheets = [];
+
+      if (menuItems.length > 0) {
+        menuItems.forEach(li => {
+          const gid = (li.id || '').replace('sheet-button-', '');
+          const title = li.textContent.trim();
+          const container = document.getElementById ? doc.getElementById(gid) : doc.querySelector(`[id="${gid}"]`);
+          const table = container ? container.querySelector('table.waffle') : null;
+          if (!table) return;
+
+          const rows = [];
+          table.querySelectorAll('tbody tr').forEach(tr => {
+            const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
+            if (cells.some(c => c !== '')) rows.push(cells);
+          });
+
+          if (rows.length > 0) {
+            sheets.push({ id: gid, title, rows });
+          }
+        });
+      } else {
+        // Caso documento con un solo foglio senza barra menu
+        const table = doc.querySelector('table.waffle');
+        if (table) {
+          const rows = [];
+          table.querySelectorAll('tbody tr').forEach(tr => {
+            const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
+            if (cells.some(c => c !== '')) rows.push(cells);
+          });
+          if (rows.length > 0) {
+            sheets.push({ id: '0', title: 'Foglio Principale', rows });
+          }
+        }
+      }
+      return sheets;
+    }
+
+    async function fetchHtmlWithFallback(url) {
+      const bustUrl = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+      const attempts = [
+        bustUrl,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(bustUrl)}`,
+        `https://corsproxy.io/?${encodeURIComponent(bustUrl)}`
+      ];
+      for (const u of attempts) {
+        try {
+          const res = await fetch(u);
+          if (res.ok) {
+            const text = await res.text();
+            if (text && text.length > 50) return text;
+          }
+        } catch (e) {}
+      }
+      throw new Error('Impossibile leggere il documento');
+    }
+
+    async function loadAllSheets() {
+      const btn = document.getElementById('btnSyncNow');
+      btn.textContent = '…';
+      try {
+        const html = await fetchHtmlWithFallback(PUBHTML_URL);
+        let parsed = parsePubHtmlAllSheets(html);
+
+        if (!parsed.length) {
+          const csv = await fetchHtmlWithFallback(FALLBACK_CSV_URL);
+          const rows = parseCSV(csv);
+          if (rows.length) parsed = [{ id: '0', title: 'Foglio 1', rows }];
+        }
+
+        if (parsed.length) {
+          allSheets = parsed;
+          localStorage.setItem('br_ledwall_speciali_cache', JSON.stringify(parsed));
+        }
+      } catch (e) {
+        const cached = JSON.parse(localStorage.getItem('br_ledwall_speciali_cache') || 'null');
+        if (cached) allSheets = cached;
+      }
+
+      btn.textContent = '↻';
+      renderSheetsGrid();
+
+      // Se stavi già guardando un foglio aperto, aggiornalo subito in diretta!
+      if (currentSheet) {
+        const updated = allSheets.find(s => s.id === currentSheet.id || s.title === currentSheet.title);
+        if (updated) {
+          currentSheet = updated;
+          renderOpenSheet();
+        }
+      }
+    }
+
+    function detectSheetType(rows) {
+      if (rows.length < 2) return 'table';
+      const headers = rows[0].map(h => h.toUpperCase());
+      const dataRows = rows.slice(1);
+
+      // Conta quante righe hanno una colonna numerica (es. percentuali o voti)
+      let numericColIdx = -1;
+      for (let c = 1; c < rows[0].length; c++) {
+        const nums = dataRows.map(r => parseNum(r[c])).filter(v => v !== null);
+        if (nums.length >= Math.max(1, Math.floor(dataRows.length * 0.6))) {
+          numericColIdx = c;
+          break;
+        }
+      }
+
+      if (numericColIdx !== -1 && rows[0].length <= 4) return 'bars';
+      if (headers.some(h => h.includes('TITOLO') || h.includes('NOTIZ') || h.includes('FLASH') || h.includes('DETTAGL'))) return 'news';
+      if (numericColIdx === -1) return 'news';
+      return 'table';
+    }
+
+    function renderSheetsGrid() {
+      if (!allSheets.length) {
+        hubStatus.style.display = 'block';
+        hubStatus.textContent = 'Nessun foglio trovato. Verifica che il file Google Fogli sia pubblicato sul web.';
+        sheetsGrid.style.display = 'none';
+        return;
+      }
+
+      hubStatus.style.display = 'none';
+      sheetsGrid.style.display = 'grid';
+      hubMeta.textContent = `${allSheets.length} ${allSheets.length === 1 ? 'foglio attivo' : 'fogli attivi'}`;
+
+      sheetsGrid.innerHTML = allSheets.map((sh, idx) => {
+        const type = detectSheetType(sh.rows);
+        const typeLabel = type === 'bars' ? 'Grafico & Barre' : type === 'news' ? 'Schede Notizie' : 'Tabella Dati';
+        const previewCols = (sh.rows[0] || []).filter(Boolean).slice(0, 4).join(' • ');
+        const countRows = Math.max(0, sh.rows.length - 1);
+
+        return `
+          <div class="sheet-card" data-idx="${idx}">
+            <span class="sheet-badge">${typeLabel} &bull; ${countRows} righe</span>
+            <div class="sheet-name">${sh.title}</div>
+            <div class="sheet-preview">${previewCols || 'Tocca per aprire la grafica'}</div>
+          </div>
+        `;
+      }).join('');
+
+      sheetsGrid.querySelectorAll('.sheet-card').forEach(card => {
+        card.addEventListener('click', () => {
+          currentSheet = allSheets[parseInt(card.dataset.idx, 10)];
+          viewMode = 'auto';
+          openSheetViewer();
+        });
+      });
+    }
+
+    function openSheetViewer() {
+      if (!currentSheet) return;
+      headerSubtitle.textContent = currentSheet.title;
+      sheetViewer.classList.add('active');
+      requestAnimationFrame(syncCanvasSize);
+      renderOpenSheet();
+    }
+
+    function closeSheetViewer() {
+      currentSheet = null;
+      sheetViewer.classList.remove('active');
+      headerSubtitle.textContent = 'Dirette Speciali';
+      clearCanvas();
+    }
+
+    document.getElementById('btnBackToSheets').addEventListener('click', closeSheetViewer);
+
+    document.getElementById('btnModeAuto').addEventListener('click', () => {
+      viewMode = 'auto';
+      document.getElementById('btnModeAuto').classList.add('active-tool');
+      document.getElementById('btnModeTable').classList.remove('active-tool');
+      renderOpenSheet();
+    });
+
+    document.getElementById('btnModeTable').addEventListener('click', () => {
+      viewMode = 'table';
+      document.getElementById('btnModeTable').classList.add('active-tool');
+      document.getElementById('btnModeAuto').classList.remove('active-tool');
+      renderOpenSheet();
+    });
+
+    function renderOpenSheet() {
+      if (!currentSheet) return;
+      viewerTitle.textContent = currentSheet.title;
+      const rows = currentSheet.rows;
+      const detected = viewMode === 'table' ? 'table' : detectSheetType(rows);
+
+      if (detected === 'bars') {
+        viewerTypeMeta.textContent = 'Tocca una barra per evidenziarla';
+        renderBarsLayout(rows);
+      } else if (detected === 'news') {
+        viewerTypeMeta.textContent = 'Schede Notizie Live';
+        renderNewsLayout(rows);
+      } else {
+        viewerTypeMeta.textContent = 'Tocca una riga per evidenziarla';
+        renderTableLayout(rows);
+      }
+    }
+
+    function renderBarsLayout(rows) {
+      const headers = rows[0] || [];
+      const dataRows = rows.slice(1);
+
+      // Trova prima colonna numerica
+      let numCol = 1;
+      for (let c = 1; c < headers.length; c++) {
+        if (dataRows.some(r => parseNum(r[c]) !== null)) { numCol = c; break; }
+      }
+      // Eventuale seconda colonna numerica (es. confronto precedente)
+      let prevCol = -1;
+      for (let c = numCol + 1; c < headers.length; c++) {
+        if (dataRows.some(r => parseNum(r[c]) !== null)) { prevCol = c; break; }
+      }
+
+      const items = dataRows.map((r, i) => {
+        const label = r[0] || `Voce ${i + 1}`;
+        const sub = numCol > 1 ? (r[1] || '') : '';
+        const rawVal = r[numCol] || '0';
+        const val = parseNum(rawVal) ?? 0;
+        const prevVal = prevCol >= 0 ? parseNum(r[prevCol]) : null;
+        const customColor = r.find(cell => /^#[0-9A-Fa-f]{6}$/.test(cell));
+        return { label, sub, rawVal, val, prevVal, color: customColor || BAR_PALETTE[i % BAR_PALETTE.length] };
+      });
+
+      const maxVal = Math.max(...items.map(it => it.val), 1);
+
+      viewerBody.innerHTML = `
+        <div class="auto-bars-list" id="autoBarsList">
+          ${items.map(it => {
+            const pctW = Math.min(100, Math.max(3, Math.round((it.val / maxVal) * 100)));
+            let diffHtml = '';
+            if (it.prevVal !== null) {
+              const diff = +(it.val - it.prevVal).toFixed(2);
+              const color = diff > 0 ? '#15803d' : diff < 0 ? '#b91c1c' : '#64748b';
+              const sign = diff > 0 ? '+' : '';
+              diffHtml = `<span style="font-size:13px; font-weight:800; color:${color}; margin-right:10px;">(${sign}${String(diff).replace('.', ',')} vs prec.)</span>`;
+            }
+            return `
+              <div class="abar-row">
+                <div class="abar-top">
+                  <div>
+                    <div class="abar-label">${it.label}</div>
+                    ${it.sub ? `<div class="abar-sub">${it.sub}</div>` : ''}
+                  </div>
+                  <div>${diffHtml}<span class="abar-val" style="color:${it.color};">${it.rawVal}</span></div>
+                </div>
+                <div class="abar-track">
+                  <div class="abar-fill" style="width:${pctW}%; background:${it.color};"></div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      const list = document.getElementById('autoBarsList');
+      list.querySelectorAll('.abar-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const was = row.classList.contains('focused');
+          list.querySelectorAll('.abar-row').forEach(r => r.classList.remove('focused'));
+          if (!was) { row.classList.add('focused'); list.classList.add('has-focus'); }
+          else list.classList.remove('has-focus');
+        });
+      });
+    }
+
+    function renderNewsLayout(rows) {
+      const headers = rows[0] || [];
+      const dataRows = rows.slice(1);
+
+      viewerBody.innerHTML = `
+        <div class="news-cards-grid">
+          ${dataRows.map(r => {
+            const nonEmpty = r.filter(Boolean);
+            const kicker = nonEmpty.length > 2 ? nonEmpty[0] : (headers[0] || 'AGGIORNAMENTO');
+            const title = nonEmpty.length > 2 ? nonEmpty[1] : (nonEmpty[0] || '');
+            const detail = nonEmpty.length > 2 ? nonEmpty.slice(2).join(' — ') : (nonEmpty[1] || '');
+            const isHighlight = r.some(c => c.toUpperCase() === 'SI' || c.toUpperCase() === 'URGENTE' || c.toUpperCase() === 'LIVE');
+
+            return `
+              <div class="news-box ${isHighlight ? 'highlight' : ''}">
+                <div class="news-kicker">${kicker}</div>
+                <div class="news-headline">${title}</div>
+                ${detail ? `<div class="news-detail">${detail}</div>` : ''}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function renderTableLayout(rows) {
+      const headers = rows[0] || [];
+      const bodyRows = rows.slice(1);
+
+      viewerBody.innerHTML = `
+        <div class="tv-table-wrap">
+          <table class="tv-table">
+            <thead>
+              <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+            </thead>
+            <tbody>
+              ${bodyRows.map(r => `
+                <tr>${headers.map((_, idx) => `<td>${r[idx] || ''}</td>`).join('')}</tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      viewerBody.querySelectorAll('tbody tr').forEach(tr => {
+        tr.addEventListener('click', () => tr.classList.toggle('row-focused'));
+      });
+    }
+
+    // EVIDENZIATORE TOUCH SUL VIEWER
+    const drawCanvas = document.getElementById('drawCanvas');
+    const ctx = drawCanvas.getContext('2d');
+    const btnDrawToggle = document.getElementById('btnDrawToggle');
+    let isDrawMode = false;
+    let currentColor = 'rgba(255, 238, 0, 0.5)';
+    let drawing = false;
+    let lastPt = null;
+
+    function syncCanvasSize() {
+      const parent = drawCanvas.parentElement;
+      if (parent && parent.clientWidth > 0) {
+        drawCanvas.width = parent.clientWidth;
+        drawCanvas.height = parent.clientHeight;
+      }
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+    }
+
+    drawCanvas.addEventListener('pointerdown', (e) => {
+      if (!isDrawMode) return;
+      drawing = true;
+      drawCanvas.setPointerCapture(e.pointerId);
+      const rect = drawCanvas.getBoundingClientRect();
+      lastPt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      ctx.strokeStyle = currentColor;
+      ctx.lineWidth = 22;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(lastPt.x, lastPt.y);
+      ctx.lineTo(lastPt.x + 0.1, lastPt.y);
+      ctx.stroke();
+    });
+
+    drawCanvas.addEventListener('pointermove', (e) => {
+      if (!drawing || !isDrawMode || !lastPt) return;
+      const rect = drawCanvas.getBoundingClientRect();
+      const pt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      ctx.beginPath();
+      ctx.moveTo(lastPt.x, lastPt.y);
+      ctx.lineTo(pt.x, pt.y);
+      ctx.stroke();
+      lastPt = pt;
+    });
+
+    drawCanvas.addEventListener('pointerup', () => { drawing = false; lastPt = null; });
+    drawCanvas.addEventListener('pointercancel', () => { drawing = false; lastPt = null; });
+
+    btnDrawToggle.addEventListener('click', () => {
+      isDrawMode = !isDrawMode;
+      btnDrawToggle.classList.toggle('active-tool', isDrawMode);
+      document.body.classList.toggle('draw-mode', isDrawMode);
+    });
+
+    document.querySelectorAll('.color-dot').forEach(dot => {
+      dot.addEventListener('click', () => {
+        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+        dot.classList.add('selected');
+        currentColor = dot.dataset.color;
+        if (!isDrawMode) btnDrawToggle.click();
+      });
+    });
+
+    document.getElementById('btnClearMarks').addEventListener('click', clearCanvas);
+    document.getElementById('btnSyncNow').addEventListener('click', loadAllSheets);
+    document.getElementById('btnToggleClean').addEventListener('click', () => document.body.classList.toggle('on-air-clean'));
+    window.addEventListener('resize', syncCanvasSize);
+
+    loadAllSheets();
+  </script>
+</body>
+</html>
