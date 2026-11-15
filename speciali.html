@@ -174,14 +174,14 @@
       background: transparent;
     }
 
-    /* VISTA 1: ELENCO AUTOMATICO DI TUTTI I FOGLI DEL GOOGLE SHEET */
+    /* HUB DI TUTTI I FOGLI DEL DOCUMENTO */
     .sheets-hub {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
       left: 0;
       right: 0;
       bottom: 0;
-      padding: 22px 26px max(22px, env(safe-area-inset-bottom));
+      padding: 22px 26px max(24px, env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
       gap: 18px;
@@ -199,10 +199,10 @@
 
     .hub-header h1 {
       margin: 0;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 900;
       color: var(--brand-blue);
-      letter-spacing: -0.4px;
+      letter-spacing: -0.5px;
     }
 
     .hub-meta {
@@ -210,32 +210,34 @@
       font-weight: 700;
       color: #64748b;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .sheets-grid {
+      flex: 1;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 18px;
-      align-content: start;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 20px;
+      align-content: stretch;
     }
 
     .sheet-card {
       background: #fff;
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 10px 26px rgba(15, 28, 46, 0.1), 0 1px 3px rgba(15, 28, 46, 0.06);
-      border-left: 6px solid var(--brand-blue);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(15, 28, 46, 0.1), 0 2px 5px rgba(15, 28, 46, 0.06);
+      border-top: 6px solid var(--card-accent, #0b3d75);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
       cursor: pointer;
       transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
 
     .sheet-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 16px 34px rgba(11, 61, 117, 0.18);
+      transform: translateY(-4px);
+      box-shadow: 0 18px 38px rgba(11, 61, 117, 0.18);
     }
 
     .sheet-card:active {
@@ -244,31 +246,34 @@
 
     .sheet-badge {
       align-self: flex-start;
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.7px;
-      padding: 3px 9px;
+      letter-spacing: 0.8px;
+      padding: 4px 10px;
       border-radius: 999px;
       background: #eff6ff;
-      color: var(--brand-blue);
+      color: var(--card-accent, #0b3d75);
     }
 
     .sheet-name {
-      font-size: 20px;
+      font-size: 23px;
       font-weight: 900;
       color: #0f172a;
       line-height: 1.2;
+      letter-spacing: -0.4px;
     }
 
     .sheet-preview {
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 600;
       color: #64748b;
       line-height: 1.4;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 10px;
     }
 
-    /* VISTA 2: GRAFICA INTERATTIVA DEL FOGLIO APERTO */
+    /* VIEWER DATAWALL IN STILE SKY TG24 */
     .sheet-viewer {
       position: fixed;
       top: calc(var(--header-h) + env(safe-area-inset-top));
@@ -339,127 +344,206 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
     }
 
-    /* LAYOUT AUTOMATICO 1: BARRE / PERCENTUALI */
-    .auto-bars-list {
+    /* GRAFICA 1: BARRE VERTICALI TV (COME SONDAGGI.HTML) */
+    .vbars-stage {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      gap: 14px;
+      padding: 24px 10px 6px;
+      min-height: 0;
+    }
+
+    .vbar-col {
+      flex: 1;
+      max-width: 130px;
+      height: 100%;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      justify-content: center;
-      flex: 1;
+      align-items: center;
+      justify-content: flex-end;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
-    .abar-row {
+    .vbars-stage.has-focus .vbar-col:not(.focused) {
+      opacity: 0.22;
+    }
+
+    .vbar-col.focused {
+      transform: scale(1.04);
+    }
+
+    .vbar-diff {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      white-space: nowrap;
+    }
+
+    .vbar-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .vbar-fill {
+      width: 68%;
+      max-width: 72px;
+      border-radius: 8px 8px 2px 2px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
+      transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      min-height: 8px;
+    }
+
+    .vbar-label {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 900;
+      color: #1e293b;
+      text-align: center;
+      line-height: 1.2;
+      max-width: 100%;
+      word-break: break-word;
+    }
+
+    .vbar-sub {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    /* GRAFICA 2: BARRE ORIZZONTALI TV */
+    .hbars-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .hbar-row {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 12px;
       padding: 12px 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
       cursor: pointer;
-      transition: opacity 0.2s, transform 0.2s;
+      transition: opacity 0.2s;
     }
 
-    .auto-bars-list.has-focus .abar-row:not(.focused) {
-      opacity: 0.25;
+    .hbars-list.has-focus .hbar-row:not(.focused) {
+      opacity: 0.24;
     }
 
-    .abar-top {
+    .hbar-top {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
       gap: 12px;
     }
 
-    .abar-label {
-      font-size: 17px;
-      font-weight: 900;
-      color: #0f172a;
-    }
-
-    .abar-sub {
-      font-size: 12.5px;
-      font-weight: 600;
-      color: #64748b;
-    }
-
-    .abar-val {
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--brand-blue);
-    }
-
-    .abar-track {
+    .hbar-track {
       width: 100%;
-      height: 16px;
+      height: 18px;
       background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
     }
 
-    .abar-fill {
+    .hbar-fill {
       height: 100%;
       border-radius: 999px;
-      transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* LAYOUT AUTOMATICO 2: SCHEDE NOTIZIE / FLASH LIVE */
-    .news-cards-grid {
+    /* GRAFICA 3: BREAKING NEWS / SCHEDE IN ONDA */
+    .news-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 16px;
+      align-content: start;
     }
 
-    .news-box {
+    .news-card {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-left: 5px solid var(--brand-blue);
+      border-left: 6px solid var(--brand-blue);
       border-radius: 12px;
-      padding: 14px 16px;
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       cursor: pointer;
-      transition: transform 0.15s ease;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
     }
 
-    .news-box.highlight {
+    .news-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(15, 28, 46, 0.08);
+    }
+
+    .news-card.urgent {
       background: #fef2f2;
       border-color: #fecaca;
       border-left-color: var(--live-red);
     }
 
-    .news-kicker {
+    .news-card.expanded {
+      grid-column: 1 / -1;
+      background: #fff;
+      border: 2px solid var(--brand-blue);
+      border-left: 8px solid var(--live-red);
+      box-shadow: 0 14px 34px rgba(11, 61, 117, 0.16);
+    }
+
+    .news-card.expanded .news-title {
+      font-size: 24px;
+    }
+
+    .news-card.expanded .news-body {
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+    .news-tag {
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
+      letter-spacing: 0.7px;
       color: var(--live-red);
-      letter-spacing: 0.6px;
     }
 
-    .news-headline {
-      font-size: 17px;
+    .news-title {
+      font-size: 18px;
       font-weight: 900;
       color: #0f172a;
       line-height: 1.25;
     }
 
-    .news-detail {
-      font-size: 13.5px;
+    .news-body {
+      font-size: 14px;
       font-weight: 500;
       color: #334155;
       line-height: 1.4;
     }
 
-    /* LAYOUT AUTOMATICO 3: TABELLA TELEVISIVA AD ALTA LEGGIBILITÀ */
+    /* GRAFICA 4: TABELLA BROADCAST */
     .tv-table-wrap {
       width: 100%;
       overflow-x: auto;
-      border-radius: 10px;
-      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
     }
 
     table.tv-table {
@@ -471,17 +555,17 @@
     table.tv-table th {
       background: var(--brand-blue);
       color: #fff;
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      padding: 12px 14px;
+      padding: 13px 16px;
       white-space: nowrap;
     }
 
     table.tv-table td {
-      padding: 12px 14px;
-      font-size: 15px;
+      padding: 13px 16px;
+      font-size: 16px;
       font-weight: 700;
       color: #0f172a;
       border-bottom: 1px solid #e2e8f0;
@@ -492,10 +576,10 @@
     }
 
     table.tv-table tr.row-focused td {
-      background: #fef9c3;
+      background: #fef08a;
     }
 
-    /* DOCK IN BASSO NEL VIEWER */
+    /* DOCK IN BASSO */
     .viewer-dock {
       position: fixed;
       bottom: max(12px, env(safe-area-inset-bottom));
@@ -507,21 +591,21 @@
       border-radius: 999px;
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
       box-shadow: 0 10px 28px rgba(7, 42, 82, 0.35);
       z-index: 110;
-      max-width: 96vw;
+      max-width: 97vw;
       overflow-x: auto;
     }
 
     .dock-btn {
       height: 30px;
-      padding: 0 11px;
+      padding: 0 10px;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.22);
       background: rgba(255, 255, 255, 0.12);
       color: #fff;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
@@ -584,8 +668,8 @@
     <div class="topbar-right">
       <a href="index.html" class="nav-pill">⌂ Regia</a>
       <a href="prime-pagine.html" class="nav-pill">Prime Pagine</a>
-      <a href="speciali.html" class="nav-pill active">Speciali</a>
       <a href="sondaggi.html" class="nav-pill">Sondaggi</a>
+      <a href="speciali.html" class="nav-pill active">Speciali</a>
       <button class="nav-pill" id="btnSyncNow" title="Rileggi tutti i fogli da Google">↻</button>
       <button class="btn-icon-only" id="btnToggleClean" title="Nascondi controlli in onda">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -593,23 +677,23 @@
     </div>
   </header>
 
-  <!-- SCHERMATA 1: GRIGLIA AUTOMATICA DI TUTTI I FOGLI DEL DOCUMENTO -->
+  <!-- SCHERMATA 1: TUTTI I FOGLI DEL GOOGLE SHEET -->
   <main class="sheets-hub" id="sheetsHub">
     <div class="hub-header">
       <h1>Fogli Diretta Speciale</h1>
-      <span class="hub-meta" id="hubMeta">Caricamento schede...</span>
+      <span class="hub-meta" id="hubMeta">Sincronizzazione...</span>
     </div>
     <div id="hubStatus" class="status-box">Lettura automatica di tutti i fogli da Google...</div>
     <div class="sheets-grid" id="sheetsGrid" style="display:none;"></div>
   </main>
 
-  <!-- SCHERMATA 2: GRAFICA INTERATTIVA DEL FOGLIO SELEZIONATO -->
+  <!-- SCHERMATA 2: GRAFICA INTERATTIVA DEL FOGLIO -->
   <section class="sheet-viewer" id="sheetViewer">
     <div class="viewer-card">
       <canvas class="draw-canvas" id="drawCanvas"></canvas>
       <div class="viewer-top">
         <h2 class="viewer-title" id="viewerTitle">Titolo Foglio</h2>
-        <span class="hub-meta" id="viewerTypeMeta">Grafica Live</span>
+        <span class="hub-meta" id="viewerTypeMeta">Tocca un elemento per metterlo in evidenza</span>
       </div>
       <div class="viewer-body" id="viewerBody"></div>
     </div>
@@ -617,8 +701,10 @@
     <div class="viewer-dock">
       <button class="dock-btn primary-back" id="btnBackToSheets">&#8592; Tutti i fogli</button>
       <div class="dock-sep"></div>
-      <button class="dock-btn active-tool" id="btnModeAuto">Grafica</button>
-      <button class="dock-btn" id="btnModeTable">Tabella</button>
+      <button class="dock-btn mode-btn active-tool" data-mode="vbars">Colonne</button>
+      <button class="dock-btn mode-btn" data-mode="hbars">Barre</button>
+      <button class="dock-btn mode-btn" data-mode="news">Schede</button>
+      <button class="dock-btn mode-btn" data-mode="table">Tabella</button>
       <div class="dock-sep"></div>
       <button class="dock-btn" id="btnDrawToggle">Evidenzia</button>
       <span class="color-dot selected" data-color="rgba(255, 238, 0, 0.5)" style="background:#ffee00;"></span>
@@ -629,16 +715,14 @@
   </section>
 
   <script>
-    // IL TUO LINK GOOGLE FOGLI (legge in automatico TUTTE le schede presenti e quelle che aggiungerai)
     const BASE_PUB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQhKtuszAe47ZCU8gtl39Ttyf1saf_0ls3ZMM4pnbvdHjCrLNULSgauI43UbunQp2eC_l3Qrpt2oNX/pub";
     const PUBHTML_URL = BASE_PUB_URL + "html";
-    const FALLBACK_CSV_URL = BASE_PUB_URL + "?output=csv";
 
-    const BAR_PALETTE = ["#0b3d75", "#e11d48", "#16a34a", "#f59e0b", "#0284c7", "#7c3aed", "#ea580c"];
+    const PALETTE = ["#0b3d75", "#e11d48", "#16a34a", "#f59e0b", "#0284c7", "#7c3aed", "#ea580c", "#0f766e"];
 
-    let allSheets = []; // [{ id, title, rows: [[...], ...] }]
+    let allSheets = [];
     let currentSheet = null;
-    let viewMode = 'auto'; // 'auto' | 'table'
+    let currentMode = 'vbars';
 
     const sheetsHub = document.getElementById('sheetsHub');
     const hubStatus = document.getElementById('hubStatus');
@@ -652,66 +736,61 @@
 
     function parseNum(str) {
       if (str === null || str === undefined) return null;
-      const s = String(str).trim().replace('%', '').replace(',', '.');
+      const s = String(str).trim().replace('%', '').replace(/\s+/g, '').replace(',', '.');
       if (!s || s === '-') return null;
       const n = parseFloat(s);
       return isNaN(n) ? null : n;
     }
 
-    function parseCSV(csvText) {
-      const lines = csvText.trim().split(/\r?\n/).filter(Boolean);
-      return lines.map(line => {
-        const res = [];
-        let cur = '', inQ = false;
-        for (let i = 0; i < line.length; i++) {
-          const c = line[i];
-          if (c === '"') inQ = !inQ;
-          else if (c === ',' && !inQ) { res.push(cur.trim()); cur = ''; }
-          else cur += c;
-        }
-        res.push(cur.trim());
-        return res;
+    function extractTableRows(tableEl) {
+      const rows = [];
+      tableEl.querySelectorAll('tbody tr').forEach(tr => {
+        // Esclude intestazioni riga di sistema (A, B, C / 1, 2, 3) se presenti
+        const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
+        // Rimuove eventuali colonne vuote in coda
+        while (cells.length > 0 && cells[cells.length - 1] === '') cells.pop();
+        if (cells.some(c => c !== '')) rows.push(cells);
       });
+      return rows;
     }
 
-    // Estrae automaticamente TUTTI i fogli (tab) dalla versione pubhtml pubblicata da Google
+    // Estrae TUTTI i fogli presenti nel documento Google (senza saltarne nessuno)
     function parsePubHtmlAllSheets(html) {
       const doc = new DOMParser().parseFromString(html, 'text/html');
-      const menuItems = Array.from(doc.querySelectorAll('#sheet-menu li'));
       const sheets = [];
+      const usedIds = new Set();
 
-      if (menuItems.length > 0) {
-        menuItems.forEach(li => {
-          const gid = (li.id || '').replace('sheet-button-', '');
-          const title = li.textContent.trim();
-          const container = document.getElementById ? doc.getElementById(gid) : doc.querySelector(`[id="${gid}"]`);
-          const table = container ? container.querySelector('table.waffle') : null;
-          if (!table) return;
-
-          const rows = [];
-          table.querySelectorAll('tbody tr').forEach(tr => {
-            const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
-            if (cells.some(c => c !== '')) rows.push(cells);
-          });
-
-          if (rows.length > 0) {
-            sheets.push({ id: gid, title, rows });
-          }
-        });
-      } else {
-        // Caso documento con un solo foglio senza barra menu
-        const table = doc.querySelector('table.waffle');
-        if (table) {
-          const rows = [];
-          table.querySelectorAll('tbody tr').forEach(tr => {
-            const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
-            if (cells.some(c => c !== '')) rows.push(cells);
-          });
-          if (rows.length > 0) {
-            sheets.push({ id: '0', title: 'Foglio Principale', rows });
-          }
+      // 1. Legge tutti i pulsanti del menu fogli di Google (#sheet-menu li)
+      const menuItems = Array.from(doc.querySelectorAll('#sheet-menu li'));
+      menuItems.forEach((li, idx) => {
+        const gid = (li.id || '').replace('sheet-button-', '').trim();
+        const title = li.textContent.trim() || `Foglio ${idx + 1}`;
+        let container = gid ? doc.querySelector(`[id="${gid}"]`) : null;
+        if (!container) {
+          const allDivs = Array.from(doc.querySelectorAll('#sheets-viewport > div'));
+          container = allDivs[idx] || null;
         }
-      }
+        const table = container ? container.querySelector('table.waffle') : null;
+        if (table) {
+          const rows = extractTableRows(table);
+          sheets.push({ id: gid || String(idx), title, rows });
+          if (gid) usedIds.add(gid);
+        }
+      });
+
+      // 2. Recupera eventuali altri fogli/tabelle presenti nel viewport non catturati sopra
+      const allTables = Array.from(doc.querySelectorAll('table.waffle'));
+      allTables.forEach((table, idx) => {
+        const parentDiv = table.closest('[id]');
+        const pid = parentDiv ? parentDiv.id : `extra-${idx}`;
+        if (usedIds.has(pid)) return;
+        const rows = extractTableRows(table);
+        if (rows.length > 0) {
+          sheets.push({ id: pid, title: `Foglio ${sheets.length + 1}`, rows });
+          usedIds.add(pid);
+        }
+      });
+
       return sheets;
     }
 
@@ -727,11 +806,11 @@
           const res = await fetch(u);
           if (res.ok) {
             const text = await res.text();
-            if (text && text.length > 50) return text;
+            if (text && text.includes('waffle')) return text;
           }
         } catch (e) {}
       }
-      throw new Error('Impossibile leggere il documento');
+      throw new Error('Impossibile leggere i fogli');
     }
 
     async function loadAllSheets() {
@@ -739,27 +818,19 @@
       btn.textContent = '…';
       try {
         const html = await fetchHtmlWithFallback(PUBHTML_URL);
-        let parsed = parsePubHtmlAllSheets(html);
-
-        if (!parsed.length) {
-          const csv = await fetchHtmlWithFallback(FALLBACK_CSV_URL);
-          const rows = parseCSV(csv);
-          if (rows.length) parsed = [{ id: '0', title: 'Foglio 1', rows }];
-        }
-
+        const parsed = parsePubHtmlAllSheets(html);
         if (parsed.length) {
           allSheets = parsed;
-          localStorage.setItem('br_ledwall_speciali_cache', JSON.stringify(parsed));
+          localStorage.setItem('br_ledwall_speciali_v2', JSON.stringify(parsed));
         }
       } catch (e) {
-        const cached = JSON.parse(localStorage.getItem('br_ledwall_speciali_cache') || 'null');
+        const cached = JSON.parse(localStorage.getItem('br_ledwall_speciali_v2') || 'null');
         if (cached) allSheets = cached;
       }
 
       btn.textContent = '↻';
       renderSheetsGrid();
 
-      // Se stavi già guardando un foglio aperto, aggiornalo subito in diretta!
       if (currentSheet) {
         const updated = allSheets.find(s => s.id === currentSheet.id || s.title === currentSheet.title);
         if (updated) {
@@ -769,50 +840,51 @@
       }
     }
 
-    function detectSheetType(rows) {
-      if (rows.length < 2) return 'table';
+    function detectBestMode(rows) {
+      if (!rows || rows.length < 2) return 'table';
       const headers = rows[0].map(h => h.toUpperCase());
       const dataRows = rows.slice(1);
 
-      // Conta quante righe hanno una colonna numerica (es. percentuali o voti)
-      let numericColIdx = -1;
+      let numericCols = 0;
       for (let c = 1; c < rows[0].length; c++) {
         const nums = dataRows.map(r => parseNum(r[c])).filter(v => v !== null);
-        if (nums.length >= Math.max(1, Math.floor(dataRows.length * 0.6))) {
-          numericColIdx = c;
-          break;
-        }
+        if (nums.length >= Math.max(1, Math.floor(dataRows.length * 0.5))) numericCols++;
       }
 
-      if (numericColIdx !== -1 && rows[0].length <= 4) return 'bars';
-      if (headers.some(h => h.includes('TITOLO') || h.includes('NOTIZ') || h.includes('FLASH') || h.includes('DETTAGL'))) return 'news';
-      if (numericColIdx === -1) return 'news';
+      if (headers.some(h => h.includes('TITOL') || h.includes('NOTIZ') || h.includes('FLASH') || h.includes('TESTO'))) return 'news';
+      if (numericCols === 0) return 'news';
+      if (numericCols >= 1 && dataRows.length <= 8) return 'vbars';
+      if (numericCols >= 1) return 'hbars';
       return 'table';
     }
 
     function renderSheetsGrid() {
       if (!allSheets.length) {
         hubStatus.style.display = 'block';
-        hubStatus.textContent = 'Nessun foglio trovato. Verifica che il file Google Fogli sia pubblicato sul web.';
+        hubStatus.innerHTML = `
+          <div style="font-weight:800; color:#b91c1c; margin-bottom:6px;">Nessun foglio rilevato</div>
+          <div style="font-size:13px; color:#475569;">Assicurati che su Google Fogli in <b>File &rarr; Condividi &rarr; Pubblica sul web</b> sia selezionato <b>Intero documento</b>.</div>
+        `;
         sheetsGrid.style.display = 'none';
         return;
       }
 
       hubStatus.style.display = 'none';
       sheetsGrid.style.display = 'grid';
-      hubMeta.textContent = `${allSheets.length} ${allSheets.length === 1 ? 'foglio attivo' : 'fogli attivi'}`;
+      hubMeta.textContent = `${allSheets.length} ${allSheets.length === 1 ? 'foglio trovato' : 'fogli trovati'}`;
 
       sheetsGrid.innerHTML = allSheets.map((sh, idx) => {
-        const type = detectSheetType(sh.rows);
-        const typeLabel = type === 'bars' ? 'Grafico & Barre' : type === 'news' ? 'Schede Notizie' : 'Tabella Dati';
+        const mode = detectBestMode(sh.rows);
+        const badgeText = mode === 'vbars' ? 'Grafico a Colonne' : mode === 'hbars' ? 'Grafico a Barre' : mode === 'news' ? 'Schede Notizie' : 'Tabella Dati';
+        const color = PALETTE[idx % PALETTE.length];
         const previewCols = (sh.rows[0] || []).filter(Boolean).slice(0, 4).join(' • ');
         const countRows = Math.max(0, sh.rows.length - 1);
 
         return `
-          <div class="sheet-card" data-idx="${idx}">
-            <span class="sheet-badge">${typeLabel} &bull; ${countRows} righe</span>
+          <div class="sheet-card" data-idx="${idx}" style="--card-accent:${color};">
+            <span class="sheet-badge" style="color:${color};">${badgeText} &bull; ${countRows} voci</span>
             <div class="sheet-name">${sh.title}</div>
-            <div class="sheet-preview">${previewCols || 'Tocca per aprire la grafica'}</div>
+            <div class="sheet-preview">${previewCols || 'Foglio vuoto — tocca per aprire'}</div>
           </div>
         `;
       }).join('');
@@ -820,11 +892,26 @@
       sheetsGrid.querySelectorAll('.sheet-card').forEach(card => {
         card.addEventListener('click', () => {
           currentSheet = allSheets[parseInt(card.dataset.idx, 10)];
-          viewMode = 'auto';
+          currentMode = detectBestMode(currentSheet.rows);
+          updateModeButtons();
           openSheetViewer();
         });
       });
     }
+
+    function updateModeButtons() {
+      document.querySelectorAll('.mode-btn').forEach(b => {
+        b.classList.toggle('active-tool', b.dataset.mode === currentMode);
+      });
+    }
+
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentMode = btn.dataset.mode;
+        updateModeButtons();
+        renderOpenSheet();
+      });
+    });
 
     function openSheetViewer() {
       if (!currentSheet) return;
@@ -843,155 +930,179 @@
 
     document.getElementById('btnBackToSheets').addEventListener('click', closeSheetViewer);
 
-    document.getElementById('btnModeAuto').addEventListener('click', () => {
-      viewMode = 'auto';
-      document.getElementById('btnModeAuto').classList.add('active-tool');
-      document.getElementById('btnModeTable').classList.remove('active-tool');
-      renderOpenSheet();
-    });
-
-    document.getElementById('btnModeTable').addEventListener('click', () => {
-      viewMode = 'table';
-      document.getElementById('btnModeTable').classList.add('active-tool');
-      document.getElementById('btnModeAuto').classList.remove('active-tool');
-      renderOpenSheet();
-    });
-
-    function renderOpenSheet() {
-      if (!currentSheet) return;
-      viewerTitle.textContent = currentSheet.title;
-      const rows = currentSheet.rows;
-      const detected = viewMode === 'table' ? 'table' : detectSheetType(rows);
-
-      if (detected === 'bars') {
-        viewerTypeMeta.textContent = 'Tocca una barra per evidenziarla';
-        renderBarsLayout(rows);
-      } else if (detected === 'news') {
-        viewerTypeMeta.textContent = 'Schede Notizie Live';
-        renderNewsLayout(rows);
-      } else {
-        viewerTypeMeta.textContent = 'Tocca una riga per evidenziarla';
-        renderTableLayout(rows);
-      }
-    }
-
-    function renderBarsLayout(rows) {
+    function extractChartItems(rows) {
       const headers = rows[0] || [];
       const dataRows = rows.slice(1);
-
-      // Trova prima colonna numerica
       let numCol = 1;
       for (let c = 1; c < headers.length; c++) {
         if (dataRows.some(r => parseNum(r[c]) !== null)) { numCol = c; break; }
       }
-      // Eventuale seconda colonna numerica (es. confronto precedente)
       let prevCol = -1;
       for (let c = numCol + 1; c < headers.length; c++) {
         if (dataRows.some(r => parseNum(r[c]) !== null)) { prevCol = c; break; }
       }
 
-      const items = dataRows.map((r, i) => {
+      return dataRows.map((r, i) => {
         const label = r[0] || `Voce ${i + 1}`;
         const sub = numCol > 1 ? (r[1] || '') : '';
         const rawVal = r[numCol] || '0';
         const val = parseNum(rawVal) ?? 0;
         const prevVal = prevCol >= 0 ? parseNum(r[prevCol]) : null;
         const customColor = r.find(cell => /^#[0-9A-Fa-f]{6}$/.test(cell));
-        return { label, sub, rawVal, val, prevVal, color: customColor || BAR_PALETTE[i % BAR_PALETTE.length] };
+        return { label, sub, rawVal, val, prevVal, color: customColor || PALETTE[i % PALETTE.length] };
       });
+    }
 
-      const maxVal = Math.max(...items.map(it => it.val), 1);
+    function renderOpenSheet() {
+      if (!currentSheet) return;
+      viewerTitle.textContent = currentSheet.title;
+      const rows = currentSheet.rows;
 
-      viewerBody.innerHTML = `
-        <div class="auto-bars-list" id="autoBarsList">
-          ${items.map(it => {
-            const pctW = Math.min(100, Math.max(3, Math.round((it.val / maxVal) * 100)));
-            let diffHtml = '';
-            if (it.prevVal !== null) {
-              const diff = +(it.val - it.prevVal).toFixed(2);
-              const color = diff > 0 ? '#15803d' : diff < 0 ? '#b91c1c' : '#64748b';
-              const sign = diff > 0 ? '+' : '';
-              diffHtml = `<span style="font-size:13px; font-weight:800; color:${color}; margin-right:10px;">(${sign}${String(diff).replace('.', ',')} vs prec.)</span>`;
-            }
-            return `
-              <div class="abar-row">
-                <div class="abar-top">
-                  <div>
-                    <div class="abar-label">${it.label}</div>
-                    ${it.sub ? `<div class="abar-sub">${it.sub}</div>` : ''}
-                  </div>
-                  <div>${diffHtml}<span class="abar-val" style="color:${it.color};">${it.rawVal}</span></div>
+      if (!rows.length) {
+        viewerBody.innerHTML = `<div style="margin:auto; color:#64748b; font-weight:700;">Questo foglio è ancora vuoto.</div>`;
+        return;
+      }
+
+      if (currentMode === 'vbars') {
+        viewerTypeMeta.textContent = 'Tocca una colonna per isolarla';
+        const items = extractChartItems(rows);
+        const maxVal = Math.max(...items.map(it => it.val), 1);
+
+        viewerBody.innerHTML = `
+          <div class="vbars-stage" id="vbarsStage">
+            ${items.map(it => {
+              const hPct = Math.max(5, Math.round((it.val / (maxVal * 1.12)) * 100));
+              let diffBadge = '';
+              if (it.prevVal !== null) {
+                const diff = +(it.val - it.prevVal).toFixed(2);
+                const bg = diff > 0 ? '#dcfce7' : diff < 0 ? '#fee2e2' : '#f1f5f9';
+                const fg = diff > 0 ? '#15803d' : diff < 0 ? '#b91c1c' : '#64748b';
+                const arrow = diff > 0 ? '▲ +' : diff < 0 ? '▼ ' : '• ';
+                diffBadge = `<span class="vbar-diff" style="background:${bg}; color:${fg};">${arrow}${String(diff).replace('.', ',')}</span>`;
+              }
+              return `
+                <div class="vbar-col">
+                  ${diffBadge}
+                  <span class="vbar-val" style="color:${it.color};">${it.rawVal}</span>
+                  <div class="vbar-fill" style="height:${hPct}%; background:${it.color};"></div>
+                  <div class="vbar-label">${it.label}</div>
+                  ${it.sub ? `<div class="vbar-sub">${it.sub}</div>` : ''}
                 </div>
-                <div class="abar-track">
-                  <div class="abar-fill" style="width:${pctW}%; background:${it.color};"></div>
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `;
+              `;
+            }).join('')}
+          </div>
+        `;
 
-      const list = document.getElementById('autoBarsList');
-      list.querySelectorAll('.abar-row').forEach(row => {
-        row.addEventListener('click', () => {
-          const was = row.classList.contains('focused');
-          list.querySelectorAll('.abar-row').forEach(r => r.classList.remove('focused'));
-          if (!was) { row.classList.add('focused'); list.classList.add('has-focus'); }
-          else list.classList.remove('has-focus');
+        const stage = document.getElementById('vbarsStage');
+        stage.querySelectorAll('.vbar-col').forEach(col => {
+          col.addEventListener('click', () => {
+            const was = col.classList.contains('focused');
+            stage.querySelectorAll('.vbar-col').forEach(c => c.classList.remove('focused'));
+            if (!was) { col.classList.add('focused'); stage.classList.add('has-focus'); }
+            else stage.classList.remove('has-focus');
+          });
         });
-      });
+
+      } else if (currentMode === 'hbars') {
+        viewerTypeMeta.textContent = 'Tocca una barra per isolarla';
+        const items = extractChartItems(rows);
+        const maxVal = Math.max(...items.map(it => it.val), 1);
+
+        viewerBody.innerHTML = `
+          <div class="hbars-list" id="hbarsList">
+            ${items.map(it => {
+              const wPct = Math.max(4, Math.min(100, Math.round((it.val / maxVal) * 100)));
+              let diffHtml = '';
+              if (it.prevVal !== null) {
+                const diff = +(it.val - it.prevVal).toFixed(2);
+                const fg = diff > 0 ? '#15803d' : diff < 0 ? '#b91c1c' : '#64748b';
+                const sign = diff > 0 ? '+' : '';
+                diffHtml = `<span style="font-size:13px; font-weight:800; color:${fg}; margin-right:8px;">(${sign}${String(diff).replace('.', ',')})</span>`;
+              }
+              return `
+                <div class="hbar-row">
+                  <div class="hbar-top">
+                    <div>
+                      <span style="font-size:17px; font-weight:900; color:#0f172a;">${it.label}</span>
+                      ${it.sub ? `<span style="font-size:13px; font-weight:600; color:#64748b; margin-left:8px;">${it.sub}</span>` : ''}
+                    </div>
+                    <div>${diffHtml}<span style="font-size:21px; font-weight:900; color:${it.color};">${it.rawVal}</span></div>
+                  </div>
+                  <div class="hbar-track">
+                    <div class="hbar-fill" style="width:${wPct}%; background:${it.color};"></div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+
+        const list = document.getElementById('hbarsList');
+        list.querySelectorAll('.hbar-row').forEach(row => {
+          row.addEventListener('click', () => {
+            const was = row.classList.contains('focused');
+            list.querySelectorAll('.hbar-row').forEach(r => r.classList.remove('focused'));
+            if (!was) { row.classList.add('focused'); list.classList.add('has-focus'); }
+            else list.classList.remove('has-focus');
+          });
+        });
+
+      } else if (currentMode === 'news') {
+        viewerTypeMeta.textContent = 'Tocca una scheda per ingrandirla in primo piano';
+        const headers = rows[0] || [];
+        const dataRows = rows.slice(1);
+
+        viewerBody.innerHTML = `
+          <div class="news-grid">
+            ${dataRows.map(r => {
+              const nonEmpty = r.filter(Boolean);
+              const tag = nonEmpty.length > 2 ? nonEmpty[0] : (headers[0] || 'LIVE');
+              const title = nonEmpty.length > 2 ? nonEmpty[1] : (nonEmpty[0] || '');
+              const body = nonEmpty.length > 2 ? nonEmpty.slice(2).join(' — ') : (nonEmpty[1] || '');
+              const isUrgent = r.some(c => ['SI', 'URGENTE', 'LIVE', 'BREAKING'].includes(c.toUpperCase()));
+
+              return `
+                <div class="news-card ${isUrgent ? 'urgent' : ''}">
+                  <div class="news-tag">${tag}</div>
+                  <div class="news-title">${title}</div>
+                  ${body ? `<div class="news-body">${body}</div>` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+
+        viewerBody.querySelectorAll('.news-card').forEach(card => {
+          card.addEventListener('click', () => card.classList.toggle('expanded'));
+        });
+
+      } else {
+        viewerTypeMeta.textContent = 'Tocca una riga per evidenziarla';
+        const headers = rows[0] || [];
+        const bodyRows = rows.slice(1);
+
+        viewerBody.innerHTML = `
+          <div class="tv-table-wrap">
+            <table class="tv-table">
+              <thead>
+                <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+              </thead>
+              <tbody>
+                ${bodyRows.map(r => `
+                  <tr>${headers.map((_, idx) => `<td>${r[idx] || ''}</td>`).join('')}</tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        viewerBody.querySelectorAll('tbody tr').forEach(tr => {
+          tr.addEventListener('click', () => tr.classList.toggle('row-focused'));
+        });
+      }
     }
 
-    function renderNewsLayout(rows) {
-      const headers = rows[0] || [];
-      const dataRows = rows.slice(1);
-
-      viewerBody.innerHTML = `
-        <div class="news-cards-grid">
-          ${dataRows.map(r => {
-            const nonEmpty = r.filter(Boolean);
-            const kicker = nonEmpty.length > 2 ? nonEmpty[0] : (headers[0] || 'AGGIORNAMENTO');
-            const title = nonEmpty.length > 2 ? nonEmpty[1] : (nonEmpty[0] || '');
-            const detail = nonEmpty.length > 2 ? nonEmpty.slice(2).join(' — ') : (nonEmpty[1] || '');
-            const isHighlight = r.some(c => c.toUpperCase() === 'SI' || c.toUpperCase() === 'URGENTE' || c.toUpperCase() === 'LIVE');
-
-            return `
-              <div class="news-box ${isHighlight ? 'highlight' : ''}">
-                <div class="news-kicker">${kicker}</div>
-                <div class="news-headline">${title}</div>
-                ${detail ? `<div class="news-detail">${detail}</div>` : ''}
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `;
-    }
-
-    function renderTableLayout(rows) {
-      const headers = rows[0] || [];
-      const bodyRows = rows.slice(1);
-
-      viewerBody.innerHTML = `
-        <div class="tv-table-wrap">
-          <table class="tv-table">
-            <thead>
-              <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
-            </thead>
-            <tbody>
-              ${bodyRows.map(r => `
-                <tr>${headers.map((_, idx) => `<td>${r[idx] || ''}</td>`).join('')}</tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      `;
-
-      viewerBody.querySelectorAll('tbody tr').forEach(tr => {
-        tr.addEventListener('click', () => tr.classList.toggle('row-focused'));
-      });
-    }
-
-    // EVIDENZIATORE TOUCH SUL VIEWER
+    // EVIDENZIATORE TOUCH
     const drawCanvas = document.getElementById('drawCanvas');
     const ctx = drawCanvas.getContext('2d');
     const btnDrawToggle = document.getElementById('btnDrawToggle');
